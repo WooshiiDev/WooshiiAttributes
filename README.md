@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/Made%20with-Unity-grey.svg?style=for-the-badge&logo=unity" alt="Unity Link">
  <a href="https://unity3d.com/get-unity/download">
   <img src="https://img.shields.io/badge/Supported-2018.4+-grey.svg?style=for-the-badge&logo=unity" alt="Unity Download Link">
- <a href="https://github.com/WooshiiDev/HierarchyDecorator/blob/master/LICENSE">
+ <a href="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/LICENSE">
  <img src="https://img.shields.io/badge/License-MIT-brightgreen.svg?style=for-the-badge" alt="License MIT">
 </p>
 
@@ -13,9 +13,7 @@
   <a href="#about">About</a> •
   <a href="#installation">Installation</a> •
   <a href="#attributes">Property Drawers</a> •
-  <a href="#materials">Material Drawers</a> •
-  <a href="#support">Support</a> •
-  <a href="#donate">Donate</a>
+  <a href="#materials">Material Drawers</a>
 </p>
 
 ## About
@@ -28,14 +26,16 @@
   contains a "Global Drawer" core that I use to reorder, assign and find info from classes.
 </p>
 
-<p>This will grow as new features and attributes are added to it</p>
+<p>This will grow as new features and attributes are added to it. Pretty much will just keep adding as long as there's a reason to add new attributes.</p>
  
 ## Installation
+ 
+For now it's just the zip download, but I'll setup some unitypackages soon.
 
 ## Attributes
 
+<Todo>
+
 ## Materials
 
-## Support
-
-## Donate
+<Todo>
