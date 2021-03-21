@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
-    public interface ICustomDrawer
+    public interface ICustomPropertyDrawer
     {
         Type AttributeType { get; }
         SerializedObject SerializedObject { get; }
@@ -12,7 +12,7 @@ namespace WooshiiAttributes
         void OnGUI();
     }
 
-    public interface ICustomDrawer<T> : ICustomDrawer
+    public interface ICustomPropertyDrawer<T> : ICustomPropertyDrawer
     {
         T Attribute { get; }
     }

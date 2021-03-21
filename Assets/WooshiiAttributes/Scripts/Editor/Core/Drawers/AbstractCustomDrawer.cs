@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
-    public abstract class AbstractCustomDrawer : ICustomDrawer
+    public abstract class AbstractCustomDrawer : ICustomPropertyDrawer
     {
         protected Type attributeType;
         public SerializedObject serializedObject;

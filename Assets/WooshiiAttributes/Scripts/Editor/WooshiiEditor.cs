@@ -36,9 +36,15 @@ namespace WooshiiAttributes
 
         // Local Data
         private List<SerializedProperty> visibleProperties;
+        private List<IMethodDrawer> visibleMethods;
 
         private List<SerializedData> serializedData;
         private Dictionary<Type, GlobalDrawer> globalDrawers;
+
+        // BindingFlags
+        private readonly BindingFlags MethodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        private readonly BindingFlags FieldFlags = BindingFlags.Public | BindingFlags.Default | BindingFlags.Instance;
+
 
         // Potential conflict with same named members/types of actual variables
         private string[] excludedPropertyTypes =
@@ -59,35 +65,15 @@ namespace WooshiiAttributes
             {
                 AllDrawers = new Dictionary<Type, Type> ();
 
-                //TODO: [Damian] Merge subclass checks into one
-                foreach (Type type in GetTypeSubclasses (typeof (GlobalDrawer)))
-                {
-                    Type baseType = type.BaseType;
-
-                    if (baseType.IsAbstract || type.IsGenericType)
-                    {
-                        continue;
-                    }
-
-                    AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
-                }
-
-                foreach (Type type in GetTypeSubclasses (typeof (ArrayDrawer)))
-                {
-                    Type baseType = type.BaseType;
-
-                    if (baseType.IsAbstract || type.IsGenericType)
-                    {
-                        continue;
-                    }
-
-                    AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
-                }
+                FindDrawerTypes (typeof (GlobalDrawer));
+                FindDrawerTypes (typeof (ArrayDrawer));
+                FindDrawerTypes (typeof (IMethodDrawer));
             }
 
             globalDrawers = new Dictionary<Type, GlobalDrawer> ();
             serializedData = new List<SerializedData> ();
 
+            visibleMethods = new List<IMethodDrawer> ();
             visibleProperties = GetAllVisibleProperties ();
 
             // We need all the properties and their corresponding fields
@@ -95,6 +81,8 @@ namespace WooshiiAttributes
             {
                 GetSerializedData (property);
             }
+
+            GetMethodDrawers ();
         }
 
         public override void OnInspectorGUI()
@@ -127,6 +115,11 @@ namespace WooshiiAttributes
             {
                 serializedObject.ApplyModifiedProperties ();
             }
+
+            foreach (var method in visibleMethods)
+            {
+                method.OnGUI ();
+            }
         }
 
         // Reflection
@@ -134,9 +127,9 @@ namespace WooshiiAttributes
         /// <summary>
         /// Find all custom drawers of type. Primarily used for finding Global and Array Drawers.
         /// </summary>
-        private Dictionary<Type, ICustomDrawer> GetAllDrawerSubclasses<T>() where T : ICustomDrawer
+        private Dictionary<Type, ICustomPropertyDrawer> GetAllDrawerSubclasses<T>() where T : ICustomPropertyDrawer
         {
-            Dictionary<Type, ICustomDrawer> drawers = new Dictionary<Type, ICustomDrawer> ();
+            Dictionary<Type, ICustomPropertyDrawer> drawers = new Dictionary<Type, ICustomPropertyDrawer> ();
             IEnumerable<Type> types = GetTypeSubclasses (typeof (T));
 
             foreach (KeyValuePair<Type, Type> drawerType in AllDrawers)
@@ -164,7 +157,40 @@ namespace WooshiiAttributes
 
         private IEnumerable<FieldInfo> GetFields(Object instance, Func<FieldInfo, bool> condition)
         {
-            return instance.GetType ().GetFields (BindingFlags.Public | BindingFlags.Default | BindingFlags.Instance).Where (condition);
+            return instance.GetType ().GetFields (FieldFlags).Where (condition);
+        }
+
+        private void FindDrawerTypes(Type attributeType)
+        {
+            foreach (Type type in GetTypeSubclasses (attributeType))
+            {
+                Type baseType = type.BaseType;
+
+                if (baseType.IsAbstract || type.IsGenericType)
+                {
+                    continue;
+                }
+
+                AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
+            }
+        }
+
+        private void GetMethodDrawers()
+        {
+
+            foreach (MethodInfo method in target.GetType ().GetMethods (MethodFlags))
+            {
+                MethodButtonAttribute attribute = method.GetCustomAttribute<MethodButtonAttribute> ();
+
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                MethodDrawer drawer = new MethodDrawer (attribute, target, method);
+
+                visibleMethods.Add (drawer);
+            }
         }
 
         // Serialized Data

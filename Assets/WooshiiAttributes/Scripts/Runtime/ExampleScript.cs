@@ -24,9 +24,6 @@ namespace WooshiiAttributes
 
         // ============ Group Examples ============
 
-        public int a, b, c, d, e;
-        public int f;
-
         [HeaderLineGroup ("Header Line Group Stats")] public int health, speed, damage;
         [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
         [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
@@ -54,5 +51,11 @@ namespace WooshiiAttributes
 
         [Reorderable] public ExampleData[] childClassArray;
         [Reorderable] public int[] intArray;
+
+        [MethodButton("Example Button")]
+        public void Method()
+        {
+            Debug.Log ("Example Method");
+        }
     }
 }
