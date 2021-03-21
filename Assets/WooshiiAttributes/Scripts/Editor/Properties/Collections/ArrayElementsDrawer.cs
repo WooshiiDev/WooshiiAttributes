@@ -39,6 +39,7 @@ namespace WooshiiAttributes
                 hasBeenValidated = true;
             }
 
+
             if (!isValid)
             {
                 base.OnGUI (position, property, label);

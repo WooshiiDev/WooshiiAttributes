@@ -1,9 +1,10 @@
 ﻿using System;
+using UnityEngine;
 
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class ArrayElementsAttribute : Attribute
+    public class ArrayElementsAttribute : PropertyAttribute
     {
         public ArrayElementsAttribute()
         {
