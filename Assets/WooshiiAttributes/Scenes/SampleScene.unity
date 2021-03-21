@@ -149,7 +149,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -339,6 +339,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ede355fed7366940a59a1045d5f906a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  a: 0
+  b: 0
+  c: 0
+  d: 0
+  e: 0
+  f: 0
+  g: 0
+  h: 0
+  i: 0
+  j:
+  - name: Hello
+    intVal: 0
+    boolVal: 0
+  - name: 
+    intVal: 0
+    boolVal: 0
+  k: 0
   readOnlyAll: Can see me at all times. Can't edit me though.
   readOnlyEditor: Can see me in the Editor when not playing only.
   readOnlyPlay: Can see me when Playing only.
@@ -354,11 +371,27 @@ MonoBehaviour:
   foldedHealth: 0
   foldedSpeed: 0
   foldedDamage: 0
+  clampedInteger: 0
+  clampedFloat: 0
   clampedVector2: {x: 0, y: 0}
   clampedVector3: {x: 0, y: 0, z: 0}
   intValue: 0
   stringValue: 
   boolValue: 0
-  arrayElements: []
-  childClassArray: []
+  arrayElements:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  childClassArray:
+  - name: Element One
+    intVal: 100
+    boolVal: 1
+  - name: Yes
+    intVal: 0
+    boolVal: 0
+  - name: Hello I am an Element
+    intVal: 0
+    boolVal: 0
   intArray: 

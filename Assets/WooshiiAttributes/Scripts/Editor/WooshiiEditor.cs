@@ -121,7 +121,7 @@ namespace WooshiiAttributes
 
         public override void OnInspectorGUI()
         {
-            if (AllDrawers == null)
+            if (serializedData == null)
             {
                 Initialize ();
             }

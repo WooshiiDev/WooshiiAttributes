@@ -16,10 +16,6 @@ namespace WooshiiAttributes
         {
             float indent = GetIndentLength (rect);
 
-            rect.x += indent;
-            rect.width -= indent;
-            rect.height = GetBoxHeight () - HEIGHT_PADDING * 0.5f;
-
             rect.Set (
                 rect.x + indent, rect.y,
                 rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
@@ -71,7 +67,7 @@ namespace WooshiiAttributes
 
             //Need a little extra for correct sizing of InfoBox
             float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Comment.text), width);
-            return Mathf.Max (minHeight, actualHeight) + HEIGHT_PADDING;
+            return Mathf.Max (minHeight, actualHeight);
         }
     }
 }
