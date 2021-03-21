@@ -3,7 +3,7 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class EndGroupAttribute : GlobalAttribute
+    public class EndGroupAttribute : GroupAttribute
     {
         public EndGroupAttribute()
         {

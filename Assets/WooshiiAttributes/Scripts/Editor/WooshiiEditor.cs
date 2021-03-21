@@ -16,15 +16,21 @@ namespace WooshiiAttributes
         {
             public readonly FieldInfo field;
             public SerializedProperty property;
-            public bool hasGlobal = false;
-            public ArrayDrawer drawer;
+
+            public bool isGlobal = false;
+            public bool hasGroup = false;
+
+            public ArrayDrawer arrayDrawer;
+            public GroupDrawer groupDrawer;
 
             public SerializedData(FieldInfo field, SerializedProperty property, bool hasGlobal)
             {
                 this.field = field;
                 this.property = property;
-                this.hasGlobal = hasGlobal;
+                this.isGlobal = hasGlobal;
             }
+
+
         }
 
         // Static Data
@@ -39,11 +45,13 @@ namespace WooshiiAttributes
         private List<IMethodDrawer> visibleMethods;
 
         private List<SerializedData> serializedData;
+        private GroupDrawer cachedGroupDrawer;
+
         private Dictionary<Type, GlobalDrawer> globalDrawers;
 
         // BindingFlags
         private readonly BindingFlags MethodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        private readonly BindingFlags FieldFlags = BindingFlags.Public | BindingFlags.Default | BindingFlags.Instance;
+        private readonly BindingFlags FieldFlags = BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
 
         // Potential conflict with same named members/types of actual variables
@@ -58,16 +66,22 @@ namespace WooshiiAttributes
             "m_Script",
             };
 
-        private void OnEnable()
+        private void Awake()
         {
-            // Cache all drawers and drawers through key/values
+            Initialize ();
+        }
+
+        private void Initialize()
+        {
             if (AllDrawers == null)
             {
                 AllDrawers = new Dictionary<Type, Type> ();
 
+                //TODO: [Damian] Merge type finding and change all to interfaces
                 FindDrawerTypes (typeof (GlobalDrawer));
                 FindDrawerTypes (typeof (ArrayDrawer));
                 FindDrawerTypes (typeof (IMethodDrawer));
+                FindDrawerTypes (typeof (GroupDrawer));
             }
 
             globalDrawers = new Dictionary<Type, GlobalDrawer> ();
@@ -76,34 +90,50 @@ namespace WooshiiAttributes
             visibleMethods = new List<IMethodDrawer> ();
             visibleProperties = GetAllVisibleProperties ();
 
+            GetMethodDrawers ();
+
             // We need all the properties and their corresponding fields
-            foreach (SerializedProperty property in visibleProperties)
+            int actualIndex = 0;
+            for (int i = 0; i < visibleProperties.Count; ++i)
             {
-                GetSerializedData (property);
+                SerializedProperty property = visibleProperties[i];
+
+                GetGlobalAttribute (property);
+                GetArrayAttribute (property);
+                GetGroupAttribute (property);
+
+                if (cachedGroupDrawer != null && !serializedData[actualIndex].isGlobal)
+                {
+                    cachedGroupDrawer.RegisterProperty (property);
+                    visibleProperties.RemoveAt (i);
+
+                    i--;
+                }
+
+                actualIndex++;
             }
 
-            GetMethodDrawers ();
+            if (cachedGroupDrawer != null)
+            {
+                cachedGroupDrawer = null;
+            }
         }
 
         public override void OnInspectorGUI()
         {
+            if (AllDrawers == null)
+            {
+                Initialize ();
+            }
+
+            cachedGroupDrawer = null;
+
             EditorGUI.BeginChangeCheck ();
 
-            foreach (SerializedData data in serializedData)
+            for (int i = 0; i < serializedData.Count; i++)
             {
-                if (data.hasGlobal)
-                {
-                    continue;
-                }
-
-                if (data.drawer != null)
-                {
-                    data.drawer.OnGUI ();
-                }
-                else
-                {
-                    EditorGUILayout.PropertyField (data.property, true);
-                }
+                SerializedData data = serializedData[i];
+                DrawProperty (data);
             }
 
             foreach (GlobalDrawer drawer in globalDrawers.Values)
@@ -116,7 +146,7 @@ namespace WooshiiAttributes
                 serializedObject.ApplyModifiedProperties ();
             }
 
-            foreach (var method in visibleMethods)
+            foreach (IMethodDrawer method in visibleMethods)
             {
                 method.OnGUI ();
             }
@@ -227,12 +257,6 @@ namespace WooshiiAttributes
             return properties;
         }
 
-        private void GetSerializedData(SerializedProperty _property)
-        {
-            GetGlobalAttribute (_property);
-            GetArrayAttribute (_property);
-        }
-
         /// <summary>
         /// Find the global property assigned to this SerializedProperty
         /// </summary>
@@ -241,7 +265,7 @@ namespace WooshiiAttributes
         {
             // Get the field based on the serialized property cached name
             // TODO: [Damian] Be able to find child data as this currently only works for root fields
-            FieldInfo field = target.GetType ().GetField (_property.name);
+            FieldInfo field = target.GetType ().GetField (_property.name, FieldFlags);
             GlobalAttribute globalAttribute = field.GetCustomAttribute<GlobalAttribute> ();
 
             serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
@@ -261,7 +285,6 @@ namespace WooshiiAttributes
                 globalDrawers.Add (attributeType, drawer);
             }
 
-            //Debug.Log (string.Format ("Registering {0} that belongs to field {1}", globalAttribute, property.name));
             drawer.Register (globalAttribute, _property);
         }
 
@@ -283,7 +306,43 @@ namespace WooshiiAttributes
                 Type drawerType = AllDrawers[attributeType];
                 ArrayDrawer drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as ArrayDrawer;
 
-                _data.drawer = drawer;
+                _data.arrayDrawer = drawer;
+            }
+        }
+
+        private void GetGroupAttribute(SerializedProperty _property)
+        {
+            // Get the field based on the serialized property cached name
+            FieldInfo field = target.GetType ().GetField (_property.name);
+
+            if (cachedGroupDrawer != null)
+            {
+                if (field.GetCustomAttribute<EndGroupAttribute> () != null)
+                {
+                    cachedGroupDrawer.RegisterProperty (_property);
+                    cachedGroupDrawer = null;
+                }
+
+                return;
+            }
+
+            GroupAttribute groupAttribute = field.GetCustomAttribute<GroupAttribute> ();
+
+            if (groupAttribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = groupAttribute.GetType ();
+
+            if (TryGetData (_property, out SerializedData _data))
+            {
+                Type drawerType = AllDrawers[attributeType];
+                GroupDrawer drawer = Activator.CreateInstance (drawerType, groupAttribute, serializedObject) as GroupDrawer;
+
+                _data.hasGroup = true;
+                _data.groupDrawer = drawer;
+                cachedGroupDrawer = drawer;
             }
         }
 
@@ -293,6 +352,37 @@ namespace WooshiiAttributes
             _data = serializedData.FirstOrDefault (t => t.property == _property);
 
             return _data != null;
+        }
+
+        private void DrawProperty(SerializedData _data)
+        {
+            if (_data.isGlobal)
+            {
+                return;
+            }
+
+            if (_data.hasGroup)
+            {
+                cachedGroupDrawer = _data.groupDrawer;
+                _data.groupDrawer.OnGUI ();
+                return;
+            }
+
+            // Do not draw grouped variables
+            if (cachedGroupDrawer != null && cachedGroupDrawer.Properties.Contains (_data.property))
+            {
+                return;
+            }
+
+            if (_data.arrayDrawer != null)
+            {
+                _data.arrayDrawer.OnGUI ();
+            }
+            else
+            {
+
+                EditorGUILayout.PropertyField (_data.property, true);
+            }
         }
     }
 }

@@ -16,6 +16,21 @@ namespace WooshiiAttributes
             public ExampleData childData;
         }
 
+        [BeginGroup ("Group of stuff", true, true, true)]
+        public int a; 
+        public int b;
+        public int c;
+        public int d;
+        public int e;
+        public int f;
+        public int g;
+        public int h;
+        public int i;
+
+        public ExampleData[] j;
+
+        public int k;
+
         // ============ ReadOnly Examples ============
         [HeaderLine ("ReadOnly")]
         [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
@@ -52,7 +67,7 @@ namespace WooshiiAttributes
         [Reorderable] public ExampleData[] childClassArray;
         [Reorderable] public int[] intArray;
 
-        [MethodButton()]
+        [MethodButton ()]
         public void ExampleMethod()
         {
             Debug.Log ("Example Method");
