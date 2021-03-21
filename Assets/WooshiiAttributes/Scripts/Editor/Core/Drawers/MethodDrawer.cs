@@ -20,6 +20,12 @@ namespace WooshiiAttributes
             this.attribute = attribute;
             this.target = Target;
             this.methodInfo = info;
+
+            if (attribute.MethodName == null)
+            {
+                attribute.MethodName = methodInfo.Name;
+
+            }
         }
 
         public virtual void OnGUI()

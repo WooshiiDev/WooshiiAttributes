@@ -52,8 +52,8 @@ namespace WooshiiAttributes
         [Reorderable] public ExampleData[] childClassArray;
         [Reorderable] public int[] intArray;
 
-        [MethodButton("Example Button")]
-        public void Method()
+        [MethodButton()]
+        public void ExampleMethod()
         {
             Debug.Log ("Example Method");
         }
