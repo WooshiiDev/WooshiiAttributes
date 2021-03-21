@@ -1,238 +1,271 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using System.Linq;
 using System.Reflection;
-
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
-    {
+{
     [CanEditMultipleObjects]
     [CustomEditor (typeof (MonoBehaviour), true)]
     public class WooshiiEditor : Editor
+    {
+        private class SerializedData
         {
-        private class AttributeField
-            {
             public readonly FieldInfo field;
-            public List<ArrayDrawer> arrayDrawers = new List<ArrayDrawer>();
+            public SerializedProperty property;
             public bool hasGlobal = false;
+            public ArrayDrawer drawer;
 
-            public AttributeField(FieldInfo field)
-                {
+            public SerializedData(FieldInfo field, SerializedProperty property, bool hasGlobal)
+            {
                 this.field = field;
-                }
-            }
-
-        //Properties/Fields
-        private List<SerializedProperty> visibleProperties = new List<SerializedProperty> ();
-        private HashSet<AttributeField> fields = new HashSet<AttributeField>();
-
-        //Cached
-        private static Dictionary<Type, ArrayDrawer> arrayDrawers;
-        private static Dictionary<Type, GlobalDrawer> globalDrawers;
-        private Dictionary<Type, GlobalDrawer> localGlobalDrawers = new Dictionary<Type, GlobalDrawer>();
-
-        private int Count => fields.Count ();
-
-        private void OnEnable()
-            {
-            GetVisibleProperties (ref visibleProperties);
-
-            //Create a cache of all drawers
-            if (arrayDrawers == null)
-                {
-                arrayDrawers = new Dictionary<Type, ArrayDrawer> ();
-
-                var types = FindSubclassesOfType (typeof (ArrayDrawer));
-                foreach (var type in types)
-                    {
-                    ArrayDrawer drawer = Activator.CreateInstance (type) as ArrayDrawer;
-                    arrayDrawers.Add (drawer.attributeType, drawer);
-                    }
-                }
-
-            if (globalDrawers == null)
-                {
-                globalDrawers = new Dictionary<Type, GlobalDrawer> ();
-
-                var types = FindSubclassesOfType (typeof (GlobalDrawer));
-                foreach (var type in types)
-                    {
-                    GlobalDrawer drawer = Activator.CreateInstance (type) as GlobalDrawer;
-                    globalDrawers.Add (drawer.AttributeType, drawer);
-                    }
-                }
-
-            //Get all fields with attributes and iterate over
-            var arrayFields = GetFields (t => t.GetCustomAttributes (typeof (ArrayAttribute), true).Length > 0);
-            foreach (var field in arrayFields)
-                {
-                var arrayField = new AttributeField (field);
-                var attributes = field.GetCustomAttributes<ArrayAttribute> ();
-
-                foreach (var attribute in attributes)
-                    {
-                    ArrayDrawer newDrawer = arrayDrawers[attribute.GetType ()];
-                    newDrawer.attribute = attribute;
-
-                    arrayField.arrayDrawers.Add (newDrawer.Clone ());
-                    }
-
-
-                fields.Add (arrayField);
-                }
-
-            var globalFields = GetFields (t => t.GetCustomAttributes (typeof (GlobalAttribute), true).Length > 0);
-            foreach (var field in globalFields)
-                {
-                var attributes = field.GetCustomAttributes<GlobalAttribute> ();
-                GlobalDrawer drawer = null;
-
-                foreach (var attribute in attributes)
-                    {
-                    Type type = attribute.GetType ();
-
-                    if (!globalDrawers.ContainsKey (type))
-                        continue;
-
-                    if (!localGlobalDrawers.ContainsKey (type))
-                        {
-                        drawer = globalDrawers[type].Clone ();
-
-                        localGlobalDrawers.Add (type, drawer);
-                        }
-                    else
-                        {
-                        drawer = localGlobalDrawers[type];
-                        }
-
-                    drawer.Register (attribute);
-                    }
-
-                var attrField = fields.FirstOrDefault (t => t.field == field);
-                if (attrField != null)
-                    attrField.hasGlobal = true;
-                else
-                    {
-                    var newField = new AttributeField (field)
-                        {
-                        hasGlobal = true
-                        };
-
-                    fields.Add (newField);
-                    }
-
-                if (drawer != null)
-                    drawer.Register (visibleProperties.First (t => t.name == field.Name));
-                }
-
-            foreach (var globalDrawer in localGlobalDrawers)
-                globalDrawer.Value.Initalize (serializedObject);
-            }
-
-        private void OnDisable()
-            {
-            //Clear serialized object ref
-            serializedObject.Dispose ();
-            visibleProperties.Clear ();
-
-            foreach (var globalDrawer in localGlobalDrawers)
-                globalDrawer.Value.Clear ();
-
-            localGlobalDrawers.Clear ();
-            fields.Clear ();
-            }
-
-        public override void OnInspectorGUI()
-            {
-            //Iterate over all properties, and find any form of global drawer
-            if (Count == 0)
-                {
-                DrawDefaultInspector ();
-                return;
-                }
-
-            //serializedObject.Update ();
-
-            for (int i = 0; i < visibleProperties.Count; i++)
-                {
-                var property = visibleProperties[i];
-                string name = property.name;
-
-                AttributeField attributeField = fields.FirstOrDefault (a => a.field.Name == name);
-
-                if (attributeField == null)
-                    {
-                    EditorGUI.BeginChangeCheck ();
-
-                    EditorGUILayout.PropertyField (property);
-
-                    if (EditorGUI.EndChangeCheck())
-                        {
-                        serializedObject.ApplyModifiedProperties ();
-                        }
-
-                    continue;
-                    }
-
-                if (attributeField.hasGlobal)
-                    continue;
-
-                for (int j = 0; j < attributeField.arrayDrawers.Count; j++)
-                    attributeField.arrayDrawers[j].OnGUI (property);
-                }
-
-            foreach (var global in localGlobalDrawers)
-                global.Value.OnGUI ();
-
-            //Draw globals last
-            for (int i = 0; i < visibleProperties.Count; i++)
-                {
-                var property = visibleProperties[i];
-                string name = property.name;
-
-                AttributeField attributeField = fields.FirstOrDefault (e => e.field.Name == name);
-
-                if (attributeField == null)
-                    continue;
-
-                if (!attributeField.hasGlobal)
-                    continue;
-
-                for (int j = 0; j < attributeField.arrayDrawers.Count; j++)
-                    attributeField.arrayDrawers[j].OnGUI (property);
-                }
-
-            }
-
-        private void GetVisibleProperties(ref List<SerializedProperty> property)
-            {
-            visibleProperties.Clear ();
-
-            using (var iterator = serializedObject.GetIterator ())
-                {
-                if (iterator.NextVisible (true))
-                    {
-                    do
-                        {
-                        property.Add (serializedObject.FindProperty (iterator.name));
-                        }
-                    while (iterator.NextVisible (false));
-                    }
-                }
-            }
-
-        private IEnumerable<FieldInfo> GetFields(Func<FieldInfo, bool> condition)
-            {
-            return target.GetType ().GetFields 
-                (BindingFlags.Public | BindingFlags.Default | BindingFlags.Instance).Where (condition);
-            }
-
-        private IEnumerable<Type> FindSubclassesOfType(Type type)
-            {
-            return GetType ().Assembly.GetTypes ().Where (t => t.IsSubclassOf (type));
+                this.property = property;
+                this.hasGlobal = hasGlobal;
             }
         }
+
+        // Static Data
+
+
+        /// <summary>
+        /// Dictionary with a key value pair linking custom attributes to their corresponding drawer type
+        /// </summary>
+        private static Dictionary<Type, Type> AllDrawers;
+        // Local Data
+        private List<SerializedProperty> visibleProperties;
+        private List<SerializedData> serializedData;
+        private Dictionary<Type, GlobalDrawer> globalDrawers;
+
+        // Potential conflict with same named members/types of actual variables
+        private string[] excludedPropertyTypes =
+            {
+            "PPtr<MonoScript>",
+            "ArraySize",
+            };
+
+        private string[] excludedPropertyNames =
+            {
+            "m_Script",
+            };
+
+        private void OnEnable()
+        {
+            // Cache all drawers and drawers through key/values
+            if (AllDrawers == null)
+            {
+                AllDrawers = new Dictionary<Type, Type> ();
+
+                //TODO: [Damian] Merge subclass checks into one
+                foreach (Type type in GetTypeSubclasses (typeof (GlobalDrawer)))
+                {
+                    Type baseType = type.BaseType;
+
+                    if (baseType.IsAbstract || type.IsGenericType)
+                    {
+                        continue;
+                    }
+
+                    AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
+                }
+
+                foreach (Type type in GetTypeSubclasses (typeof (ArrayDrawer)))
+                {
+                    Type baseType = type.BaseType;
+
+                    if (baseType.IsAbstract || type.IsGenericType)
+                    {
+                        continue;
+                    }
+
+                    AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
+                }
+            }
+
+            globalDrawers = new Dictionary<Type, GlobalDrawer> ();
+            serializedData = new List<SerializedData> ();
+
+            visibleProperties = GetAllVisibleProperties ();
+
+            // We need all the properties and their corresponding fields
+            foreach (SerializedProperty property in visibleProperties)
+            {
+                GetSerializedData (property);
+            }
+        }
+
+        public override void OnInspectorGUI()
+        {
+            EditorGUI.BeginChangeCheck ();
+
+            foreach (SerializedData data in serializedData)
+            {
+                if (data.hasGlobal)
+                {
+                    continue;
+                }
+
+                if (data.drawer != null)
+                {
+                    data.drawer.OnGUI ();
+                }
+                else
+                {
+                    EditorGUILayout.PropertyField (data.property, true);
+                }
+            }
+
+            foreach (GlobalDrawer drawer in globalDrawers.Values)
+            {
+                drawer.OnGUI ();
+            }
+
+            if (EditorGUI.EndChangeCheck ())
+            {
+                serializedObject.ApplyModifiedProperties ();
+            }
+        }
+
+        // Reflection
+
+        /// <summary>
+        /// Find all custom drawers of type. Primarily used for finding Global and Array Drawers.
+        /// </summary>
+        private Dictionary<Type, ICustomDrawer> GetAllDrawerSubclasses<T>() where T : ICustomDrawer
+        {
+            Dictionary<Type, ICustomDrawer> drawers = new Dictionary<Type, ICustomDrawer> ();
+            IEnumerable<Type> types = GetTypeSubclasses (typeof (T));
+
+            foreach (KeyValuePair<Type, Type> drawerType in AllDrawers)
+            {
+                //var drawer = Activator.CreateInstance (drawerType) as ICustomDrawer;
+                //drawers.Add (drawerType, drawer);
+            }
+
+            return drawers;
+        }
+
+        /// <summary>
+        /// Get all subclasses of a type. Will ignore abstract classes.
+        /// </summary>
+        /// <param name="type">The type to search for</param>
+        private IEnumerable<Type> GetTypeSubclasses(Type type)
+        {
+            return GetType ().Assembly.GetTypes ().Where (t => t.IsSubclassOf (type) && !t.IsAbstract);
+        }
+
+        private IEnumerable<FieldInfo> GetFields(Func<FieldInfo, bool> condition)
+        {
+            return GetFields (target, condition);
+        }
+
+        private IEnumerable<FieldInfo> GetFields(Object instance, Func<FieldInfo, bool> condition)
+        {
+            return instance.GetType ().GetFields (BindingFlags.Public | BindingFlags.Default | BindingFlags.Instance).Where (condition);
+        }
+
+        // Serialized Data
+
+        private List<SerializedProperty> GetAllVisibleProperties()
+        {
+            List<SerializedProperty> properties = new List<SerializedProperty> ();
+
+            using (SerializedProperty iterator = serializedObject.GetIterator ())
+            {
+                if (iterator.NextVisible (true))
+                {
+                    do
+                    {
+                        string name = iterator.name;
+                        string type = iterator.type;
+
+                        if (excludedPropertyNames.Contains (name))
+                        {
+                            continue;
+                        }
+
+                        if (excludedPropertyTypes.Contains (type))
+                        {
+                            continue;
+                        }
+
+                        properties.Add (serializedObject.FindProperty (iterator.name));
+                    }
+                    while (iterator.NextVisible (false));
+                }
+            }
+
+            return properties;
+        }
+
+        private void GetSerializedData(SerializedProperty _property)
+        {
+            GetGlobalAttribute (_property);
+            GetArrayAttribute (_property);
+        }
+
+        /// <summary>
+        /// Find the global property assigned to this SerializedProperty
+        /// </summary>
+        /// <param name="_property">The target property</param>
+        private void GetGlobalAttribute(SerializedProperty _property)
+        {
+            // Get the field based on the serialized property cached name
+            // TODO: [Damian] Be able to find child data as this currently only works for root fields
+            FieldInfo field = target.GetType ().GetField (_property.name);
+            GlobalAttribute globalAttribute = field.GetCustomAttribute<GlobalAttribute> ();
+
+            serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
+
+            if (globalAttribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = globalAttribute.GetType ();
+
+            if (!globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
+            {
+                Type drawerType = AllDrawers[attributeType];
+                drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as GlobalDrawer;
+
+                globalDrawers.Add (attributeType, drawer);
+            }
+
+            //Debug.Log (string.Format ("Registering {0} that belongs to field {1}", globalAttribute, property.name));
+            drawer.Register (globalAttribute, _property);
+        }
+
+        private void GetArrayAttribute(SerializedProperty _property)
+        {
+            // Get the field based on the serialized property cached name
+            FieldInfo field = target.GetType ().GetField (_property.name);
+            ArrayAttribute arrayAttribute = field.GetCustomAttribute<ArrayAttribute> ();
+
+            if (arrayAttribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = arrayAttribute.GetType ();
+
+            if (TryGetData(_property, out SerializedData _data))
+            {
+                Type drawerType = AllDrawers[attributeType];
+                ArrayDrawer drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as ArrayDrawer;
+
+                _data.drawer = drawer;
+            }
+        }
+
+        // Helpers
+        private bool TryGetData(SerializedProperty _property, out SerializedData _data)
+        {
+            _data = serializedData.FirstOrDefault (t => t.property == _property);
+
+            return _data != null;
+        }
     }
+}

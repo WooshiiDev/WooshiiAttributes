@@ -1,40 +1,33 @@
 ﻿using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace WooshiiAttributes
+{
+    public class ArrayDrawer : AbstractCustomDrawer
     {
-    public class ArrayDrawer 
+        public ArrayDrawer(SerializedObject serializedObject, SerializedProperty property, Type attributeType) : base (serializedObject, property, attributeType)
         {
-        public readonly Type attributeType;
-        public readonly SerializedProperty property;
 
-        public ArrayAttribute attribute;
+        }
 
-        public ArrayDrawer(Type attributeType)
-            {
-            this.attributeType = attributeType;
-            }
-
-        public void OnGUI(SerializedProperty property)
-            {
-            EditorGUI.BeginChangeCheck ();
-                {
-                OnGUI_Internal (property);
-                }
-            if (EditorGUI.EndChangeCheck ())
-                {
-                property.serializedObject.ApplyModifiedProperties ();
-                }
-            }
-
-        protected virtual void OnGUI_Internal(SerializedProperty property)
-            {
-
-            }
-
-        public ArrayDrawer Clone()
-            {
-            return MemberwiseClone () as ArrayDrawer;
-            }
+        /// <summary>
+        /// Get the original rect for this drawer
+        /// </summary>
+        /// <returns>Returns the original rect for this drawe</returns>
+        protected Rect GetRect()
+        {
+            Rect rect = GUILayoutUtility.GetLastRect ();
+            rect.y += 19f;
+            return rect;
         }
     }
+
+    public class ArrayDrawer<T> : ArrayDrawer where T : ArrayAttribute
+    {
+        public ArrayDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property, typeof (T))
+        {
+
+        }
+    }
+}

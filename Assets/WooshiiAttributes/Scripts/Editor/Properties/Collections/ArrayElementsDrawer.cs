@@ -15,22 +15,36 @@ namespace WooshiiAttributes
 
         private const float BUTTON_SIZE = 19F;
 
+        private bool hasBeenValidated = false;
+        private bool isValid = false;
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
             {
-            //Get array path
-            string path = property.propertyPath;
-            path = path.Substring (0, path.LastIndexOf ('.'));
+            if (!hasBeenValidated )
+            {
+                //Get array path
+                string path = property.propertyPath;
+                path = path.Substring (0, path.LastIndexOf ('.'));
 
-            //Update the property to the array
-            arrayProperty = property.serializedObject.FindProperty (path);
+                //Update the property to the array
+                arrayProperty = property.serializedObject.FindProperty (path);
 
-            if (!arrayProperty.isArray)
+                isValid = arrayProperty.isArray;
+
+                if (!isValid)
                 {
-                base.OnGUI (position, property, label);
-                Debug.LogWarning ("Array Elements useless as property is not an array!");
-
-                return;
+                    Debug.LogWarning ("Array Elements useless as property is not an array!");
                 }
+
+                hasBeenValidated = true;
+            }
+
+            if (!isValid)
+            {
+                base.OnGUI (position, property, label);
+                return;
+            }
+           
 
             //Find current index
             index = GetElementIndex (property);

@@ -342,9 +342,15 @@ MonoBehaviour:
   readOnlyAll: Can see me at all times. Can't edit me though.
   readOnlyEditor: Can see me in the Editor when not playing only.
   readOnlyPlay: Can see me when Playing only.
-  health: 0
-  speed: 0
-  damage: 0
+  a: 0
+  b: 0
+  c: 0
+  d: 0
+  e: 0
+  f: 0
+  health: -47
+  speed: 96
+  damage: 86
   otherHealth: 0
   otherSpeed: 0
   otherDamage: 0
@@ -362,6 +368,25 @@ MonoBehaviour:
   arrayElements:
   - 2
   - 4
-  - 5
-  childClassArray: []
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  - 10
+  childClassArray:
+  - name: It's an element
+    intVal: 0
+    boolVal: 0
+  - name: Omg an element
+    intVal: 0
+    boolVal: 0
+  - name: Hello there, I'm useful :)
+    intVal: 0
+    boolVal: 0
+  - name: Another element!
+    intVal: 0
+    boolVal: 0
   intArray: 
