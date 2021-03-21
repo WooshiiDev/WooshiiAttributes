@@ -1,24 +1,21 @@
-﻿using System;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
-    {
+{
     public class SelectableArrayDrawer : ArrayDrawer<SelectableArrayAttribute>
-        {
+    {
         private static Texture2D AddTex => EditorGUIUtility.Load ("icons/d_winbtn_mac_max_h.png") as Texture2D;
         private static Texture2D RemoveTex => EditorGUIUtility.Load ("icons/d_winbtn_mac_min_h.png") as Texture2D;
 
         private int selection;
 
-        public SelectableArrayDrawer(SerializedObject parent, SerializedProperty property) : base(parent, property)
-            {
-            
-            }
+        public SelectableArrayDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
+        {
+        }
 
         protected override void OnGUI_Internal()
-            {
-
+        {
             //SerializedObject serializedObject = property.serializedObject;
             //if (!property.isArray)
             //    {
@@ -85,25 +82,29 @@ namespace WooshiiAttributes
             //    }
 
             //EditorGUILayout.PropertyField (property.GetArrayElementAtIndex (val));
-
-            }
+        }
 
         private bool DrawButtonLabel(Texture2D texture, string label, System.Action action)
-            {
-
+        {
             bool pressed = false;
             GUILayout.BeginVertical ();
-                {
+            {
                 if (pressed = GUILayout.Button (texture, EditorStyles.centeredGreyMiniLabel))
+                {
                     action?.Invoke ();
+                }
                 else
                 if (!string.IsNullOrWhiteSpace (label))
+                {
                     if (pressed = GUILayout.Button (label, EditorStyles.centeredGreyMiniLabel))
+                    {
                         action?.Invoke ();
+                    }
                 }
+            }
             GUILayout.EndVertical ();
 
             return pressed;
-            }
         }
     }
+}

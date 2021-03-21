@@ -8,7 +8,6 @@ namespace WooshiiAttributes
     {
         public ArrayDrawer(SerializedObject serializedObject, SerializedProperty property, Type attributeType) : base (serializedObject, property, attributeType)
         {
-
         }
 
         /// <summary>
@@ -27,7 +26,6 @@ namespace WooshiiAttributes
     {
         public ArrayDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property, typeof (T))
         {
-
         }
     }
 }

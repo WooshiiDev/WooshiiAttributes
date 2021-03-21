@@ -29,13 +29,14 @@ namespace WooshiiAttributes
 
         // Static Data
 
-
         /// <summary>
         /// Dictionary with a key value pair linking custom attributes to their corresponding drawer type
         /// </summary>
         private static Dictionary<Type, Type> AllDrawers;
+
         // Local Data
         private List<SerializedProperty> visibleProperties;
+
         private List<SerializedData> serializedData;
         private Dictionary<Type, GlobalDrawer> globalDrawers;
 
@@ -251,7 +252,7 @@ namespace WooshiiAttributes
 
             Type attributeType = arrayAttribute.GetType ();
 
-            if (TryGetData(_property, out SerializedData _data))
+            if (TryGetData (_property, out SerializedData _data))
             {
                 Type drawerType = AllDrawers[attributeType];
                 ArrayDrawer drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as ArrayDrawer;

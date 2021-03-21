@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEditor;
 
 namespace WooshiiAttributes
 {
@@ -8,7 +6,6 @@ namespace WooshiiAttributes
     {
         public HeaderGroupDrawer(SerializedObject serializedObject, SerializedProperty property) : base (serializedObject, property)
         {
-
         }
 
         protected override void OnGUI_Internal()
@@ -17,11 +14,10 @@ namespace WooshiiAttributes
 
             for (int i = 0; i < Properties.Count; i++)
             {
-                var property = Properties[i];
-                var attribute = Attributes[i];
+                SerializedProperty property = Properties[i];
+                HeaderGroupAttribute attribute = Attributes[i];
 
                 EditorGUILayout.PropertyField (property);
-
             }
         }
     }

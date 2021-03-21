@@ -1,21 +1,20 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using System.Reflection;
 
 namespace WooshiiAttributes
-    {
+{
     [CustomPropertyDrawer (typeof (ReadOnlyAttribute))]
     public class ReadOnlyDrawer : WooshiiPropertyDrawer
-        {
+    {
         private ReadOnlyAttribute target;
         private bool canShow;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-            {
+        {
             target = attribute as ReadOnlyAttribute;
 
             switch (target.displayMode)
-                {
+            {
                 case DisplayMode.EDITOR:
                     canShow = !EditorApplication.isPlaying;
                     break;
@@ -30,10 +29,10 @@ namespace WooshiiAttributes
 
                 default:
                     break;
-                }
+            }
 
             if (canShow)
-                {
+            {
                 //EditorGUI.BeginProperty (position, label, property);
 
                 GUI.enabled = false;
@@ -42,18 +41,17 @@ namespace WooshiiAttributes
                 GUI.enabled = true;
 
                 //EditorGUI.EndProperty ();
-                }
             }
+        }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-            {
+        {
             //if (canShow)
             //    return base.GetPropertyHeight (property, label) * 10;
             //else
             //    return 0;
 
             return 0;
-            }
         }
     }
-
+}

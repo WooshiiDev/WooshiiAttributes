@@ -11,6 +11,7 @@ namespace WooshiiAttributes
 
         // Properties
         public Type AttributeType => attributeType;
+
         public SerializedObject SerializedObject => serializedObject;
         public SerializedProperty SerializedProperty => serializedProperty;
 
@@ -23,7 +24,6 @@ namespace WooshiiAttributes
 
         public void OnGUI()
         {
-
             EditorGUI.BeginChangeCheck ();
             {
                 OnGUI_Internal ();
@@ -36,7 +36,6 @@ namespace WooshiiAttributes
 
         protected virtual void OnGUI_Internal()
         {
-
         }
     }
 }

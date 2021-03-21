@@ -10,7 +10,6 @@ namespace WooshiiAttributes
 
         public FoldoutGroupDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
         {
-
         }
 
         protected override void OnGUI_Internal()
@@ -36,6 +35,5 @@ namespace WooshiiAttributes
                 EditorGUI.indentLevel--;
             }
         }
-
     }
 }
