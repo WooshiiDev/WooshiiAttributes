@@ -54,7 +54,7 @@
 #### ReadOnly 
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_Comment_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_ReadOnly_Example.png">
 </a>
 
 ### Decorators
