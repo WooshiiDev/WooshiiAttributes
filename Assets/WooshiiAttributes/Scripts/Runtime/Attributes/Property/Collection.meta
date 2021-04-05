@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:Assets/_Main/Materials/Effects/BifrostField.mat.meta
+guid: 15c01bfb8a114b04daec6ed4ca0a3b67
+NativeFormatImporter:
+=======
+guid: 06b6276084c9062418ac4baf316e140a
+folderAsset: yes
+DefaultImporter:
+>>>>>>> master:Assets/_Main/Modules/Wooshii/WooshiiAttributes/Scripts/Attributes/Collection.meta
+  externalObjects: {}
+  mainObjectFileID: 0
+=======
+guid: 06b6276084c9062418ac4baf316e140a
+folderAsset: yes
+DefaultImporter:
+  externalObjects: {}
+>>>>>>> master
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
