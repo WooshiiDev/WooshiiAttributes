@@ -2,7 +2,7 @@
 
 namespace WooshiiAttributes
 {
-    [AttributeUsage (AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage (AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
     public class ClassPropertyAttribute : Attribute
     {
         public ClassPropertyAttribute()

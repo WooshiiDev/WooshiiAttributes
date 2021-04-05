@@ -33,6 +33,22 @@ namespace WooshiiAttributes
         public int k;
 
 
+        [ClassProperty]
+        public string PropertyOne { get; private set; } = "HELLO THERE";
+
+        private float propTwo = 69.0f;
+
+        [ClassProperty]
+        public float PropertyTwo { set => value = propTwo; } 
+
+        [ClassProperty]
+        public DisplayMode PropertyThree { get; }
+
+        [ClassProperty]
+        public int PropertyFour { get; private set; } = 4444;
+
+        [ClassProperty]
+        public bool PropertyBool { get; private set; }
 
         // ============ Groups ============
         [HeaderLineGroup ("Header Line Group Stats")] public int health, speed, damage;
@@ -40,7 +56,7 @@ namespace WooshiiAttributes
         [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
         [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;
 
-
+        
 
         // ============ ReadOnly ============
         [HeaderLine ("ReadOnly")]
@@ -61,7 +77,7 @@ namespace WooshiiAttributes
         [Vector2Clamp (0, 10)] public Vector2 clampedVector2;
         [Vector3Clamp (0, 10)] public Vector3 clampedVector3;
 
-        [Paragraph ("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#0000FF")]
+        [Paragraph ("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#1000FF")]
         public string stringWithParagraph;
 
 

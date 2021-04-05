@@ -32,8 +32,6 @@ namespace WooshiiAttributes
                 {
                     backgroundColor = GUI.color;
                 }
-
-                Debug.Log (backgroundColor);
             }
 
             position.height = GetParagraphHeight ();

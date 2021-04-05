@@ -48,6 +48,9 @@ namespace WooshiiAttributes
         private GroupDrawer cachedGroupDrawer;
 
         private Dictionary<Type, GlobalDrawer> globalDrawers;
+        private List<PropertyAttributeDrawer> classPropertyDrawers;
+
+        
 
         // BindingFlags
         private readonly BindingFlags MethodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -69,6 +72,7 @@ namespace WooshiiAttributes
         private void Awake()
         {
             Initialize ();
+
         }
 
         private void Initialize()
@@ -82,6 +86,7 @@ namespace WooshiiAttributes
                 FindDrawerTypes (typeof (ArrayDrawer));
                 FindDrawerTypes (typeof (IMethodDrawer));
                 FindDrawerTypes (typeof (GroupDrawer));
+                FindDrawerTypes (typeof (PropertyAttributeDrawer));
             }
 
             globalDrawers = new Dictionary<Type, GlobalDrawer> ();
@@ -117,6 +122,16 @@ namespace WooshiiAttributes
             {
                 cachedGroupDrawer = null;
             }
+
+
+            classPropertyDrawers = new List<PropertyAttributeDrawer> ();
+
+            PropertyInfo[] properties = target.GetType ().GetProperties (FieldFlags);
+
+            for (int i = 0; i < properties.Length; i++)
+            {
+                GetPropertyAttribute (properties[i]);
+            }
         }
 
         public override void OnInspectorGUI()
@@ -127,6 +142,11 @@ namespace WooshiiAttributes
             }
 
             cachedGroupDrawer = null;
+
+            for (int i = 0; i < classPropertyDrawers.Count; i++)
+            {
+                classPropertyDrawers[i].OnGUI ();
+            }
 
             EditorGUI.BeginChangeCheck ();
 
@@ -146,10 +166,11 @@ namespace WooshiiAttributes
                 serializedObject.ApplyModifiedProperties ();
             }
 
-            foreach (IMethodDrawer method in visibleMethods)
+            for (int i = 0; i < visibleMethods.Count; i++)
             {
-                method.OnGUI ();
+                visibleMethods[i].OnGUI ();
             }
+
         }
 
         // Reflection
@@ -307,6 +328,25 @@ namespace WooshiiAttributes
                 ArrayDrawer drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as ArrayDrawer;
 
                 _data.arrayDrawer = drawer;
+            }
+        }
+
+        private void GetPropertyAttribute(PropertyInfo _property)
+        {
+            // Get the field based on the serialized property cached name
+            ClassPropertyAttribute attribute = _property.GetCustomAttribute<ClassPropertyAttribute> ();
+
+            if (attribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = attribute.GetType ();
+
+            if (AllDrawers.TryGetValue(attributeType, out Type drawerType))
+            {
+                PropertyAttributeDrawer drawer = Activator.CreateInstance (drawerType, _property, target) as PropertyAttributeDrawer;
+                classPropertyDrawers.Add (drawer);
             }
         }
 
