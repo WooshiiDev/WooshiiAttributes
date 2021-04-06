@@ -29,8 +29,6 @@ namespace WooshiiAttributes
                 this.property = property;
                 this.isGlobal = hasGlobal;
             }
-
-
         }
 
         // Static Data
@@ -49,14 +47,7 @@ namespace WooshiiAttributes
 
         private Dictionary<Type, GlobalDrawer> globalDrawers;
         private List<PropertyAttributeDrawer> classPropertyDrawers;
-
-        
-
-        // BindingFlags
-        private readonly BindingFlags MethodFlags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-        private readonly BindingFlags FieldFlags = BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
-
-
+      
         // Potential conflict with same named members/types of actual variables
         private string[] excludedPropertyTypes =
             {
@@ -72,7 +63,6 @@ namespace WooshiiAttributes
         private void Awake()
         {
             Initialize ();
-
         }
 
         private void Initialize()
@@ -93,7 +83,7 @@ namespace WooshiiAttributes
             serializedData = new List<SerializedData> ();
 
             visibleMethods = new List<IMethodDrawer> ();
-            visibleProperties = GetAllVisibleProperties ();
+            visibleProperties = SerializedUtility.GetAllVisibleProperties(serializedObject);
 
             GetMethodDrawers ();
 
@@ -123,14 +113,13 @@ namespace WooshiiAttributes
                 cachedGroupDrawer = null;
             }
 
-
             classPropertyDrawers = new List<PropertyAttributeDrawer> ();
 
-            PropertyInfo[] properties = target.GetType ().GetProperties (FieldFlags);
+            IEnumerable<PropertyInfo> properties = ReflectionUtility.GetProperties(target);
 
-            for (int i = 0; i < properties.Length; i++)
+            foreach (var property in properties)
             {
-                GetPropertyAttribute (properties[i]);
+                GetPropertyAttribute (property);
             }
         }
 
@@ -175,45 +164,9 @@ namespace WooshiiAttributes
 
         // Reflection
 
-        /// <summary>
-        /// Find all custom drawers of type. Primarily used for finding Global and Array Drawers.
-        /// </summary>
-        private Dictionary<Type, ICustomPropertyDrawer> GetAllDrawerSubclasses<T>() where T : ICustomPropertyDrawer
-        {
-            Dictionary<Type, ICustomPropertyDrawer> drawers = new Dictionary<Type, ICustomPropertyDrawer> ();
-            IEnumerable<Type> types = GetTypeSubclasses (typeof (T));
-
-            foreach (KeyValuePair<Type, Type> drawerType in AllDrawers)
-            {
-                //var drawer = Activator.CreateInstance (drawerType) as ICustomDrawer;
-                //drawers.Add (drawerType, drawer);
-            }
-
-            return drawers;
-        }
-
-        /// <summary>
-        /// Get all subclasses of a type. Will ignore abstract classes.
-        /// </summary>
-        /// <param name="type">The type to search for</param>
-        private IEnumerable<Type> GetTypeSubclasses(Type type)
-        {
-            return GetType ().Assembly.GetTypes ().Where (t => t.IsSubclassOf (type) && !t.IsAbstract);
-        }
-
-        private IEnumerable<FieldInfo> GetFields(Func<FieldInfo, bool> condition)
-        {
-            return GetFields (target, condition);
-        }
-
-        private IEnumerable<FieldInfo> GetFields(Object instance, Func<FieldInfo, bool> condition)
-        {
-            return instance.GetType ().GetFields (FieldFlags).Where (condition);
-        }
-
         private void FindDrawerTypes(Type attributeType)
         {
-            foreach (Type type in GetTypeSubclasses (attributeType))
+            foreach (Type type in ReflectionUtility.GetTypeSubclasses (attributeType))
             {
                 Type baseType = type.BaseType;
 
@@ -228,8 +181,7 @@ namespace WooshiiAttributes
 
         private void GetMethodDrawers()
         {
-
-            foreach (MethodInfo method in target.GetType ().GetMethods (MethodFlags))
+            foreach (MethodInfo method in ReflectionUtility.GetMethods(target))
             {
                 MethodButtonAttribute attribute = method.GetCustomAttribute<MethodButtonAttribute> ();
 
@@ -246,38 +198,6 @@ namespace WooshiiAttributes
 
         // Serialized Data
 
-        private List<SerializedProperty> GetAllVisibleProperties()
-        {
-            List<SerializedProperty> properties = new List<SerializedProperty> ();
-
-            using (SerializedProperty iterator = serializedObject.GetIterator ())
-            {
-                if (iterator.NextVisible (true))
-                {
-                    do
-                    {
-                        string name = iterator.name;
-                        string type = iterator.type;
-
-                        if (excludedPropertyNames.Contains (name))
-                        {
-                            continue;
-                        }
-
-                        if (excludedPropertyTypes.Contains (type))
-                        {
-                            continue;
-                        }
-
-                        properties.Add (serializedObject.FindProperty (iterator.name));
-                    }
-                    while (iterator.NextVisible (false));
-                }
-            }
-
-            return properties;
-        }
-
         /// <summary>
         /// Find the global property assigned to this SerializedProperty
         /// </summary>
@@ -286,7 +206,13 @@ namespace WooshiiAttributes
         {
             // Get the field based on the serialized property cached name
             // TODO: [Damian] Be able to find child data as this currently only works for root fields
-            FieldInfo field = target.GetType ().GetField (_property.name, FieldFlags);
+            FieldInfo field = ReflectionUtility.GetField (target, _property.name);
+
+            if (field == null)
+            {
+                return;
+            }
+
             GlobalAttribute globalAttribute = field.GetCustomAttribute<GlobalAttribute> ();
 
             serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
@@ -300,9 +226,7 @@ namespace WooshiiAttributes
 
             if (!globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
             {
-                Type drawerType = AllDrawers[attributeType];
-                drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as GlobalDrawer;
-
+                drawer = CreateInstanceOfType<GlobalDrawer> (AllDrawers[attributeType], serializedObject, _property);
                 globalDrawers.Add (attributeType, drawer);
             }
 
@@ -313,6 +237,12 @@ namespace WooshiiAttributes
         {
             // Get the field based on the serialized property cached name
             FieldInfo field = target.GetType ().GetField (_property.name);
+
+            if (field == null)
+            {
+                return;
+            }
+
             ArrayAttribute arrayAttribute = field.GetCustomAttribute<ArrayAttribute> ();
 
             if (arrayAttribute == null)
@@ -324,8 +254,7 @@ namespace WooshiiAttributes
 
             if (TryGetData (_property, out SerializedData _data))
             {
-                Type drawerType = AllDrawers[attributeType];
-                ArrayDrawer drawer = Activator.CreateInstance (drawerType, serializedObject, _property) as ArrayDrawer;
+                ArrayDrawer drawer = CreateInstanceOfType<ArrayDrawer> (AllDrawers[attributeType], serializedObject, _property);
 
                 _data.arrayDrawer = drawer;
             }
@@ -345,7 +274,7 @@ namespace WooshiiAttributes
 
             if (AllDrawers.TryGetValue(attributeType, out Type drawerType))
             {
-                PropertyAttributeDrawer drawer = Activator.CreateInstance (drawerType, _property, target) as PropertyAttributeDrawer;
+                PropertyAttributeDrawer drawer =  CreateInstanceOfType<PropertyAttributeDrawer>(drawerType, _property, target);
                 classPropertyDrawers.Add (drawer);
             }
         }
@@ -353,11 +282,19 @@ namespace WooshiiAttributes
         private void GetGroupAttribute(SerializedProperty _property)
         {
             // Get the field based on the serialized property cached name
-            FieldInfo field = target.GetType ().GetField (_property.name);
+            FieldInfo field = ReflectionUtility.GetField (target, _property.name);
+
+            if (field == null)
+            {
+                return;
+            }
+
+            BeginGroupAttribute beginAttribute = field.GetCustomAttribute<BeginGroupAttribute> ();
+            EndGroupAttribute endAttribute = field.GetCustomAttribute<EndGroupAttribute> ();
 
             if (cachedGroupDrawer != null)
             {
-                if (field.GetCustomAttribute<EndGroupAttribute> () != null)
+                if (endAttribute != null)
                 {
                     cachedGroupDrawer.RegisterProperty (_property);
                     cachedGroupDrawer = null;
@@ -366,19 +303,16 @@ namespace WooshiiAttributes
                 return;
             }
 
-            GroupAttribute groupAttribute = field.GetCustomAttribute<GroupAttribute> ();
-
-            if (groupAttribute == null)
+            if (beginAttribute == null)
             {
                 return;
             }
 
-            Type attributeType = groupAttribute.GetType ();
+            Type attributeType = beginAttribute.GetType ();
 
             if (TryGetData (_property, out SerializedData _data))
             {
-                Type drawerType = AllDrawers[attributeType];
-                GroupDrawer drawer = Activator.CreateInstance (drawerType, groupAttribute, serializedObject) as GroupDrawer;
+                GroupDrawer drawer = CreateInstanceOfType<GroupDrawer>(AllDrawers[attributeType], beginAttribute, serializedObject);
 
                 _data.hasGroup = true;
                 _data.groupDrawer = drawer;
@@ -387,6 +321,31 @@ namespace WooshiiAttributes
         }
 
         // Helpers
+        private void CreateGlobalDrawer<T>(T _attribute, SerializedProperty _property, Type _drawerType, params object[] _drawerArgs) where T : GlobalAttribute
+        {
+            if (_attribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = _attribute.GetType ();
+
+            if (globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
+            {
+                drawer = CreateInstanceOfType<GlobalDrawer> (drawer.GetType(), _property, target);
+                globalDrawers.Add (attributeType, drawer);
+            }
+
+            drawer.Register (_attribute, _property);
+        }
+
+        private T CreateInstanceOfType<T>(Type _type, params object[] _args)
+        {
+            T instance = (T)Activator.CreateInstance (_type, _args);
+
+            return instance;
+        }
+
         private bool TryGetData(SerializedProperty _property, out SerializedData _data)
         {
             _data = serializedData.FirstOrDefault (t => t.property == _property);

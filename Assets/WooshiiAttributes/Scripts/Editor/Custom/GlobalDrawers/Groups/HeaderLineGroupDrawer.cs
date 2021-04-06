@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
-    public class HeaderLineGroupDrawer : GlobalDrawer<HeaderLineGroupAttribute>
+    public class HeaderLineGroupDrawer : GlobalDrawer<HeaderLineGroupAttributeAttribute>
     {
         private static GUIStyle style;
 
@@ -29,7 +29,7 @@ namespace WooshiiAttributes
 
             for (int j = 0; j < Attributes.Count; j++)
             {
-                if (!(Attributes[j] is HeaderLineGroupAttribute groupAttribute))
+                if (!(Attributes[j] is HeaderLineGroupAttributeAttribute groupAttribute))
                 {
                     continue;
                 }

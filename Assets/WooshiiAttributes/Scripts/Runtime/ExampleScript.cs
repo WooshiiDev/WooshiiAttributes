@@ -51,7 +51,7 @@ namespace WooshiiAttributes
         public bool PropertyBool { get; private set; }
 
         // ============ Groups ============
-        [HeaderLineGroup ("Header Line Group Stats")] public int health, speed, damage;
+        [HeaderLineGroupAttribute ("Header Line Group Stats")] public int health, speed, damage;
         [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
         [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
         [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;

@@ -3,11 +3,11 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class HeaderLineGroupAttribute : GlobalAttribute
+    public class HeaderLineGroupAttributeAttribute : GlobalAttribute
     {
         public string Name { get; private set; }
 
-        public HeaderLineGroupAttribute(string name)
+        public HeaderLineGroupAttributeAttribute(string name)
         {
             Name = name;
         }
