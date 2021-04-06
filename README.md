@@ -23,14 +23,14 @@
 ## About
 
 <p>
- WooshiiAttributes is a collection of attributes that I've either used in previous projects or have wanted to add myself.
+ WooshiiAttributes is a collection of attributes to flexibility and better visualisation in the Unity Inspector.
 </p>
 
 <p>
  Not only does WooshiiAttribute add general attributes for headers, dropdowns or for providing extra information, but also allows attributes to manipulate how information is displayed; local and global groups, and also attributes to modify how arrays show rather than the elements themselves. See <a href="#attributes">attributes</a> for examples,
 </p>
 
-<p>This will grow as new features and attributes are added to it. Pretty much will just keep adding as long as there's a reason to add new attributes.</p>
+<p>Features, systems and new attribute types will be added to this repository as development continues.</p>
  
 ## Installation
  
@@ -173,13 +173,13 @@ public int k;
 
 ### Globals
 
-Globals are attributes that affect a group of members together no matter where they are in the script. Fields with this attribute will display at the bottom of the script combined with the others.
+Globals are attributes that affect a group of members together no matter where they are in the script. Any field that uses a global attribute, will be displayed at the bottom of the script.
 
-Globals need to be applied to each field manually however, which may be slower. If you're specifically using globals for groups, look to <a href="#groups">Groups</a>
+Globals need to be applied to each field manually however, which may be slower. If you're specifically using globals for groups, see <a href="#groups">Groups</a> for local versions.
 
 #### HeaderGroup
 
-Will display all fields with the provided `HeaderGroup` attribute together with a header. 
+Groups all fields under a header. 
 
 ```cs
 [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
@@ -191,7 +191,7 @@ Will display all fields with the provided `HeaderGroup` attribute together with 
 
 #### HeaderLineGroup
 
-The same as the `HeaderGroup` attribute but with an underline.
+Groups all fields under a header but formatted like the `HeaderLine` attribute.
 
 ```cs
 [HeaderLineGroupAttribute ("Header Line Group Stats")] public int health, speed, damage;
@@ -203,7 +203,7 @@ The same as the `HeaderGroup` attribute but with an underline.
 
 #### ContainedGroup
 
-Contains the group within a box.
+Contains the fields within a box.
 
 ```cs
 [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
