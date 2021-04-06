@@ -17,7 +17,7 @@
 </p>
 
 <p align="center"> 
- <img src="https://i.imgur.com/P9QFjAA.png?1" alt="Example Image">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_Full_Example.png" alt="Example Image">
 </p>
 
 ## About
