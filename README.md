@@ -54,7 +54,7 @@
 #### ReadOnly 
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_ReadOnly_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_ReadOnly_Example.png">
 </a>
 
 ### Decorators
@@ -68,7 +68,7 @@ Header Lines appear like normal headers, but keep the header capitalized and und
 Comments draw helpboxes to the inspector, allowing information to be provided about fields with an icon for the message type.
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_Comment_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_Comment_Example.png">
 </a>
 
 ### Groups
@@ -78,7 +78,7 @@ Local Groups can be created using any attribute that has `BeginGroup` and `EndGr
  - `upperTitle`: Is the title fully capitalized 
  - `underlineTitle` : Is the title underlined. This appears just like `HeaderLine` or `HeaderLineGroup` attributes.
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_LocalGroup_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_LocalGroup_Example.png">
 </a>
 
 ### Globals
@@ -92,7 +92,7 @@ The Global Group Attributes differ to the Local Group Attributes in functionalit
 Will display all fields with the provided `HeaderGroup` attribute together with a header. 
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_GlobHeader_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_GlobHeader_Example.png">
 </a>
 
 #### HeaderLineGroup
@@ -100,7 +100,7 @@ Will display all fields with the provided `HeaderGroup` attribute together with 
 The same as the `HeaderGroup` attribute but with an underline.
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_GlobHeaderLine_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_GlobHeaderLine_Example.png">
 </a>
 
 #### ContainedGroup
@@ -108,14 +108,14 @@ The same as the `HeaderGroup` attribute but with an underline.
 Contains the group within a box.
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_GlobContained_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_GlobContained_Example.png">
 </a>
 
 #### FoldoutGroup
 
 Group that has a foldout to hide or show the fields when required.
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_GlobFoldout_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_GlobFoldout_Example.png">
 </a>
 
 ### Arrays
@@ -123,7 +123,7 @@ Group that has a foldout to hide or show the fields when required.
 #### Reorderable
 
 <a>
- <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/main/.github/README_Attr_Reorderable_Example.png">
+ <img src="https://github.com/WooshiiDev/WooshiiAttributes/blob/readme-assets/.github/README_Attr_Reorderable_Example.png">
 </a>
 
 ### Methods
