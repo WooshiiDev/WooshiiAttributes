@@ -27,7 +27,7 @@
 </p>
 
 <p>
- Not only does WooshiiAttribute add general attributes for headers, dropdowns or for providing extra information, but also allows attributes to manipulate how information is displayed; local and global groups, and also attributes to modify how arrays show rather than the elements themselves. See <a href="#attributes">attributes</a> for examples,
+ Not only does WooshiiAttribute add general attributes for headers, dropdowns or for providing extra information, but also allows attributes to manipulate how information is displayed; local and global groups, and also attributes to modify how arrays show rather than the elements themselves. See <a href="#attributes">attributes</a> for examples.
 </p>
 
 <p>Features, systems and new attribute types will be added to this repository as development continues.</p>
