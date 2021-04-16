@@ -9,18 +9,18 @@ namespace WooshiiAttributes
 {
     public class BeginGroupDrawer : GroupDrawer<BeginGroupAttribute>
     {
-        private static GUIStyle style;
+        private static GUIStyle GroupStyle;
 
-        public BeginGroupDrawer(BeginGroupAttribute attribute, SerializedObject serializedObject) : base (attribute, serializedObject)
+        public BeginGroupDrawer(BeginGroupAttribute _attribute, SerializedObject _serializedObject) : base (_attribute, _serializedObject)
         {
 
         }
 
         public override void OnGUI()
         {
-            if (style == null)
+            if (GroupStyle == null)
             {
-                style = EditorStyles.boldLabel;
+                GroupStyle = EditorStyles.boldLabel;
             }
 
             bool isTitleGrouped = attribute.TitleGrouped;
@@ -39,9 +39,9 @@ namespace WooshiiAttributes
             }
 
             EditorGUI.indentLevel++;
-            for (int i = 0; i < properties.Count; i++)
+            for (int i = 0; i < m_properties.Count; i++)
             {
-                SerializedProperty property = properties[i];
+                SerializedProperty property = m_properties[i];
                 EditorGUILayout.PropertyField (property, true);
             }
             EditorGUI.indentLevel--;
@@ -49,17 +49,17 @@ namespace WooshiiAttributes
             EditorGUILayout.EndVertical ();
         }
 
-        private void DrawHeader(string name)
+        private void DrawHeader(string _name)
         {
-            EditorGUILayout.LabelField (name, style);
+            EditorGUILayout.LabelField (_name, GroupStyle);
 
             if (attribute.TitleUnderlined)
             {
-                Color color = style.normal.textColor;
+                Color color = GroupStyle.normal.textColor;
                 Rect rect = GUILayoutUtility.GetLastRect ();
                 rect.y += rect.height - 1;
 
-                GUIExtension.CreateLineSpacer (rect, color, 1);
+                WooshiiGUI.CreateLineSpacer (rect, color, 1);
             }
         }
     }

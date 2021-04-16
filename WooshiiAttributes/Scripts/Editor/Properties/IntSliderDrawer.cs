@@ -8,9 +8,9 @@ namespace WooshiiAttributes
     {
         private IntSliderAttribute Target => attribute as IntSliderAttribute;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            EditorGUI.IntSlider (position, property, Target.Min, Target.Max, label.text);
+            EditorGUI.IntSlider (_position, _property, Target.Min, Target.Max, _label.text);
         }
     }
 }

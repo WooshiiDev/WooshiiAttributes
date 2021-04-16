@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
@@ -8,11 +9,9 @@ namespace WooshiiAttributes
         private static Texture2D AddTex => EditorGUIUtility.Load ("icons/d_winbtn_mac_max_h.png") as Texture2D;
         private static Texture2D RemoveTex => EditorGUIUtility.Load ("icons/d_winbtn_mac_min_h.png") as Texture2D;
 
-        private int selection;
+        private int m_selection;
 
-        public SelectableArrayDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
-        {
-        }
+        public SelectableArrayDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property) { }
 
         protected override void OnGUI_Internal()
         {
@@ -84,21 +83,21 @@ namespace WooshiiAttributes
             //EditorGUILayout.PropertyField (property.GetArrayElementAtIndex (val));
         }
 
-        private bool DrawButtonLabel(Texture2D texture, string label, System.Action action)
+        private bool DrawButtonLabel(Texture2D _texture, string _label, Action _action)
         {
             bool pressed = false;
             GUILayout.BeginVertical ();
             {
-                if (pressed = GUILayout.Button (texture, EditorStyles.centeredGreyMiniLabel))
+                if (pressed = GUILayout.Button (_texture, EditorStyles.centeredGreyMiniLabel))
                 {
-                    action?.Invoke ();
+                    _action?.Invoke ();
                 }
                 else
-                if (!string.IsNullOrWhiteSpace (label))
+                if (!string.IsNullOrWhiteSpace (_label))
                 {
-                    if (pressed = GUILayout.Button (label, EditorStyles.centeredGreyMiniLabel))
+                    if (pressed = GUILayout.Button (_label, EditorStyles.centeredGreyMiniLabel))
                     {
-                        action?.Invoke ();
+                        _action?.Invoke ();
                     }
                 }
             }

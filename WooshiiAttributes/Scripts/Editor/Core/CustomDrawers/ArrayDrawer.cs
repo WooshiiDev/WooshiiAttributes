@@ -6,7 +6,7 @@ namespace WooshiiAttributes
 {
     public class ArrayDrawer : AbstractCustomDrawer
     {
-        public ArrayDrawer(SerializedObject serializedObject, SerializedProperty property, Type attributeType) : base (serializedObject, property, attributeType)
+        public ArrayDrawer(SerializedObject _serializedObject, SerializedProperty _property, Type _attributeType) : base (_serializedObject, _property, _attributeType)
         {
         }
 
@@ -24,7 +24,7 @@ namespace WooshiiAttributes
 
     public class ArrayDrawer<T> : ArrayDrawer where T : ArrayAttribute
     {
-        public ArrayDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property, typeof (T))
+        public ArrayDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property, typeof (T))
         {
         }
     }

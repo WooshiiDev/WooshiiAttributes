@@ -8,28 +8,28 @@ namespace WooshiiAttributes
     {
         private Vector2ClampAttribute Target => attribute as Vector2ClampAttribute;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            label.text = label.text + $" [{Target.min}-{Target.max}]";
+            _label.text = _label.text + $" [{Target.m_min}-{Target.m_max}]";
 
             EditorGUI.BeginChangeCheck ();
 
-            EditorGUI.PropertyField (position, property, label, true);
+            EditorGUI.PropertyField (_position, _property, _label, true);
 
             if (EditorGUI.EndChangeCheck ())
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Target.value[i] = Mathf.Clamp (property.vector2Value[i], Target.min, Target.max);
+                    Target.value[i] = Mathf.Clamp (_property.vector2Value[i], Target.m_min, Target.m_max);
                 }
 
-                property.vector2Value = Target.value;
+                _property.vector2Value = Target.value;
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
-            return EditorGUI.GetPropertyHeight (property);
+            return EditorGUI.GetPropertyHeight (_property);
         }
     }
 
@@ -38,28 +38,28 @@ namespace WooshiiAttributes
     {
         private Vector3ClampAttribute Target => attribute as Vector3ClampAttribute;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            label.text = label.text + $" [{Target.min}-{Target.max}]";
+            _label.text = _label.text + $" [{Target.m_min}-{Target.m_max}]";
 
             EditorGUI.BeginChangeCheck ();
 
-            EditorGUI.PropertyField (position, property, label, true);
+            EditorGUI.PropertyField (_position, _property, _label, true);
 
             if (EditorGUI.EndChangeCheck ())
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Target.value[i] = Mathf.Clamp (property.vector3Value[i], Target.min, Target.max);
+                    Target.value[i] = Mathf.Clamp (_property.vector3Value[i], Target.m_min, Target.m_max);
                 }
 
-                property.vector3Value = Target.value;
+                _property.vector3Value = Target.value;
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
-            return EditorGUI.GetPropertyHeight (property);
+            return EditorGUI.GetPropertyHeight (_property);
         }
     }
 }

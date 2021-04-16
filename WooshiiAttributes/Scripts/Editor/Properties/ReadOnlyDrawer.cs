@@ -6,32 +6,32 @@ namespace WooshiiAttributes
     [CustomPropertyDrawer (typeof (ReadOnlyAttribute))]
     public class ReadOnlyDrawer : WooshiiPropertyDrawer
     {
-        private ReadOnlyAttribute target;
-        private bool canShow;
+        private ReadOnlyAttribute m_target;
+        private bool m_canShow;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            target = attribute as ReadOnlyAttribute;
+            m_target = attribute as ReadOnlyAttribute;
 
-            switch (target.displayMode)
+            switch (m_target.m_displayMode)
             {
                 case DisplayMode.EDITOR:
-                    canShow = !EditorApplication.isPlaying;
+                    m_canShow = !EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.PLAYING:
-                    canShow = EditorApplication.isPlaying;
+                    m_canShow = EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.BOTH:
-                    canShow = true;
+                    m_canShow = true;
                     break;
 
                 default:
                     break;
             }
 
-            if (canShow)
+            if (m_canShow)
             {
                 //EditorGUI.BeginProperty (position, label, property);
 

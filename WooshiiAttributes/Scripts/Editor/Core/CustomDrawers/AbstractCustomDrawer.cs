@@ -5,21 +5,21 @@ namespace WooshiiAttributes
 {
     public abstract class AbstractCustomDrawer : ICustomPropertyDrawer
     {
-        protected Type attributeType;
-        public SerializedObject serializedObject;
-        public SerializedProperty serializedProperty;
+        protected Type _attributeType;
+        protected SerializedObject _serializedObject;
+        protected SerializedProperty _serializedProperty;
 
         // Properties
-        public Type AttributeType => attributeType;
+        public Type AttributeType => _attributeType;
 
-        public SerializedObject SerializedObject => serializedObject;
-        public SerializedProperty SerializedProperty => serializedProperty;
+        public SerializedObject SerializedObject => _serializedObject;
+        public SerializedProperty SerializedProperty => _serializedProperty;
 
-        public AbstractCustomDrawer(SerializedObject parent, SerializedProperty property, Type type)
+        public AbstractCustomDrawer(SerializedObject _parent, SerializedProperty _property, Type _type)
         {
-            serializedObject = parent;
-            serializedProperty = property;
-            attributeType = type;
+            _serializedObject = _parent;
+            _serializedProperty = _property;
+            _attributeType = _type;
         }
 
         public void OnGUI()

@@ -13,7 +13,7 @@ namespace WooshiiAttributes
         List<SerializedProperty> Properties { get; }
 
         void OnGUI();
-        void RegisterProperty(SerializedProperty property);
+        void RegisterProperty(SerializedProperty _property);
     }
 
 }

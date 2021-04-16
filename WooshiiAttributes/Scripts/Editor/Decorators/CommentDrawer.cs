@@ -8,21 +8,21 @@ namespace WooshiiAttributes
     [CustomPropertyDrawer (typeof (CommentAttribute))]
     internal class CommentDrawer : WooshiiDecoratorDrawer
     {
-        private CommentAttribute Comment => attribute as CommentAttribute;
-
         private const float HEIGHT_PADDING = 4f;
 
-        public override void OnGUI(Rect rect)
-        {
-            float indent = GetIndentLength (rect);
+        private CommentAttribute Target => attribute as CommentAttribute;
 
-            rect.Set (
-                rect.x + indent, rect.y,
-                rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
+        public override void OnGUI(Rect _rect)
+        {
+            float indent = GetIndentLength (_rect);
+
+            _rect.Set (
+                _rect.x + indent, _rect.y,
+                _rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
 
             MessageType messageType = MessageType.None;
 
-            switch (Comment.messageType)
+            switch (Target.messageType)
             {
                 case CommentAttribute.MessageType.WARNING:
                     messageType = MessageType.Warning;
@@ -37,13 +37,13 @@ namespace WooshiiAttributes
                     break;
             }
 
-            EditorGUI.HelpBox (rect, Comment.text, messageType);
+            EditorGUI.HelpBox (_rect, Target.text, messageType);
         }
 
-        public static float GetIndentLength(Rect sourceRect)
+        public static float GetIndentLength(Rect _sourceRect)
         {
-            Rect indentRect = EditorGUI.IndentedRect (sourceRect);
-            float indentLength = indentRect.x - sourceRect.x;
+            Rect indentRect = EditorGUI.IndentedRect (_sourceRect);
+            float indentLength = indentRect.x - _sourceRect.x;
 
             return indentLength;
         }
@@ -57,16 +57,16 @@ namespace WooshiiAttributes
         private float GetBoxHeight()
         {
             float width = EditorGUIUtility.currentViewWidth;
-            float minHeight = SingleLine * 2f;
+            float minHeight = singleLine * 2f;
 
             // Icon, Scrollbar, Indent
-            if (Comment.messageType != CommentAttribute.MessageType.NONE)
+            if (Target.messageType != CommentAttribute.MessageType.NONE)
             {
                 width -= 68;
             }
 
             //Need a little extra for correct sizing of InfoBox
-            float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Comment.text), width);
+            float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Target.text), width);
             return Mathf.Max (minHeight, actualHeight);
         }
     }

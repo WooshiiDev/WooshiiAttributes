@@ -5,27 +5,27 @@ namespace WooshiiAttributes
 {
     public class HeaderLineGroupDrawer : GlobalDrawer<HeaderLineGroupAttributeAttribute>
     {
-        private static GUIStyle style;
+        private static GUIStyle HeaderLineStyle;
 
-        public HeaderLineGroupDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
+        public HeaderLineGroupDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
         {
         }
 
         protected override void OnGUI_Internal()
         {
-            if (style == null)
+            if (HeaderLineStyle == null)
             {
-                style = new GUIStyle (EditorStyles.boldLabel);
+                HeaderLineStyle = new GUIStyle (EditorStyles.boldLabel);
             }
 
             string name = Attributes[0].Name;
-            EditorGUILayout.LabelField (name.ToUpper (), style);
+            EditorGUILayout.LabelField (name.ToUpper (), HeaderLineStyle);
 
-            Color color = style.normal.textColor;
+            Color color = HeaderLineStyle.normal.textColor;
             Rect rect = GUILayoutUtility.GetLastRect ();
             rect.y += rect.height - 1;
 
-            GUIExtension.CreateLineSpacer (rect, color, 1);
+            WooshiiGUI.CreateLineSpacer (rect, color, 1);
 
             for (int j = 0; j < Attributes.Count; j++)
             {

@@ -6,11 +6,11 @@ namespace WooshiiAttributes
     [CustomPropertyDrawer (typeof (ContainedClassAttribute))]
     public class ContainedClassDrawer : WooshiiPropertyDrawer
     {
-        private GUIStyle style = new GUIStyle (EditorStyles.boldLabel);
+        private static GUIStyle m_style = new GUIStyle (EditorStyles.boldLabel);
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            style.alignment = TextAnchor.UpperLeft;
+            m_style.alignment = TextAnchor.UpperLeft;
 
             //============ Draw ============
             GUIStyle boxStyle = new GUIStyle (GUI.skin.window)
@@ -20,12 +20,12 @@ namespace WooshiiAttributes
 
             EditorGUILayout.BeginVertical (boxStyle);
             {
-                property.isExpanded = EditorGUILayout.Foldout (property.isExpanded, " " + property.displayName, true);
+                _property.isExpanded = EditorGUILayout.Foldout (_property.isExpanded, " " + _property.displayName, true);
 
-                if (property.isExpanded)
+                if (_property.isExpanded)
                 {
                     EditorGUILayout.Space ();
-                    DrawChildProperties (property);
+                    DrawChildProperties (_property);
                     EditorGUILayout.Space ();
                 }
             }
@@ -33,14 +33,14 @@ namespace WooshiiAttributes
             EditorGUILayout.EndVertical ();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
             return 0;
         }
 
-        private void DrawChildProperties(SerializedProperty property)
+        private void DrawChildProperties(SerializedProperty _property)
         {
-            SerializedProperty itr = property.Copy ();
+            SerializedProperty itr = _property.Copy ();
             SerializedProperty current = itr.Copy ();
 
             bool iterateChildrenTemp = true;
@@ -54,7 +54,7 @@ namespace WooshiiAttributes
                 }
 
                 //Return if end
-                if (SerializedProperty.EqualContents (itr, property.GetEndProperty ()))
+                if (SerializedProperty.EqualContents (itr, _property.GetEndProperty ()))
                 {
                     break;
                 }

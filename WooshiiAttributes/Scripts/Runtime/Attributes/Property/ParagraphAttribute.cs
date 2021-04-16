@@ -13,27 +13,27 @@ namespace WooshiiAttributes
         public string TextColor { get; } = "#D2D2D2";
         public string BackgroundColour { get; } = "#787878";
 
-        public ParagraphAttribute(string text, TextAnchor textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string _text, TextAnchor _textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = text;
-            Anchor = textAnchor;
+            Text = _text;
+            Anchor = _textAnchor;
         }
 
-        public ParagraphAttribute(string text, string textColor = "#D2D2D2", TextAnchor textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string _text, string _textColor = "#D2D2D2", TextAnchor _textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = text;
-            TextColor = textColor;
+            Text = _text;
+            TextColor = _textColor;
 
-            Anchor = textAnchor;
+            Anchor = _textAnchor;
         }
 
-        public ParagraphAttribute(string text, string textColor = "#D2D2D2", string backgroundColour = "#787878", TextAnchor textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string _text, string _textColor = "#D2D2D2", string _backgroundColour = "#787878", TextAnchor _textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = text;
-            TextColor = textColor;
-            BackgroundColour = backgroundColour;
+            Text = _text;
+            TextColor = _textColor;
+            BackgroundColour = _backgroundColour;
 
-            Anchor = textAnchor;
+            Anchor = _textAnchor;
         }
     }
 }

@@ -56,5 +56,23 @@ namespace WooshiiAttributes
 
             return properties;
         }
+
+        /// <summary>
+        /// Draw a <see cref="SerializedProperty"/> that will automatically apply changes 
+        /// </summary>
+        /// <param name="_property">The property to draw</param>
+        /// <param name="_showChildren">Should children of this property been shown</param>
+        /// <param name="_options">Optional layout options</param>
+        public static void AutoProperty(SerializedProperty _property, bool _showChildren, params EditorGUILayout[] _options)
+        {
+            EditorGUI.BeginChangeCheck ();
+
+            EditorGUILayout.PropertyField (_property, _showChildren);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                _property.serializedObject.ApplyModifiedProperties ();
+            }
+        }
     }
 }

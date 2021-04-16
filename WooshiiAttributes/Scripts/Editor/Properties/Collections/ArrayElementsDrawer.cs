@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
@@ -6,97 +7,97 @@ namespace WooshiiAttributes
     [CustomPropertyDrawer (typeof (ArrayElementsAttribute))]
     public class ArrayElementsDrawer : WooshiiPropertyDrawer
     {
+        private const float BUTTON_SIZE = 19F;
+
         // --- Draw Refs ---
         private Texture2D AddTex => EditorGUIUtility.Load ("icons/d_winbtn_graph_max_h.png") as Texture2D;
         private Texture2D RemoveTex => EditorGUIUtility.Load ("icons/d_winbtn_graph_min_h.png") as Texture2D;
 
-        private int index = 0;
-        private SerializedProperty arrayProperty;
+        private int m_index = 0;
+        private SerializedProperty m_arrayProperty;
 
-        private const float BUTTON_SIZE = 19F;
+        private bool m_hasBeenValidated = false;
+        private bool m_isValid = false;
 
-        private bool hasBeenValidated = false;
-        private bool isValid = false;
-
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            if (!hasBeenValidated)
+            if (!m_hasBeenValidated)
             {
                 //Get array path
-                string path = property.propertyPath;
+                string path = _property.propertyPath;
                 path = path.Substring (0, path.LastIndexOf ('.'));
 
                 //Update the property to the array
-                arrayProperty = property.serializedObject.FindProperty (path);
+                m_arrayProperty = _property.serializedObject.FindProperty (path);
 
-                isValid = arrayProperty.isArray;
+                m_isValid = m_arrayProperty.isArray;
 
-                if (!isValid)
+                if (!m_isValid)
                 {
                     Debug.LogWarning ("Array Elements useless as property is not an array!");
                 }
 
-                hasBeenValidated = true;
+                m_hasBeenValidated = true;
             }
 
-            if (!isValid)
+            if (!m_isValid)
             {
-                base.OnGUI (position, property, label);
+                base.OnGUI (_position, _property, _label);
                 return;
             }
 
             //Find current index
-            index = GetElementIndex (property);
+            m_index = GetElementIndex (_property);
 
             //Draw property and buttons
             EditorGUI.BeginChangeCheck ();
             {
-                position.width -= BUTTON_SIZE * 2;
+                _position.width -= BUTTON_SIZE * 2;
 
-                EditorGUI.PropertyField (position, property, true);
+                EditorGUI.PropertyField (_position, _property, true);
 
-                DrawButtonLabel (position, RemoveTex, "", () => arrayProperty.DeleteArrayElementAtIndex (index));
-                position.x += BUTTON_SIZE;
-                DrawButtonLabel (position, AddTex, "", () => arrayProperty.InsertArrayElementAtIndex (index + 1));
+                DrawButtonLabel (_position, RemoveTex, "", () => m_arrayProperty.DeleteArrayElementAtIndex (m_index));
+                _position.x += BUTTON_SIZE;
+                DrawButtonLabel (_position, AddTex, "", () => m_arrayProperty.InsertArrayElementAtIndex (m_index + 1));
             }
             if (EditorGUI.EndChangeCheck ())
             {
-                property.serializedObject.ApplyModifiedProperties ();
-                property.serializedObject.Update ();
+                _property.serializedObject.ApplyModifiedProperties ();
+                _property.serializedObject.Update ();
             }
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
-            if (property.isExpanded)
+            if (_property.isExpanded)
             {
-                return EditorGUI.GetPropertyHeight (property, label, true);
+                return EditorGUI.GetPropertyHeight (_property, _label, true);
             }
             else
             {
-                return base.GetPropertyHeight (property, label);
+                return base.GetPropertyHeight (_property, _label);
             }
         }
 
-        private bool DrawButtonLabel(Rect rect, Texture2D texture, string label, System.Action action)
+        private bool DrawButtonLabel(Rect _rect, Texture2D _texture, string _label, Action _action)
         {
-            rect.x += rect.width;
-            rect.width = BUTTON_SIZE;
+            _rect.x += _rect.width;
+            _rect.width = BUTTON_SIZE;
 
-            if (GUI.Button (rect, texture, EditorStyles.centeredGreyMiniLabel))
+            if (GUI.Button (_rect, _texture, EditorStyles.centeredGreyMiniLabel))
             {
-                action?.Invoke ();
+                _action?.Invoke ();
                 return true;
             }
 
             return false;
         }
 
-        private int GetElementIndex(SerializedProperty property)
+        private int GetElementIndex(SerializedProperty _property)
         {
-            for (int i = 0; i < arrayProperty.arraySize; i++)
+            for (int i = 0; i < m_arrayProperty.arraySize; i++)
             {
-                if (arrayProperty.GetArrayElementAtIndex (i).displayName == property.displayName)
+                if (m_arrayProperty.GetArrayElementAtIndex (i).displayName == _property.displayName)
                 {
                     return i;
                 }

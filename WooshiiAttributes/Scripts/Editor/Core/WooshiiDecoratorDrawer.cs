@@ -5,6 +5,6 @@ namespace WooshiiAttributes
     public class WooshiiDecoratorDrawer : DecoratorDrawer
     {
         //Cached
-        protected float SingleLine = EditorGUIUtility.singleLineHeight;
+        protected float singleLine = EditorGUIUtility.singleLineHeight;
     }
 }

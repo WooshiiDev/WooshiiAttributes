@@ -8,15 +8,15 @@ namespace WooshiiAttributes
     {
         private FloatClampAttribute Target => attribute as FloatClampAttribute;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
             if (Target.ShowClamp)
             {
-                label.text += $" [{Target.Min} - {Target.Max}]";
+                _label.text += $" [{Target.Min} - {Target.Max}]";
             }
 
-            EditorGUI.PropertyField (position, property, label);
-            property.floatValue = Mathf.Clamp (property.floatValue, Target.Min, Target.Max);
+            EditorGUI.PropertyField (_position, _property, _label);
+            _property.floatValue = Mathf.Clamp (_property.floatValue, Target.Min, Target.Max);
         }
     }
 }

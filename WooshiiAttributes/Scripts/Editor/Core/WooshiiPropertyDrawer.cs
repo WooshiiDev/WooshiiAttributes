@@ -6,18 +6,18 @@ namespace WooshiiAttributes
     public class WooshiiPropertyDrawer : PropertyDrawer
     {
         //Cached
-        protected float lineHeight = EditorGUIUtility.singleLineHeight;
+        protected float m_lineHeight = EditorGUIUtility.singleLineHeight;
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
-            return base.GetPropertyHeight (property, label);
+            return base.GetPropertyHeight (_property, _label);
         }
 
         //Custom Methods
-        protected void DrawBackground(Rect rect, Color color)
+        protected void DrawBackground(Rect _rect, Color _color)
         {
-            GUI.color = color;
-            GUI.Box (rect, GUIContent.none, EditorStyles.textField);
+            GUI.color = _color;
+            GUI.Box (_rect, GUIContent.none, EditorStyles.textField);
             GUI.color = Color.white;
         }
     }

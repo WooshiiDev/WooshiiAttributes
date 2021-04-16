@@ -9,20 +9,20 @@ namespace WooshiiAttributes
 {
     public class GroupDrawer : IGroupDrawer
     {
-        protected SerializedObject serializedObject;
-        public SerializedObject SerializedObject => serializedObject;
+        protected SerializedObject m_serializedObject;
+        public SerializedObject SerializedObject => m_serializedObject;
 
-        protected Type attributeType;
-        public Type AttributeType => attributeType;
+        protected Type m_attributeType;
+        public Type AttributeType => m_attributeType;
 
-        protected List<SerializedProperty> properties;
-        public List<SerializedProperty> Properties => properties;
+        protected List<SerializedProperty> m_properties;
+        public List<SerializedProperty> Properties => m_properties;
 
-        public SerializedProperty StartProperty => properties[0];
+        public SerializedProperty StartProperty => m_properties[0];
 
-        public GroupDrawer(SerializedObject serializedObject)
+        public GroupDrawer(SerializedObject _serializedObject)
         {
-            properties = new List<SerializedProperty> ();
+            m_properties = new List<SerializedProperty> ();
         }
 
         public virtual void OnGUI()
@@ -30,9 +30,9 @@ namespace WooshiiAttributes
 
         }
 
-        public void RegisterProperty(SerializedProperty property)
+        public void RegisterProperty(SerializedProperty _property)
         {
-            properties.Add (property);
+            m_properties.Add (_property);
         }
     }
 
@@ -40,7 +40,7 @@ namespace WooshiiAttributes
     {
         public T attribute;
 
-        public GroupDrawer(T attribute, SerializedObject serializedObject) : base(serializedObject)
+        public GroupDrawer(T attribute, SerializedObject _serializedObject) : base(_serializedObject)
         {
             this.attribute = attribute;
         }

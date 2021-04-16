@@ -8,23 +8,23 @@ namespace WooshiiAttributes
     [AttributeUsage (AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class ReadOnlyAttribute : PropertyAttribute
     {
-        public readonly DisplayMode displayMode;
+        public readonly DisplayMode m_displayMode;
 
         /// <summary>
         /// Display a readonly value in the inspector
         /// </summary>
         public ReadOnlyAttribute()
         {
-            displayMode = DisplayMode.BOTH;
+            m_displayMode = DisplayMode.BOTH;
         }
 
         /// <summary>
         /// Display a readonly value in the inspector
         /// </summary>
-        /// <param name="displayMode">When is the value displayed</param>
-        public ReadOnlyAttribute(DisplayMode displayMode)
+        /// <param name="_displayMode">When is the value displayed</param>
+        public ReadOnlyAttribute(DisplayMode _displayMode)
         {
-            this.displayMode = displayMode;
+            this.m_displayMode = _displayMode;
         }
     }
 }

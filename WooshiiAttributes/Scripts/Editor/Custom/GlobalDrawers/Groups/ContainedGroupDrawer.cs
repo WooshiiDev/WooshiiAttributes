@@ -4,7 +4,7 @@ namespace WooshiiAttributes
 {
     public class ContainedGroupDrawer : GlobalDrawer<ContainedGroupAttribute>
     {
-        public ContainedGroupDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
+        public ContainedGroupDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
         {
         }
 

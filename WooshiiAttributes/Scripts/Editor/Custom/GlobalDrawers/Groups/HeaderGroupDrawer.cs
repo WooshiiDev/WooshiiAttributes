@@ -4,7 +4,7 @@ namespace WooshiiAttributes
 {
     public class HeaderGroupDrawer : GlobalDrawer<HeaderGroupAttribute>
     {
-        public HeaderGroupDrawer(SerializedObject serializedObject, SerializedProperty property) : base (serializedObject, property)
+        public HeaderGroupDrawer(SerializedObject _serializedObject, SerializedProperty _property) : base (_serializedObject, _property)
         {
         }
 

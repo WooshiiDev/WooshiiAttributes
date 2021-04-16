@@ -9,16 +9,16 @@ namespace WooshiiAttributes
         public List<SerializedProperty> Properties { get; private set; }
         public List<GlobalAttribute> Attributes { get; private set; }
 
-        public GlobalDrawer(SerializedObject serializedObject, SerializedProperty property, Type attributeType) : base (serializedObject, property, attributeType)
+        public GlobalDrawer(SerializedObject _serializedObject, SerializedProperty _property, Type _attributeType) : base (_serializedObject, _property, _attributeType)
         {
             Properties = new List<SerializedProperty> ();
             Attributes = new List<GlobalAttribute> ();
         }
 
-        public virtual void Register(GlobalAttribute attribute, SerializedProperty property)
+        public virtual void Register(GlobalAttribute _attribute, SerializedProperty _property)
         {
-            Attributes.Add (attribute);
-            Properties.Add (property);
+            Attributes.Add (_attribute);
+            Properties.Add (_property);
         }
     }
 
@@ -26,15 +26,15 @@ namespace WooshiiAttributes
     {
         public new List<T> Attributes { get; private set; }
 
-        public GlobalDrawer(SerializedObject serializedObject, SerializedProperty property) : base (serializedObject, property, typeof (T))
+        public GlobalDrawer(SerializedObject _serializedObject, SerializedProperty _property) : base (_serializedObject, _property, typeof (T))
         {
             Attributes = new List<T> ();
         }
 
-        public override void Register(GlobalAttribute attribute, SerializedProperty property)
+        public override void Register(GlobalAttribute _attribute, SerializedProperty _property)
         {
-            Attributes.Add (attribute as T);
-            Properties.Add (property);
+            Attributes.Add (_attribute as T);
+            Properties.Add (_property);
         }
     }
 }

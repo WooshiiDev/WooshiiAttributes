@@ -7,13 +7,13 @@ namespace WooshiiAttributes
     public class ReorderableDrawer : ArrayDrawer<ReorderableAttribute>
     {
         // --- Draw Refs ---
-        private ReorderableList list;
+        private ReorderableList m_list;
 
-        public ReorderableDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
+        public ReorderableDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
         {
-            if (list == null)
+            if (m_list == null)
             {
-                list = new ReorderableList (SerializedObject, SerializedProperty, true, true, true, true)
+                m_list = new ReorderableList (SerializedObject, SerializedProperty, true, true, true, true)
                 {
                     drawHeaderCallback = DrawHeader,
                     drawElementCallback = DrawElement,
@@ -26,46 +26,46 @@ namespace WooshiiAttributes
         {
             EditorGUILayout.Space ();
 
-            list.DoLayoutList ();
+            m_list.DoLayoutList ();
 
             EditorGUILayout.Space ();
         }
 
-        private void DrawHeader(Rect rect)
+        private void DrawHeader(Rect _rect)
         {
             string label = $"{SerializedProperty.displayName} ({SerializedProperty.arrayElementType})";
 
-            EditorGUI.LabelField (rect, label);
+            EditorGUI.LabelField (_rect, label);
         }
 
-        private void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
+        private void DrawElement(Rect _rect, int _index, bool _isActive, bool _isFocused)
         {
-            if (index > SerializedProperty.arraySize)
+            if (_index > SerializedProperty.arraySize)
             {
                 return;
             }
 
-            SerializedProperty property = SerializedProperty.GetArrayElementAtIndex (index);
+            SerializedProperty property = SerializedProperty.GetArrayElementAtIndex (_index);
 
             if (property == null)
             {
                 return;
             }
 
-            rect.x += 12f;
-            rect.width = rect.width - 12f;
+            _rect.x += 12f;
+            _rect.width = _rect.width - 12f;
 
-            EditorGUI.PropertyField (rect, property, true);
+            EditorGUI.PropertyField (_rect, property, true);
         }
 
-        private float GetElementHeight(int index)
+        private float GetElementHeight(int _index)
         {
-            if (index > SerializedProperty.arraySize)
+            if (_index > SerializedProperty.arraySize)
             {
                 return 19f;
             }
 
-            SerializedProperty element = SerializedProperty.GetArrayElementAtIndex (index);
+            SerializedProperty element = SerializedProperty.GetArrayElementAtIndex (_index);
 
             if (element == null)
             {

@@ -14,20 +14,20 @@ namespace WooshiiAttributes
     {
         private class SerializedData
         {
-            public readonly FieldInfo field;
-            public SerializedProperty property;
+            public readonly FieldInfo m_field;
+            public SerializedProperty m_property;
 
             public bool isGlobal = false;
             public bool hasGroup = false;
 
-            public ArrayDrawer arrayDrawer;
-            public GroupDrawer groupDrawer;
+            public ArrayDrawer m_arrayDrawer;
+            public GroupDrawer m_groupDrawer;
 
-            public SerializedData(FieldInfo field, SerializedProperty property, bool hasGlobal)
+            public SerializedData(FieldInfo _field, SerializedProperty _property, bool _hasGlobal)
             {
-                this.field = field;
-                this.property = property;
-                this.isGlobal = hasGlobal;
+                this.m_field = _field;
+                this.m_property = _property;
+                this.isGlobal = _hasGlobal;
             }
         }
 
@@ -39,23 +39,23 @@ namespace WooshiiAttributes
         private static Dictionary<Type, Type> AllDrawers;
 
         // Local Data
-        private List<SerializedProperty> visibleProperties;
-        private List<IMethodDrawer> visibleMethods;
+        private List<SerializedProperty> m_visibleProperties;
+        private List<IMethodDrawer> m_visibleMethods;
 
-        private List<SerializedData> serializedData;
-        private GroupDrawer cachedGroupDrawer;
+        private List<SerializedData> m_serializedData;
+        private GroupDrawer m_cachedGroupDrawer;
 
-        private Dictionary<Type, GlobalDrawer> globalDrawers;
-        private List<PropertyAttributeDrawer> classPropertyDrawers;
+        private Dictionary<Type, GlobalDrawer> m_globalDrawers;
+        private List<PropertyAttributeDrawer> m_classPropertyDrawers;
       
         // Potential conflict with same named members/types of actual variables
-        private string[] excludedPropertyTypes =
+        private readonly string[] m_excludedPropertyTypes =
             {
             "PPtr<MonoScript>",
             "ArraySize",
             };
 
-        private string[] excludedPropertyNames =
+        private readonly string[] m_excludedPropertyNames =
             {
             "m_Script",
             };
@@ -79,28 +79,28 @@ namespace WooshiiAttributes
                 FindDrawerTypes (typeof (PropertyAttributeDrawer));
             }
 
-            globalDrawers = new Dictionary<Type, GlobalDrawer> ();
-            serializedData = new List<SerializedData> ();
+            m_globalDrawers = new Dictionary<Type, GlobalDrawer> ();
+            m_serializedData = new List<SerializedData> ();
 
-            visibleMethods = new List<IMethodDrawer> ();
-            visibleProperties = SerializedUtility.GetAllVisibleProperties(serializedObject);
+            m_visibleMethods = new List<IMethodDrawer> ();
+            m_visibleProperties = SerializedUtility.GetAllVisibleProperties(serializedObject);
 
             GetMethodDrawers ();
 
             // We need all the properties and their corresponding fields
             int actualIndex = 0;
-            for (int i = 0; i < visibleProperties.Count; ++i)
+            for (int i = 0; i < m_visibleProperties.Count; ++i)
             {
-                SerializedProperty property = visibleProperties[i];
+                SerializedProperty property = m_visibleProperties[i];
 
                 GetGlobalAttribute (property);
                 GetArrayAttribute (property);
                 GetGroupAttribute (property);
 
-                if (cachedGroupDrawer != null && !serializedData[actualIndex].isGlobal)
+                if (m_cachedGroupDrawer != null && !m_serializedData[actualIndex].isGlobal)
                 {
-                    cachedGroupDrawer.RegisterProperty (property);
-                    visibleProperties.RemoveAt (i);
+                    m_cachedGroupDrawer.RegisterProperty (property);
+                    m_visibleProperties.RemoveAt (i);
 
                     i--;
                 }
@@ -108,12 +108,12 @@ namespace WooshiiAttributes
                 actualIndex++;
             }
 
-            if (cachedGroupDrawer != null)
+            if (m_cachedGroupDrawer != null)
             {
-                cachedGroupDrawer = null;
+                m_cachedGroupDrawer = null;
             }
 
-            classPropertyDrawers = new List<PropertyAttributeDrawer> ();
+            m_classPropertyDrawers = new List<PropertyAttributeDrawer> ();
 
             IEnumerable<PropertyInfo> properties = ReflectionUtility.GetProperties(target);
 
@@ -125,27 +125,27 @@ namespace WooshiiAttributes
 
         public override void OnInspectorGUI()
         {
-            if (serializedData == null)
+            if (m_serializedData == null)
             {
                 Initialize ();
             }
 
-            cachedGroupDrawer = null;
+            m_cachedGroupDrawer = null;
 
-            for (int i = 0; i < classPropertyDrawers.Count; i++)
+            for (int i = 0; i < m_classPropertyDrawers.Count; i++)
             {
-                classPropertyDrawers[i].OnGUI ();
+                m_classPropertyDrawers[i].OnGUI ();
             }
 
             EditorGUI.BeginChangeCheck ();
 
-            for (int i = 0; i < serializedData.Count; i++)
+            for (int i = 0; i < m_serializedData.Count; i++)
             {
-                SerializedData data = serializedData[i];
+                SerializedData data = m_serializedData[i];
                 DrawProperty (data);
             }
 
-            foreach (GlobalDrawer drawer in globalDrawers.Values)
+            foreach (GlobalDrawer drawer in m_globalDrawers.Values)
             {
                 drawer.OnGUI ();
             }
@@ -155,18 +155,18 @@ namespace WooshiiAttributes
                 serializedObject.ApplyModifiedProperties ();
             }
 
-            for (int i = 0; i < visibleMethods.Count; i++)
+            for (int i = 0; i < m_visibleMethods.Count; i++)
             {
-                visibleMethods[i].OnGUI ();
+                m_visibleMethods[i].OnGUI ();
             }
 
         }
 
         // Reflection
 
-        private void FindDrawerTypes(Type attributeType)
+        private void FindDrawerTypes(Type _attributeType)
         {
-            foreach (Type type in ReflectionUtility.GetTypeSubclasses (attributeType))
+            foreach (Type type in ReflectionUtility.GetTypeSubclasses (_attributeType))
             {
                 Type baseType = type.BaseType;
 
@@ -192,7 +192,7 @@ namespace WooshiiAttributes
 
                 MethodDrawer drawer = new MethodDrawer (attribute, target, method);
 
-                visibleMethods.Add (drawer);
+                m_visibleMethods.Add (drawer);
             }
         }
 
@@ -215,7 +215,7 @@ namespace WooshiiAttributes
 
             GlobalAttribute globalAttribute = field.GetCustomAttribute<GlobalAttribute> ();
 
-            serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
+            m_serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
 
             if (globalAttribute == null)
             {
@@ -224,10 +224,10 @@ namespace WooshiiAttributes
 
             Type attributeType = globalAttribute.GetType ();
 
-            if (!globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
+            if (!m_globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
             {
                 drawer = CreateInstanceOfType<GlobalDrawer> (AllDrawers[attributeType], serializedObject, _property);
-                globalDrawers.Add (attributeType, drawer);
+                m_globalDrawers.Add (attributeType, drawer);
             }
 
             drawer.Register (globalAttribute, _property);
@@ -256,7 +256,7 @@ namespace WooshiiAttributes
             {
                 ArrayDrawer drawer = CreateInstanceOfType<ArrayDrawer> (AllDrawers[attributeType], serializedObject, _property);
 
-                _data.arrayDrawer = drawer;
+                _data.m_arrayDrawer = drawer;
             }
         }
 
@@ -275,7 +275,7 @@ namespace WooshiiAttributes
             if (AllDrawers.TryGetValue(attributeType, out Type drawerType))
             {
                 PropertyAttributeDrawer drawer =  CreateInstanceOfType<PropertyAttributeDrawer>(drawerType, _property, target);
-                classPropertyDrawers.Add (drawer);
+                m_classPropertyDrawers.Add (drawer);
             }
         }
 
@@ -292,12 +292,12 @@ namespace WooshiiAttributes
             BeginGroupAttribute beginAttribute = field.GetCustomAttribute<BeginGroupAttribute> ();
             EndGroupAttribute endAttribute = field.GetCustomAttribute<EndGroupAttribute> ();
 
-            if (cachedGroupDrawer != null)
+            if (m_cachedGroupDrawer != null)
             {
                 if (endAttribute != null)
                 {
-                    cachedGroupDrawer.RegisterProperty (_property);
-                    cachedGroupDrawer = null;
+                    m_cachedGroupDrawer.RegisterProperty (_property);
+                    m_cachedGroupDrawer = null;
                 }
 
                 return;
@@ -315,8 +315,8 @@ namespace WooshiiAttributes
                 GroupDrawer drawer = CreateInstanceOfType<GroupDrawer>(AllDrawers[attributeType], beginAttribute, serializedObject);
 
                 _data.hasGroup = true;
-                _data.groupDrawer = drawer;
-                cachedGroupDrawer = drawer;
+                _data.m_groupDrawer = drawer;
+                m_cachedGroupDrawer = drawer;
             }
         }
 
@@ -330,10 +330,10 @@ namespace WooshiiAttributes
 
             Type attributeType = _attribute.GetType ();
 
-            if (globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
+            if (m_globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
             {
                 drawer = CreateInstanceOfType<GlobalDrawer> (drawer.GetType(), _property, target);
-                globalDrawers.Add (attributeType, drawer);
+                m_globalDrawers.Add (attributeType, drawer);
             }
 
             drawer.Register (_attribute, _property);
@@ -348,7 +348,7 @@ namespace WooshiiAttributes
 
         private bool TryGetData(SerializedProperty _property, out SerializedData _data)
         {
-            _data = serializedData.FirstOrDefault (t => t.property == _property);
+            _data = m_serializedData.FirstOrDefault (t => t.m_property == _property);
 
             return _data != null;
         }
@@ -362,25 +362,25 @@ namespace WooshiiAttributes
 
             if (_data.hasGroup)
             {
-                cachedGroupDrawer = _data.groupDrawer;
-                _data.groupDrawer.OnGUI ();
+                m_cachedGroupDrawer = _data.m_groupDrawer;
+                _data.m_groupDrawer.OnGUI ();
                 return;
             }
 
             // Do not draw grouped variables
-            if (cachedGroupDrawer != null && cachedGroupDrawer.Properties.Contains (_data.property))
+            if (m_cachedGroupDrawer != null && m_cachedGroupDrawer.Properties.Contains (_data.m_property))
             {
                 return;
             }
 
-            if (_data.arrayDrawer != null)
+            if (_data.m_arrayDrawer != null)
             {
-                _data.arrayDrawer.OnGUI ();
+                _data.m_arrayDrawer.OnGUI ();
             }
             else
             {
 
-                EditorGUILayout.PropertyField (_data.property, true);
+                EditorGUILayout.PropertyField (_data.m_property, true);
             }
         }
     }

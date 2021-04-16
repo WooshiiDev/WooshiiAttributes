@@ -6,24 +6,24 @@ namespace WooshiiAttributes
 {
     public class MethodDrawer : IMethodDrawer
     {
-        protected MethodButtonAttribute attribute;
-        public MethodButtonAttribute Attribute => attribute;
+        protected MethodButtonAttribute _attribute;
+        public MethodButtonAttribute Attribute => _attribute;
 
-        protected Object target;
-        public Object Target => target;
+        protected Object _target;
+        public Object Target => _target;
 
-        protected MethodInfo methodInfo;
-        public MethodInfo MethodInfo => methodInfo;
+        protected MethodInfo _methodInfo;
+        public MethodInfo MethodInfo => _methodInfo;
 
-        public MethodDrawer(MethodButtonAttribute attribute, Object Target, MethodInfo info)
+        public MethodDrawer(MethodButtonAttribute _attribute, Object _target, MethodInfo _info)
         {
-            this.attribute = attribute;
-            this.target = Target;
-            this.methodInfo = info;
+            this._attribute = _attribute;
+            this._target = _target;
+            this._methodInfo = _info;
 
-            if (attribute.MethodName == null)
+            if (_attribute.MethodName == null)
             {
-                attribute.MethodName = methodInfo.Name;
+                _attribute.MethodName = _methodInfo.Name;
 
             }
         }
@@ -38,7 +38,7 @@ namespace WooshiiAttributes
 
         protected void CallMethod()
         {
-            MethodInfo.Invoke (target, null);
+            MethodInfo.Invoke (_target, null);
         }
     }
 }
