@@ -15,7 +15,7 @@ namespace WooshiiAttributes
 
             public ExampleData childData;
         }
-
+    
         [BeginGroup ("Group of stuff", true, true, true)]
         public int a; 
         public int b;
@@ -29,26 +29,7 @@ namespace WooshiiAttributes
 
         public ExampleData[] j;
 
-        [EndGroup()]
-        public int k;
-
-
-        [ClassProperty]
-        public string PropertyOne { get; private set; } = "HELLO THERE";
-
-        private float propTwo = 69.0f;
-
-        [ClassProperty]
-        public float PropertyTwo { set => value = propTwo; } 
-
-        [ClassProperty]
-        public DisplayMode PropertyThree { get; }
-
-        [ClassProperty]
-        public int PropertyFour { get; private set; } = 4444;
-
-        [ClassProperty]
-        public bool PropertyBool { get; private set; }
+        [EndGroup()] public int k;
 
         // ============ Groups ============
         [HeaderLineGroupAttribute ("Header Line Group Stats")] public int health, speed, damage;
@@ -56,15 +37,11 @@ namespace WooshiiAttributes
         [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
         [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;
 
-        
-
         // ============ ReadOnly ============
         [HeaderLine ("ReadOnly")]
         [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
         [ReadOnly (DisplayMode.EDITOR)] public string readOnlyEditor = "Can see me in the Editor when not playing only.";
         [ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
-
-
 
         // ============ Basic Data Types ============
         [HeaderLine ("Basic Types")]
@@ -80,8 +57,6 @@ namespace WooshiiAttributes
         [Paragraph ("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#1000FF")]
         public string stringWithParagraph;
 
-
-
         // ============ Comment Examples ============
         [Comment ("Get yer 2D space here!", CommentAttribute.MessageType.NONE)]
         [HeaderLine ("Comments")]
@@ -95,8 +70,6 @@ namespace WooshiiAttributes
 
         [Comment ("Toggle value.\nTake caution when editing. Can be indecisive. Also likes to bite.", CommentAttribute.MessageType.ERROR)]
         public bool boolValue;
-
-
 
         // ============ Array Based Examples ============
         [HeaderLine ("Array Based")]

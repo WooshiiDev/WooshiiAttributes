@@ -60,7 +60,7 @@ namespace WooshiiAttributes
             "m_Script",
             };
 
-        private void Awake()
+        private void OnEnable()
         {
             Initialize ();
         }

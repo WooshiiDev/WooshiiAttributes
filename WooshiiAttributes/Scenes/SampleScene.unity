@@ -305,6 +305,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1393815629}
+  - component: {fileID: 1393815631}
   - component: {fileID: 1393815630}
   m_Layer: 0
   m_Name: Examples
@@ -339,7 +340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ede355fed7366940a59a1045d5f906a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  a: 412412
+  a: 405935
   b: 2147483647
   c: 3123
   d: 1111
@@ -399,3 +400,15 @@ MonoBehaviour:
     intVal: 0
     boolVal: 0
   intArray: 00000000010000000200000003000000
+--- !u!114 &1393815631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393815628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a4b4e805c443743adacf30ab8180d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

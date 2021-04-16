@@ -1,193 +1,292 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityEditorInternal;
 using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
     public enum PropertyType
     {
-        INVALID     = -1,
+        // --- Standard Types ---
 
-        OBJECT      = 0,
+        INVALID         = -1,
 
-        BOOLEAN     = 1,
-        STRING      = 2,
-        INTEGER     = 3,
-        FLOAT       = 4,
+        OBJECT          = 0,
 
-        ENUM        = 5,
+        BOOLEAN         = 1,
+        STRING          = 2,
 
-        VECTOR2     = 6,
-        VECTOR3     = 7,
+        INTEGER         = 3,
+        FLOAT           = 4,
+        DOUBLE          = 5,
+        LONG            = 6,
 
-        UNITYOBJ    = 8,
+        ENUM            = 7,
+
+        // --- Unity Types ---
+
+        UNITY_OBJECT    = 8,
+
+        VECTOR2         = 9,
+        VECTOR3         = 10,
+        VECTOR4         = 11,
+
+        VECTOR2INT      = 12,
+        VECTOR3INT      = 13,
+
+        COLOR           = 14,
+        GRADIENT        = 15,
+
+        LAYER_MASK      = 16,
+        ANIMATION_CURVE = 17,
+
+        // Other unity types - find through serializable properties
+
+        RECT            = 18,
+        RECTINT         = 19,
+
+        BOUNDS          = 20,
+        BOUNDSINT       = 21,
+
+        POSE            = 22
     }
 
     public class PropertyAttributeDrawer
     {
-        public Type type;
-        public PropertyInfo propertyInfo;
-
-        public object target;
-
-        public bool isArray;
-
-        public PropertyType propertyType;
-
-        public PropertyAttributeDrawer(PropertyInfo _property, Type _attributeType, object _target)
+        private static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
         {
-            propertyInfo = _property;
-            type = _attributeType;
+            { typeof(bool)          , PropertyType.BOOLEAN  },
+            { typeof(string)        , PropertyType.STRING   },
+            { typeof(int)           , PropertyType.INTEGER  },
+            { typeof(float)         , PropertyType.FLOAT    },
+            { typeof(double)        , PropertyType.DOUBLE   },
+            { typeof(long)          , PropertyType.LONG     },
 
-            target = _target;
-            isArray = _property.PropertyType.IsArray;
+            { typeof(Enum)          , PropertyType.ENUM     },
 
-            propertyType = GetPropertyType (propertyInfo.PropertyType);
+            { typeof(Object)        , PropertyType.UNITY_OBJECT     },
+
+            { typeof(Vector2)       , PropertyType.VECTOR2  },
+            { typeof(Vector3)       , PropertyType.VECTOR3  },
+            { typeof(Vector4)       , PropertyType.VECTOR4  },
+
+            { typeof(Vector2Int)    , PropertyType.VECTOR2INT },
+            { typeof(Vector3Int)    , PropertyType.VECTOR3INT },
+
+            { typeof(Color)         , PropertyType.COLOR },
+            { typeof(Gradient)      , PropertyType.GRADIENT },
+
+            { typeof(LayerMask)     , PropertyType.LAYER_MASK },
+            { typeof(AnimationCurve), PropertyType.ANIMATION_CURVE },
+
+            { typeof(Rect)          , PropertyType.RECT     },
+            { typeof(RectInt)       , PropertyType.RECTINT  },
+
+            { typeof(Bounds)        , PropertyType.BOUNDS   },
+            { typeof(BoundsInt)     , PropertyType.BOUNDSINT },
+
+            { typeof(Pose)          , PropertyType.POSE     },
+        };
+
+        protected Object m_target;
+
+        // State
+        protected PropertyType m_propertyType;
+        protected bool m_isArray;
+
+        // Reflection Info
+        protected Type m_type;
+        protected PropertyInfo m_propertyInfo;
+
+        public PropertyAttributeDrawer(PropertyInfo _property, Type _attributeType, Object _target)
+        {
+            m_propertyInfo = _property;
+            m_type = _attributeType;
+
+            m_target = _target;
+            m_isArray = _property.PropertyType.IsArray;
+
+            m_propertyType = GetPropertyType (m_propertyInfo.PropertyType);
         }
 
         public virtual void OnGUI()
         {
-            EditorGUILayout.LabelField (propertyInfo.Name);
+            EditorGUILayout.LabelField (m_propertyInfo.Name);
         }
 
-        protected PropertyType GetPropertyType(Type type)
+        protected PropertyType GetPropertyType(Type _type)
         {
-            if (type.IsEnum)
+            if (_type.IsEnum)
             {
                 return PropertyType.ENUM;
             }
 
-            string typeName = type.Name;
-
-            switch (typeName)
+            if (PropertyTypes.TryGetValue(_type, out PropertyType _value))
             {
-                case "Boolean":
-                    return PropertyType.BOOLEAN;
-
-                case "String":
-                    return PropertyType.STRING;
-
-                case "Int16":
-                case "Int32":
-                case "Int64":
-                    return PropertyType.INTEGER;
-
-                case "Single":
-                    return PropertyType.FLOAT;
-
-                case "Vector2":
-                    return PropertyType.VECTOR2;
-
-                case "Object":
-                    return PropertyType.UNITYOBJ;
-
-                default:
-                    return PropertyType.INVALID;
-                
+                return _value;
             }
-        }
 
-        protected PropertyType GetPropertyType(PropertyInfo property)
-        {
-            return GetPropertyType (property.PropertyType);
+            return PropertyType.INVALID;
         }
 
         protected T GetValueType<T>()
         {
-            if (!propertyInfo.CanRead)
+            if (!m_propertyInfo.CanRead)
             {
                 return default;
             }
 
-            return (T)propertyInfo.GetValue (target);
+            object value = m_propertyInfo.GetValue (m_target);
+
+            return (T)value;
         }
+
     }
 
     public class PropertyAttributeDrawer<T> : PropertyAttributeDrawer where T : ClassPropertyAttribute
     {
-        public PropertyAttributeDrawer(PropertyInfo property, object target) : base (property, typeof(T), target)
-        {
-
-        }
+        public PropertyAttributeDrawer(PropertyInfo _property, Object _target) : base (_property, typeof(T), _target) { }
     }
 
     public class ClassPropertyDrawer : PropertyAttributeDrawer<ClassPropertyAttribute>
     {
-        public ClassPropertyDrawer(PropertyInfo property, object target) : base (property, target)
-        {
+        private readonly string displayName;
 
+        public ClassPropertyDrawer(PropertyInfo _property, Object _target) : base (_property, _target)
+        {
+            string actualName = m_propertyInfo.Name;
+            actualName = actualName.Substring (0, 1).ToUpper () + actualName.Substring (1);
+
+            displayName = string.Format ("(Property) {0}", actualName);
         }
 
         public override void OnGUI()
         {
-            bool canRead = propertyInfo.CanRead;
-            bool canWrite = propertyInfo.CanWrite;
+            bool canRead = m_propertyInfo.CanRead;
+            bool canWrite = m_propertyInfo.CanWrite;
 
-            //string s = string.Format ("{0} [{1}{2}]", prop.Name, canRead ? "get; " : "", canWrite ? "set; " : "");
-            //s += "(" + propertyType + ")";
-
-            //if (!canRead)
-            //{
-            //    //Debug.Log (s + " " + prop.GetValue (target) + " = " + v);
-
-            //    string ss = string.Format ("<{0}>k__BackingField", prop.Name);
-            //    var mailField = target.GetType ().GetField (ss,
-            //         BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            //    Debug.Log (ss + " : " + mailField);
-            //}
-            string s = propertyInfo.Name;
-            object val = null;
+            object value = null;
 
             EditorGUI.BeginChangeCheck ();
             EditorGUILayout.BeginHorizontal ();
-
-            float labelWidth = EditorGUIUtility.labelWidth;
-            EditorGUIUtility.labelWidth = EditorStyles.boldLabel.CalcSize(new GUIContent("(Property)")).x;
-            EditorGUILayout.PrefixLabel ("(Property)", EditorStyles.boldLabel);
-            EditorGUIUtility.labelWidth = labelWidth;
-
-            EditorGUI.BeginDisabledGroup (!canWrite);
-            switch (propertyType)
             {
-                case PropertyType.INVALID:
+                //EditorGUI.BeginDisabledGroup (!canWrite);
+                EditorGUI.BeginDisabledGroup (true);
 
-                    break;
+                switch (m_propertyType)
+                {
+                    case PropertyType.INVALID:
 
-                case PropertyType.OBJECT:
-                    
-                    break;
+                        break;
 
-                case PropertyType.BOOLEAN:
-                    val = EditorGUILayout.Toggle (s, GetValueType<bool>());
-                    break;
-                case PropertyType.STRING:
-                    val = EditorGUILayout.TextField (s, GetValueType<string> ());
-                    break;
-                case PropertyType.INTEGER:
-                    val = EditorGUILayout.IntField (s, GetValueType<int> ());
-                    break;
-                case PropertyType.FLOAT:
-                    val = EditorGUILayout.FloatField (s, GetValueType<float> ());
-                    break;
-                case PropertyType.ENUM:
-                    val = EditorGUILayout.EnumPopup (s, propertyType);
-                    break;
-                case PropertyType.VECTOR2:
-                    val = EditorGUILayout.Vector2Field (s, GetValueType<Vector2> ());
-                    break;
-                case PropertyType.VECTOR3:
-                    val = EditorGUILayout.Vector3Field (s, GetValueType<Vector3> ());
-                    break;
-                case PropertyType.UNITYOBJ:
-                    val = EditorGUILayout.ObjectField (s, null, typeof (Object), true);
-                    break;
+                    // Standard
 
-                default:
-                    break;
+                    case PropertyType.OBJECT:
+                        
+                        break;
+
+                    case PropertyType.BOOLEAN:
+                        value = EditorGUILayout.Toggle (displayName, GetValueType<bool> ());
+                        break;
+
+                    case PropertyType.STRING:
+                        value = EditorGUILayout.TextField (displayName, GetValueType<string> ());
+                        break;
+
+                    case PropertyType.INTEGER:
+                        value = EditorGUILayout.IntField (displayName, GetValueType<int> ());
+                        break;
+
+                    case PropertyType.FLOAT:
+                        value = EditorGUILayout.FloatField (displayName, GetValueType<float> ());
+                        break;
+
+                    case PropertyType.DOUBLE:
+                        value = EditorGUILayout.DoubleField (displayName, GetValueType<double> ());
+                        break;
+
+                    case PropertyType.LONG:
+                        value = EditorGUILayout.LongField (displayName, GetValueType<long> ());
+                        break;
+
+                    case PropertyType.ENUM:
+                        value = EditorGUILayout.EnumPopup (displayName, GetValueType<Enum> ());
+                        break;
+
+                    // Unity Types
+
+                    case PropertyType.UNITY_OBJECT:
+                        value = EditorGUILayout.ObjectField (displayName, GetValueType<Object> (), m_propertyInfo.PropertyType, false);
+                        break;
+
+                    case PropertyType.VECTOR2:
+                        value = EditorGUILayout.Vector2Field (displayName, GetValueType<Vector2> ());
+                        break;
+
+                    case PropertyType.VECTOR3:
+                        value = EditorGUILayout.Vector3Field (displayName, GetValueType<Vector3> ());
+                        break;
+
+                    case PropertyType.VECTOR4:
+                        value = EditorGUILayout.Vector4Field (displayName, GetValueType<Vector4> ());
+                        break;
+
+                    case PropertyType.VECTOR2INT:
+                        value = EditorGUILayout.Vector2IntField (displayName, GetValueType<Vector2Int> ());
+                        break;
+
+                    case PropertyType.VECTOR3INT:
+                        value = EditorGUILayout.Vector3IntField (displayName, GetValueType<Vector3Int> ());
+                        break;
+
+                    // Colour
+
+                    case PropertyType.COLOR:
+                        value = EditorGUILayout.ColorField (displayName, GetValueType<Color> ());
+                        break;
+
+                    case PropertyType.GRADIENT:
+                        value = EditorGUILayout.GradientField (displayName, GetValueType<Gradient> ());
+                        break;
+
+                    // Others
+
+                    case PropertyType.LAYER_MASK:
+                        value = (LayerMask)EditorGUILayout.MaskField (
+                            displayName, GetValueType<LayerMask> (), InternalEditorUtility.layers);
+                        break;
+
+                    case PropertyType.ANIMATION_CURVE:
+                        value = EditorGUILayout.CurveField (displayName, GetValueType<AnimationCurve> ());
+                        break;
+
+                    // Areas
+
+                    case PropertyType.RECT:
+                        value = EditorGUILayout.RectField (displayName, GetValueType<Rect> ());
+                        break;
+
+                    case PropertyType.RECTINT:
+                        value = EditorGUILayout.RectIntField (displayName, GetValueType<RectInt> ());
+                        break;
+
+                    case PropertyType.BOUNDS:
+                        value = EditorGUILayout.BoundsField (displayName, GetValueType<Bounds> ());
+                        break;
+
+                    case PropertyType.BOUNDSINT:
+                        value = EditorGUILayout.BoundsIntField (displayName, GetValueType<BoundsInt> ());
+                        break;
+
+                    default:
+                        break;
+                }
+
+                EditorGUI.EndDisabledGroup ();
             }
-            EditorGUI.EndDisabledGroup ();
             EditorGUILayout.EndHorizontal ();
         
             if (EditorGUI.EndChangeCheck())
@@ -197,7 +296,7 @@ namespace WooshiiAttributes
                     return;
                 }
 
-                propertyInfo.SetValue (target, val);
+                m_propertyInfo.SetValue (m_target, value);
             }
         }
 
