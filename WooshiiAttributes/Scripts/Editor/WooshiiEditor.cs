@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
@@ -47,7 +46,7 @@ namespace WooshiiAttributes
 
         private Dictionary<Type, GlobalDrawer> m_globalDrawers;
         private List<PropertyAttributeDrawer> m_classPropertyDrawers;
-      
+
         // Potential conflict with same named members/types of actual variables
         private readonly string[] m_excludedPropertyTypes =
             {
@@ -83,7 +82,7 @@ namespace WooshiiAttributes
             m_serializedData = new List<SerializedData> ();
 
             m_visibleMethods = new List<IMethodDrawer> ();
-            m_visibleProperties = SerializedUtility.GetAllVisibleProperties(serializedObject);
+            m_visibleProperties = SerializedUtility.GetAllVisibleProperties (serializedObject);
 
             GetMethodDrawers ();
 
@@ -115,9 +114,9 @@ namespace WooshiiAttributes
 
             m_classPropertyDrawers = new List<PropertyAttributeDrawer> ();
 
-            IEnumerable<PropertyInfo> properties = ReflectionUtility.GetProperties(target);
+            IEnumerable<PropertyInfo> properties = ReflectionUtility.GetProperties (target);
 
-            foreach (var property in properties)
+            foreach (PropertyInfo property in properties)
             {
                 GetPropertyAttribute (property);
             }
@@ -181,7 +180,7 @@ namespace WooshiiAttributes
 
         private void GetMethodDrawers()
         {
-            foreach (MethodInfo method in ReflectionUtility.GetMethods(target))
+            foreach (MethodInfo method in ReflectionUtility.GetMethods (target))
             {
                 MethodButtonAttribute attribute = method.GetCustomAttribute<MethodButtonAttribute> ();
 
@@ -272,9 +271,9 @@ namespace WooshiiAttributes
 
             Type attributeType = attribute.GetType ();
 
-            if (AllDrawers.TryGetValue(attributeType, out Type drawerType))
+            if (AllDrawers.TryGetValue (attributeType, out Type drawerType))
             {
-                PropertyAttributeDrawer drawer =  CreateInstanceOfType<PropertyAttributeDrawer>(drawerType, _property, target);
+                PropertyAttributeDrawer drawer = CreateInstanceOfType<PropertyAttributeDrawer> (drawerType, _property, target);
                 m_classPropertyDrawers.Add (drawer);
             }
         }
@@ -312,7 +311,7 @@ namespace WooshiiAttributes
 
             if (TryGetData (_property, out SerializedData _data))
             {
-                GroupDrawer drawer = CreateInstanceOfType<GroupDrawer>(AllDrawers[attributeType], beginAttribute, serializedObject);
+                GroupDrawer drawer = CreateInstanceOfType<GroupDrawer> (AllDrawers[attributeType], beginAttribute, serializedObject);
 
                 _data.hasGroup = true;
                 _data.m_groupDrawer = drawer;
@@ -332,7 +331,7 @@ namespace WooshiiAttributes
 
             if (m_globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
             {
-                drawer = CreateInstanceOfType<GlobalDrawer> (drawer.GetType(), _property, target);
+                drawer = CreateInstanceOfType<GlobalDrawer> (drawer.GetType (), _property, target);
                 m_globalDrawers.Add (attributeType, drawer);
             }
 
