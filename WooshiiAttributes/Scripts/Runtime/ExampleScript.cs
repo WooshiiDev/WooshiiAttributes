@@ -83,5 +83,13 @@ namespace WooshiiAttributes
         {
             Debug.Log ("Example Method");
         }
+
+        [MethodButton ()]
+        public void AnotherExampleMethod(int intParameter, string stringParameter, bool booleanParameter)
+        {
+            Debug.Log (intParameter);
+            Debug.Log (stringParameter);
+            Debug.Log (booleanParameter);
+        }
     }
 }

@@ -56,7 +56,7 @@ namespace WooshiiAttributes
 
     public class PropertyAttributeDrawer
     {
-        private static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
+        public static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
         {
             { typeof(bool)          , PropertyType.BOOLEAN  },
             { typeof(string)        , PropertyType.STRING   },
@@ -117,7 +117,7 @@ namespace WooshiiAttributes
             EditorGUILayout.LabelField (m_propertyInfo.Name);
         }
 
-        protected PropertyType GetPropertyType(Type _type)
+        public static PropertyType GetPropertyType(Type _type)
         {
             if (_type.IsEnum)
             {

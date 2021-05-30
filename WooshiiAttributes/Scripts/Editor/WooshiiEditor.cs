@@ -190,7 +190,7 @@ namespace WooshiiAttributes
                     continue;
                 }
 
-                MethodDrawer drawer = new MethodDrawer (attribute, target, method);
+                MethodButtonDrawer drawer = new MethodButtonDrawer (attribute, target, method);
 
                 m_visibleMethods.Add (drawer);
             }
