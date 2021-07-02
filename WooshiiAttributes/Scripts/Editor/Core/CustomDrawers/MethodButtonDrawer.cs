@@ -39,6 +39,7 @@ namespace WooshiiAttributes
         public MethodButtonDrawer(MethodButtonAttribute _attribute, Object _target, MethodInfo _info)
         {
             this._attribute = _attribute;
+
             this._target = _target;
             this._methodInfo = _info;
 
@@ -47,6 +48,7 @@ namespace WooshiiAttributes
                 _attribute.MethodName = _methodInfo.Name;
             }
 
+            // Get parameters and set parameter data
             ParameterInfo[] parameters = _info.GetParameters ();
             int paramLength = parameters.Length;
 
@@ -60,10 +62,9 @@ namespace WooshiiAttributes
                 for (int i = 0; i < paramLength; i++)
                 {
                     ParameterInfo parameterInfo = parameters[i];
-                    Type type = parameterInfo.ParameterType;
-                    PropertyType propertyType = PropertyAttributeDrawer.GetPropertyType (type);
+                    PropertyType propertyType = TypeUtility.GetPropertyTypeFromType (parameterInfo.ParameterType);
 
-                    object value = ""; 
+                    object value = null;
 
                     if (parameterInfo.HasDefaultValue)
                     {
@@ -71,12 +72,13 @@ namespace WooshiiAttributes
                     }
                     else
                     {
+                        if (!parameterInfo.ParameterType.IsValueType)
+                        {
+
+                        }
+
                         switch (propertyType)
                         {
-                            case PropertyType.INVALID:
-                                break;
-                            case PropertyType.OBJECT:
-                                break;
                             case PropertyType.BOOLEAN:
                                 value = default(bool);
                                 break;
@@ -245,6 +247,13 @@ namespace WooshiiAttributes
                                 break;
 
                             case PropertyType.GRADIENT:
+
+                                if (value == null)
+                                {
+                                    arg.value = value = new Gradient ();
+                                    m_parameterData[i] = arg;
+                                }
+
                                 value = EditorGUILayout.GradientField (name, (Gradient)value);
                                 break;
 
@@ -255,6 +264,12 @@ namespace WooshiiAttributes
                                 break;
 
                             case PropertyType.ANIMATION_CURVE:
+                                if (value == null)
+                                {
+                                    arg.value = value = new AnimationCurve ();
+                                    m_parameterData[i] = arg;
+                                }
+
                                 value = EditorGUILayout.CurveField (name, (AnimationCurve)value);
                                 break;
 
@@ -290,7 +305,6 @@ namespace WooshiiAttributes
                  
                 }
                 EditorGUILayout.EndHorizontal ();
-
             }
             else
             {
@@ -309,7 +323,6 @@ namespace WooshiiAttributes
             {
                 parameterValues[i] = m_parameterData[i].value;
             }
-
 
             MethodInfo.Invoke (_target, parameterValues);
         }

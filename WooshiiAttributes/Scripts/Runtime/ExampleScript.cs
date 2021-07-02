@@ -78,18 +78,30 @@ namespace WooshiiAttributes
         [Reorderable] public ExampleData[] childClassArray;
         [Reorderable] public int[] intArray;
 
+
         [MethodButton ()]
         public void ExampleMethod()
         {
             Debug.Log ("Example Method");
         }
 
-        [MethodButton ()]
+        [MethodButton ("Example Method With Parameters", 10, "Hello World", true)]
         public void AnotherExampleMethod(int intParameter, string stringParameter, bool booleanParameter)
         {
             Debug.Log (intParameter);
             Debug.Log (stringParameter);
             Debug.Log (booleanParameter);
+        }
+
+        [MethodButton ("Example Method With Complex Parameters", 10, "Hello World", true)]
+        public void AComplexMethod(float evalTime, Gradient gradient, AnimationCurve curve)
+        {
+            string format = string.Format (
+                "Gradient Colour - {0}, Animation Curve Value - {1}", gradient.Evaluate (evalTime), curve.Evaluate (evalTime));
+
+            Debug.Log (format);
+
+            transform.position += Vector3.up * 10;
         }
     }
 }
