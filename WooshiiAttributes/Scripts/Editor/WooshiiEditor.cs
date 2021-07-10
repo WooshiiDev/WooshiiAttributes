@@ -155,9 +155,15 @@ namespace WooshiiAttributes
                 serializedObject.ApplyModifiedProperties ();
             }
 
-            for (int i = 0; i < m_visibleMethods.Count; i++)
+            if (m_visibleMethods.Count > 0)
             {
-                m_visibleMethods[i].OnGUI ();
+                EditorGUILayout.Space ();
+                EditorGUILayout.LabelField ("Exposed Methods", EditorStyles.boldLabel);
+
+                for (int i = 0; i < m_visibleMethods.Count; i++)
+                {
+                    m_visibleMethods[i].OnGUI ();
+                }
             }
 
         }
