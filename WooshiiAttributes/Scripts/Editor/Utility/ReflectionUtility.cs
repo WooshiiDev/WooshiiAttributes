@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
-using UnityEditor;
 using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+
+
     public static class ReflectionUtility
     {
         // BindingFlags
@@ -64,6 +63,25 @@ namespace WooshiiAttributes
         public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DefaultFlags)
         {
             return _type.GetProperties (DefaultFlags);
+        }
+
+        /// <summary>
+        /// Get the value of the property on the target object
+        /// </summary>
+        /// <typeparam name="T">The type to get</typeparam>
+        /// <param name="_target">The target instance</param>
+        /// <param name="_info">The property info we want the value of</param>
+        /// <returns></returns>
+        public static T GetTargetPropertyValue<T>(object _target, PropertyInfo _info)
+        {
+            if (_info.CanRead)
+            {
+                return default;
+            }
+
+            object value = _info.GetValue (_target);
+
+            return (T)value; 
         }
 
         // Methods

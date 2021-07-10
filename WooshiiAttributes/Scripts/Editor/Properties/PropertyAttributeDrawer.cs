@@ -8,55 +8,11 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
-    public enum PropertyType
-    {
-        // --- Standard Types ---
-
-        INVALID         = -1,
-
-        OBJECT          = 0,
-
-        BOOLEAN         = 1,
-        STRING          = 2,
-
-        INTEGER         = 3,
-        FLOAT           = 4,
-        DOUBLE          = 5,
-        LONG            = 6,
-
-        ENUM            = 7,
-
-        // --- Unity Types ---
-
-        UNITY_OBJECT    = 8,
-
-        VECTOR2         = 9,
-        VECTOR3         = 10,
-        VECTOR4         = 11,
-
-        VECTOR2INT      = 12,
-        VECTOR3INT      = 13,
-
-        COLOR           = 14,
-        GRADIENT        = 15,
-
-        LAYER_MASK      = 16,
-        ANIMATION_CURVE = 17,
-
-        // Other unity types - find through serializable properties
-
-        RECT            = 18,
-        RECTINT         = 19,
-
-        BOUNDS          = 20,
-        BOUNDSINT       = 21,
-
-        POSE            = 22
-    }
+   
 
     public class PropertyAttributeDrawer
     {
-        private static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
+        public static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
         {
             { typeof(bool)          , PropertyType.BOOLEAN  },
             { typeof(string)        , PropertyType.STRING   },
@@ -109,27 +65,12 @@ namespace WooshiiAttributes
             m_target = _target;
             m_isArray = _property.PropertyType.IsArray;
 
-            m_propertyType = GetPropertyType (m_propertyInfo.PropertyType);
+            m_propertyType = TypeUtility.GetPropertyTypeFromType (m_type);
         }
 
         public virtual void OnGUI()
         {
             EditorGUILayout.LabelField (m_propertyInfo.Name);
-        }
-
-        protected PropertyType GetPropertyType(Type _type)
-        {
-            if (_type.IsEnum)
-            {
-                return PropertyType.ENUM;
-            }
-
-            if (PropertyTypes.TryGetValue(_type, out PropertyType _value))
-            {
-                return _value;
-            }
-
-            return PropertyType.INVALID;
         }
 
         protected T GetValueType<T>()
