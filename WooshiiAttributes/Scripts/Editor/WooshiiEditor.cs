@@ -45,7 +45,7 @@ namespace WooshiiAttributes
         private GroupDrawer m_cachedGroupDrawer;
 
         private Dictionary<Type, GlobalDrawer> m_globalDrawers;
-        private List<PropertyAttributeDrawer> m_classPropertyDrawers;
+        private List<PropertyInfo> m_properties;
 
         // Potential conflict with same named members/types of actual variables
         private readonly string[] m_excludedPropertyTypes =
@@ -75,7 +75,6 @@ namespace WooshiiAttributes
                 FindDrawerTypes (typeof (ArrayDrawer));
                 FindDrawerTypes (typeof (IMethodDrawer));
                 FindDrawerTypes (typeof (GroupDrawer));
-                FindDrawerTypes (typeof (PropertyAttributeDrawer));
             }
 
             m_globalDrawers = new Dictionary<Type, GlobalDrawer> ();
@@ -112,14 +111,7 @@ namespace WooshiiAttributes
                 m_cachedGroupDrawer = null;
             }
 
-            m_classPropertyDrawers = new List<PropertyAttributeDrawer> ();
-
-            IEnumerable<PropertyInfo> properties = ReflectionUtility.GetProperties (target);
-
-            foreach (PropertyInfo property in properties)
-            {
-                GetPropertyAttribute (property);
-            }
+            m_properties = ReflectionUtility.GetProperties (target, condition: HasValidAttribute<ClassPropertyAttribute>).ToList();
         }
 
         public override void OnInspectorGUI()
@@ -131,9 +123,9 @@ namespace WooshiiAttributes
 
             m_cachedGroupDrawer = null;
 
-            for (int i = 0; i < m_classPropertyDrawers.Count; i++)
+            for (int i = 0; i < m_properties.Count; i++)
             {
-                m_classPropertyDrawers[i].OnGUI ();
+                NativePropertyDrawer.OnGUI (m_properties[i], target);
             }
 
             EditorGUI.BeginChangeCheck ();
@@ -259,25 +251,6 @@ namespace WooshiiAttributes
             }
         }
 
-        private void GetPropertyAttribute(PropertyInfo _property)
-        {
-            // Get the field based on the serialized property cached name
-            ClassPropertyAttribute attribute = _property.GetCustomAttribute<ClassPropertyAttribute> ();
-
-            if (attribute == null)
-            {
-                return;
-            }
-
-            Type attributeType = attribute.GetType ();
-
-            if (AllDrawers.TryGetValue (attributeType, out Type drawerType))
-            {
-                PropertyAttributeDrawer drawer = CreateInstanceOfType<PropertyAttributeDrawer> (drawerType, _property, target);
-                m_classPropertyDrawers.Add (drawer);
-            }
-        }
-
         private void GetGroupAttribute(SerializedProperty _property)
         {
             // Get the field based on the serialized property cached name
@@ -320,6 +293,7 @@ namespace WooshiiAttributes
         }
 
         // Helpers
+
         private void CreateGlobalDrawer<T>(T _attribute, SerializedProperty _property, Type _drawerType, params object[] _drawerArgs) where T : GlobalAttribute
         {
             if (_attribute == null)
@@ -381,6 +355,11 @@ namespace WooshiiAttributes
 
                 EditorGUILayout.PropertyField (_data.m_property, true);
             }
+        }
+
+        private bool HasValidAttribute<T>(PropertyInfo _property) where T : ClassPropertyAttribute
+        {
+            return _property.GetCustomAttribute<T>() != null;
         }
     }
 }

@@ -56,14 +56,14 @@ namespace WooshiiAttributes
 
         // Properties
 
-        public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DefaultFlags, Predicate<PropertyInfo> condition = null)
         {
-            return GetProperties (_target.GetType (), DefaultFlags);
+            return GetProperties (_target.GetType (), DefaultFlags, condition);
         }
 
-        public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DefaultFlags, Predicate<PropertyInfo> condition = null)
         {
-            return _type.GetProperties (DefaultFlags);
+            return _type.GetProperties (DefaultFlags).Where (prop => condition.Invoke(prop));
         }
 
         // Methods
