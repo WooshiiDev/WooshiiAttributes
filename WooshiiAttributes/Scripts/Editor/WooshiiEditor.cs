@@ -38,6 +38,7 @@ namespace WooshiiAttributes
         private static Dictionary<Type, Type> AllDrawers;
 
         // Local Data
+
         private List<SerializedProperty> m_visibleProperties;
         private List<IMethodDrawer> m_visibleMethods;
 
@@ -47,17 +48,23 @@ namespace WooshiiAttributes
         private Dictionary<Type, GlobalDrawer> m_globalDrawers;
         private List<PropertyInfo> m_properties;
 
+        // Object Data
+
+        private Type m_targetType;
+        private FieldInfo[] fields;
+        private MethodInfo[] methods;
+
         // Potential conflict with same named members/types of actual variables
         private readonly string[] m_excludedPropertyTypes =
-            {
+        {
             "PPtr<MonoScript>",
             "ArraySize",
-            };
+        };
 
         private readonly string[] m_excludedPropertyNames =
-            {
+        {
             "m_Script",
-            };
+        };
 
         private void OnEnable()
         {
@@ -66,6 +73,14 @@ namespace WooshiiAttributes
 
         private void Initialize()
         {
+            m_targetType = target.GetType ();
+
+            fields = ReflectionUtility.GetFields (target).ToArray ();
+            methods = ReflectionUtility.GetMethods (target).ToArray ();
+
+            m_properties = ReflectionUtility.GetProperties (target, condition: HasValidAttribute<ClassPropertyAttribute>).ToList ();
+            m_properties.Sort ((a, b) => a.CanWrite.CompareTo (b.CanWrite));
+
             if (AllDrawers == null)
             {
                 AllDrawers = new Dictionary<Type, Type> ();
@@ -91,9 +106,11 @@ namespace WooshiiAttributes
             {
                 SerializedProperty property = m_visibleProperties[i];
 
-                GetGlobalAttribute (property);
-                GetArrayAttribute (property);
-                GetGroupAttribute (property);
+                bool hasGlobal = GetGlobalDrawer (property);
+                m_serializedData.Add (new SerializedData (GetObjectField (property), property, hasGlobal));
+
+                GetArrayDrawer (property);
+                GetGroupDrawer (property);
 
                 if (m_cachedGroupDrawer != null && !m_serializedData[actualIndex].isGlobal)
                 {
@@ -110,8 +127,6 @@ namespace WooshiiAttributes
             {
                 m_cachedGroupDrawer = null;
             }
-
-            m_properties = ReflectionUtility.GetProperties (target, condition: HasValidAttribute<ClassPropertyAttribute>).ToList();
         }
 
         public override void OnInspectorGUI()
@@ -123,17 +138,48 @@ namespace WooshiiAttributes
 
             m_cachedGroupDrawer = null;
 
-            for (int i = 0; i < m_properties.Count; i++)
+            if (m_properties.Count > 0)
             {
-                NativePropertyDrawer.OnGUI (m_properties[i], target);
+                GUIStyle style = EditorStyles.helpBox;
+                EditorGUILayout.BeginVertical (style);
+
+                EditorGUILayout.LabelField ("Read Only Properties", EditorStyles.boldLabel);
+                EditorGUI.BeginDisabledGroup (true);
+                bool canWrite = false;
+
+                for (int i = 0; i < m_properties.Count; i++)
+                {
+                    if (!canWrite && m_properties[i].CanWrite)
+                    {
+                        EditorGUI.EndDisabledGroup ();
+
+                        EditorGUILayout.EndVertical ();
+
+
+                        canWrite = true;
+
+                        EditorGUILayout.BeginVertical (style);
+                        EditorGUILayout.LabelField ("Writable Properties", EditorStyles.boldLabel);
+                        EditorGUI.BeginDisabledGroup (true);
+                    }
+
+                    NativePropertyDrawer.OnGUI (m_properties[i], target);
+                }
+
+                if (!canWrite)
+                {
+                    EditorGUILayout.EndVertical ();
+                }
+
+                EditorGUILayout.EndVertical ();
+                EditorGUI.EndDisabledGroup ();
             }
 
             EditorGUI.BeginChangeCheck ();
 
             for (int i = 0; i < m_serializedData.Count; i++)
             {
-                SerializedData data = m_serializedData[i];
-                DrawProperty (data);
+                DrawProperty (m_serializedData[i]);
             }
 
             foreach (GlobalDrawer drawer in m_globalDrawers.Values)
@@ -151,180 +197,10 @@ namespace WooshiiAttributes
                 m_visibleMethods[i].OnGUI ();
             }
 
+            Repaint ();
         }
 
-        // Reflection
-
-        private void FindDrawerTypes(Type _attributeType)
-        {
-            foreach (Type type in ReflectionUtility.GetTypeSubclasses (_attributeType))
-            {
-                Type baseType = type.BaseType;
-
-                if (baseType.IsAbstract || type.IsGenericType)
-                {
-                    continue;
-                }
-
-                AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
-            }
-        }
-
-        private void GetMethodDrawers()
-        {
-            foreach (MethodInfo method in ReflectionUtility.GetMethods (target))
-            {
-                MethodButtonAttribute attribute = method.GetCustomAttribute<MethodButtonAttribute> ();
-
-                if (attribute == null)
-                {
-                    continue;
-                }
-
-                MethodDrawer drawer = new MethodDrawer (attribute, target, method);
-
-                m_visibleMethods.Add (drawer);
-            }
-        }
-
-        // Serialized Data
-
-        /// <summary>
-        /// Find the global property assigned to this SerializedProperty
-        /// </summary>
-        /// <param name="_property">The target property</param>
-        private void GetGlobalAttribute(SerializedProperty _property)
-        {
-            // Get the field based on the serialized property cached name
-            // TODO: [Damian] Be able to find child data as this currently only works for root fields
-            FieldInfo field = ReflectionUtility.GetField (target, _property.name);
-
-            if (field == null)
-            {
-                return;
-            }
-
-            GlobalAttribute globalAttribute = field.GetCustomAttribute<GlobalAttribute> ();
-
-            m_serializedData.Add (new SerializedData (field, _property, globalAttribute != null));
-
-            if (globalAttribute == null)
-            {
-                return;
-            }
-
-            Type attributeType = globalAttribute.GetType ();
-
-            if (!m_globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
-            {
-                drawer = CreateInstanceOfType<GlobalDrawer> (AllDrawers[attributeType], serializedObject, _property);
-                m_globalDrawers.Add (attributeType, drawer);
-            }
-
-            drawer.Register (globalAttribute, _property);
-        }
-
-        private void GetArrayAttribute(SerializedProperty _property)
-        {
-            // Get the field based on the serialized property cached name
-            FieldInfo field = target.GetType ().GetField (_property.name);
-
-            if (field == null)
-            {
-                return;
-            }
-
-            ArrayAttribute arrayAttribute = field.GetCustomAttribute<ArrayAttribute> ();
-
-            if (arrayAttribute == null)
-            {
-                return;
-            }
-
-            Type attributeType = arrayAttribute.GetType ();
-
-            if (TryGetData (_property, out SerializedData _data))
-            {
-                ArrayDrawer drawer = CreateInstanceOfType<ArrayDrawer> (AllDrawers[attributeType], serializedObject, _property);
-
-                _data.m_arrayDrawer = drawer;
-            }
-        }
-
-        private void GetGroupAttribute(SerializedProperty _property)
-        {
-            // Get the field based on the serialized property cached name
-            FieldInfo field = ReflectionUtility.GetField (target, _property.name);
-
-            if (field == null)
-            {
-                return;
-            }
-
-            BeginGroupAttribute beginAttribute = field.GetCustomAttribute<BeginGroupAttribute> ();
-            EndGroupAttribute endAttribute = field.GetCustomAttribute<EndGroupAttribute> ();
-
-            if (m_cachedGroupDrawer != null)
-            {
-                if (endAttribute != null)
-                {
-                    m_cachedGroupDrawer.RegisterProperty (_property);
-                    m_cachedGroupDrawer = null;
-                }
-
-                return;
-            }
-
-            if (beginAttribute == null)
-            {
-                return;
-            }
-
-            Type attributeType = beginAttribute.GetType ();
-
-            if (TryGetData (_property, out SerializedData _data))
-            {
-                GroupDrawer drawer = CreateInstanceOfType<GroupDrawer> (AllDrawers[attributeType], beginAttribute, serializedObject);
-
-                _data.hasGroup = true;
-                _data.m_groupDrawer = drawer;
-                m_cachedGroupDrawer = drawer;
-            }
-        }
-
-        // Helpers
-
-        private void CreateGlobalDrawer<T>(T _attribute, SerializedProperty _property, Type _drawerType, params object[] _drawerArgs) where T : GlobalAttribute
-        {
-            if (_attribute == null)
-            {
-                return;
-            }
-
-            Type attributeType = _attribute.GetType ();
-
-            if (m_globalDrawers.TryGetValue (attributeType, out GlobalDrawer drawer))
-            {
-                drawer = CreateInstanceOfType<GlobalDrawer> (drawer.GetType (), _property, target);
-                m_globalDrawers.Add (attributeType, drawer);
-            }
-
-            drawer.Register (_attribute, _property);
-        }
-
-        private T CreateInstanceOfType<T>(Type _type, params object[] _args)
-        {
-            T instance = (T)Activator.CreateInstance (_type, _args);
-
-            return instance;
-        }
-
-        private bool TryGetData(SerializedProperty _property, out SerializedData _data)
-        {
-            _data = m_serializedData.FirstOrDefault (t => t.m_property == _property);
-
-            return _data != null;
-        }
+        // GUI 
 
         private void DrawProperty(SerializedData _data)
         {
@@ -357,9 +233,197 @@ namespace WooshiiAttributes
             }
         }
 
-        private bool HasValidAttribute<T>(PropertyInfo _property) where T : ClassPropertyAttribute
+        // Instanciation
+
+        private void FindDrawerTypes(Type _attributeType)
         {
-            return _property.GetCustomAttribute<T>() != null;
+            foreach (Type type in ReflectionUtility.GetTypeSubclasses (_attributeType, true))
+            {
+                Type baseType = type.BaseType;
+
+                if (baseType.IsAbstract || type.IsGenericType)
+                {
+                    continue;
+                }
+
+                AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
+            }
+        }
+
+        private void GetMethodDrawers()
+        {
+            methods = ReflectionUtility.GetMethods (target).ToArray ();
+
+            foreach (MethodInfo method in methods)
+            {
+                MethodButtonAttribute attribute = GetAttribute<MethodButtonAttribute> (method);
+
+                if (attribute == null)
+                {
+                    continue;
+                }
+
+                MethodDrawer drawer = new MethodDrawer (attribute, target, method);
+
+                m_visibleMethods.Add (drawer);
+            }
+        }
+
+        private bool GetGlobalDrawer(SerializedProperty _property)
+        {
+            GlobalAttribute attribute = GetAttribute<GlobalAttribute> (_property);
+
+            if (attribute == null)
+            {
+                return false;
+            }
+
+            Type type = attribute.GetType ();
+
+
+            GlobalDrawer drawer;
+
+            if (m_globalDrawers.ContainsKey (type))
+            {
+                drawer = m_globalDrawers[type];
+            }
+            else
+            {
+                drawer = CreateDrawer<GlobalDrawer> (attribute, serializedObject, _property);
+                m_globalDrawers.Add (type, drawer);
+            }
+
+            drawer.Register (attribute, _property);
+
+            return true;
+        }
+
+        private void GetArrayDrawer(SerializedProperty _property)
+        {
+            ArrayAttribute attribute = GetAttribute<ArrayAttribute> (_property);
+
+            if (attribute == null)
+            {
+                return;
+            }
+
+            Type attributeType = attribute.GetType ();
+
+            if (TryGetData (_property, out SerializedData _data))
+            {
+                ArrayDrawer drawer = CreateDrawer<ArrayDrawer> (attribute, serializedObject, _property);
+                _data.m_arrayDrawer = drawer;
+            }
+        }
+
+        private void GetGroupDrawer(SerializedProperty _property)
+        {
+            BeginGroupAttribute beginAttribute = GetAttribute<BeginGroupAttribute> (_property);
+            EndGroupAttribute endAttribute = GetAttribute<EndGroupAttribute> (_property);
+
+            if (endAttribute != null)
+            {
+                if (m_cachedGroupDrawer != null)
+                {
+                    m_cachedGroupDrawer.RegisterProperty (_property);
+                    m_cachedGroupDrawer = null;
+                }
+
+                return;
+            }
+
+            if (beginAttribute == null)
+            {
+                return;
+            }
+
+            if (TryGetData (_property, out SerializedData data))
+            {
+                GroupDrawer drawer = CreateDrawer<GroupDrawer> (beginAttribute, beginAttribute, serializedObject);
+
+                data.hasGroup = true;
+                data.m_groupDrawer = drawer;
+
+                m_cachedGroupDrawer = drawer;
+            }
+        }
+
+        private T CreateDrawer<T>(Attribute _attribute, params object[] _args)
+        {
+            return (T)Activator.CreateInstance (AllDrawers[_attribute.GetType ()], _args);
+        }
+
+        // Helpers
+
+        private bool TryGetData(SerializedProperty _property, out SerializedData _data)
+        {
+            _data = m_serializedData.FirstOrDefault (t => t.m_property == _property);
+
+            return _data != null;
+        }
+
+        // --- Reflection
+
+        private bool HasValidAttribute<T>(MemberInfo _member) where T : Attribute
+        {
+            return _member.GetCustomAttribute<T> () != null;
+        }
+
+        private T GetAttribute<T>(SerializedProperty _property) where T : Attribute
+        {
+            FieldInfo field = m_targetType.GetField (_property.name);
+
+            return GetAttribute<T> (field);
+        }
+
+        private T GetAttribute<T>(FieldInfo _field) where T : Attribute
+        {
+            if (_field == null)
+            {
+                throw new ArgumentNullException ();
+            }
+
+            return _field.GetCustomAttribute<T> ();
+        }
+
+        private T GetAttribute<T>(MethodInfo _method) where T : MethodButtonAttribute
+        {
+            if (_method == null)
+            {
+                throw new ArgumentNullException ();
+            }
+
+            return _method.GetCustomAttribute<T> ();
+        }
+
+        private FieldInfo GetObjectField(string _name)
+        {
+            return fields.FirstOrDefault (field => field.Name == name);
+        }
+
+        private FieldInfo GetObjectField(SerializedProperty _property)
+        {
+            return GetObjectField (_property.name);
         }
     }
 }
+
+
+// Serialized Data
+
+// >>>> DRAWER TYPES <<<<
+
+// Globals - Can happen anywhere, on anything
+//  >> Normally move, group, reorder
+//  >> Do they need instances? Should re-evaluate
+//  >> Single per instance
+
+// Array - Handles Serialized Collections
+//  >> Has to be on an array/collection or break from creation
+//  >> Do they need instances? Should re-evaluate
+//  >> Single per instance
+
+// Group - Groups data together in some way
+//  >> Needs an attribute to end the group or will end at the end of the field list
+//  >> Do they need instances? Should re-evaluate
+//  >> Can multiple be on one instance?
