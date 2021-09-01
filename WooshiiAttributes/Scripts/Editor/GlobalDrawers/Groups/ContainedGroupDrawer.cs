@@ -4,13 +4,15 @@ namespace WooshiiAttributes
 {
     public class ContainedGroupDrawer : GlobalDrawer<ContainedGroupAttribute>
     {
+        private ContainedGroupAttribute Header => Attributes[0] as ContainedGroupAttribute;
+
         public ContainedGroupDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
         {
         }
 
         protected override void OnGUI_Internal()
         {
-            string name = Attributes[0].Name;
+            string name = Header.Name;
             EditorGUILayout.BeginVertical (EditorStyles.helpBox);
             {
                 EditorGUILayout.LabelField (name, EditorStyles.boldLabel);

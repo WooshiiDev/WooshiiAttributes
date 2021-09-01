@@ -24,17 +24,9 @@ namespace WooshiiAttributes
 
     public class GlobalDrawer<T> : GlobalDrawer where T : GlobalAttribute
     {
-        public new List<T> Attributes { get; private set; }
-
         public GlobalDrawer(SerializedObject _serializedObject, SerializedProperty _property) : base (_serializedObject, _property, typeof (T))
         {
-            Attributes = new List<T> ();
-        }
 
-        public override void Register(GlobalAttribute _attribute, SerializedProperty _property)
-        {
-            Attributes.Add (_attribute as T);
-            Properties.Add (_property);
         }
     }
 }

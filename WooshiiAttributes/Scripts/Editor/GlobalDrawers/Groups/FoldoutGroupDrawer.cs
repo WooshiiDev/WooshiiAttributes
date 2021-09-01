@@ -5,8 +5,9 @@ namespace WooshiiAttributes
 {
     public class FoldoutGroupDrawer : GlobalDrawer<FoldoutGroupAttribute>
     {
-        private static GUIStyle HelpStyle;
+        private FoldoutGroupAttribute Header => Attributes[0] as FoldoutGroupAttribute;
 
+        private static GUIStyle HelpStyle;
         private bool m_shown;
 
         public FoldoutGroupDrawer(SerializedObject parent, SerializedProperty property) : base (parent, property)
@@ -20,7 +21,8 @@ namespace WooshiiAttributes
                 HelpStyle = new GUIStyle (EditorStyles.boldLabel);
             }
 
-            string name = Attributes[0].Name;
+            string name = Header.Name;
+
             if (m_shown = EditorGUILayout.Foldout (m_shown, name, true))
             {
                 EditorGUI.indentLevel++;

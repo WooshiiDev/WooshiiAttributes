@@ -32,7 +32,7 @@ namespace WooshiiAttributes
         [EndGroup()] public int k;
 
         // ============ Groups ============
-        [HeaderLineGroupAttribute ("Header Line Group Stats")] public int health, speed, damage;
+        [GlobalGroup("Header Line Group Stats", true, true, false, true)] public int health, speed, damage;
         [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
         [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
         [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;

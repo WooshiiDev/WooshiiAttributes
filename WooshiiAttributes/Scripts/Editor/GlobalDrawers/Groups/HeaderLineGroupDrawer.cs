@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
-    public class HeaderLineGroupDrawer : GlobalDrawer<HeaderLineGroupAttributeAttribute>
+    public class HeaderLineGroupDrawer : GlobalDrawer<HeaderLineGroupAttribute>
     {
+        private HeaderLineGroupAttribute Header => Attributes[0] as HeaderLineGroupAttribute;
         private static GUIStyle HeaderLineStyle;
 
         public HeaderLineGroupDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
@@ -18,7 +19,7 @@ namespace WooshiiAttributes
                 HeaderLineStyle = new GUIStyle (EditorStyles.boldLabel);
             }
 
-            string name = Attributes[0].Name;
+            string name = Header.Name;
             EditorGUILayout.LabelField (name.ToUpper (), HeaderLineStyle);
 
             Color color = HeaderLineStyle.normal.textColor;
@@ -29,7 +30,7 @@ namespace WooshiiAttributes
 
             for (int j = 0; j < Attributes.Count; j++)
             {
-                if (!(Attributes[j] is HeaderLineGroupAttributeAttribute groupAttribute))
+                if (!(Attributes[j] is HeaderLineGroupAttribute groupAttribute))
                 {
                     continue;
                 }
