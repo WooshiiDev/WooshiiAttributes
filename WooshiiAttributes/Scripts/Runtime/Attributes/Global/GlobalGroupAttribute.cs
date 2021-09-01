@@ -22,7 +22,7 @@ namespace WooshiiAttributes
             Contained = contained;
         }
 
-        public override string GetValidator()
+        public override string GetIdenifier()
         {
             return Name;
         }

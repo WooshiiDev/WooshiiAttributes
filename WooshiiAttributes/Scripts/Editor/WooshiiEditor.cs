@@ -280,7 +280,7 @@ namespace WooshiiAttributes
 
             Type type = attribute.GetType ();
 
-            string validator = attribute.GetValidator ();
+            string validator = attribute.GetIdenifier ();
             GlobalDrawer drawer;
 
             if (m_globalDrawers.ContainsKey (validator))
