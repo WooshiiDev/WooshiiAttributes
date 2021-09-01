@@ -15,9 +15,22 @@ namespace WooshiiAttributes
 
             public ExampleData childData;
         }
-    
+
+        // ============ Groups ============
+        [GlobalGroup ("Header Line Group Stats", true, false, false, false)] public int health, speed, damage;
+        [GlobalGroup ("Header Group Stats", true, true)] public int otherHealth, otherSpeed, otherDamage;
+        [GlobalGroup ("Contained Group Stats", true, true, true)] public int containedHealth, containedSpeed, containedDamage;
+        [GlobalGroup ("Foldout Group Stats", true, true, true, true)] public int foldedHealth, foldedSpeed, foldedDamage;
+        [GlobalGroup ("Foldout Group Stats")] public ExampleData data;
+
+        // ============ ReadOnly ============
+        [HeaderLine ("ReadOnly")]
+        [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
+        [ReadOnly (DisplayMode.EDITOR)] public string readOnlyEditor = "Can see me in the Editor when not playing only.";
+        [ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
+
         [BeginGroup ("Group of stuff", true, true, true)]
-        public int a; 
+        public int a;
         public int b;
         public int c;
         public int d;
@@ -29,19 +42,7 @@ namespace WooshiiAttributes
 
         public ExampleData[] j;
 
-        [EndGroup()] public int k;
-
-        // ============ Groups ============
-        [GlobalGroup("Header Line Group Stats", true, true, false, true)] public int health, speed, damage;
-        [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
-        [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
-        [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;
-
-        // ============ ReadOnly ============
-        [HeaderLine ("ReadOnly")]
-        [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
-        [ReadOnly (DisplayMode.EDITOR)] public string readOnlyEditor = "Can see me in the Editor when not playing only.";
-        [ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
+        [EndGroup ()] public int k;
 
         // ============ Basic Data Types ============
         [HeaderLine ("Basic Types")]

@@ -55,12 +55,17 @@ namespace WooshiiAttributes
 
             if (attribute.TitleUnderlined)
             {
-                Color color = GroupStyle.normal.textColor;
+                Color color = new Color(0.4f, 0.4f, 0.4f);
                 Rect rect = GUILayoutUtility.GetLastRect ();
-                rect.y += rect.height - 1;
+
+                rect.x -= 4f;
+                rect.width += 8f;
+                rect.y += rect.height + 2f;
 
                 WooshiiGUI.CreateLineSpacer (rect, color, 1);
             }
+
+            GUILayout.Space (3f);
         }
     }
 }

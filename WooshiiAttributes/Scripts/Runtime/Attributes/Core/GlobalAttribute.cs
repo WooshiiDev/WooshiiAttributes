@@ -3,7 +3,8 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class GlobalAttribute : Attribute
+    public abstract class GlobalAttribute : Attribute
     {
+        public abstract string GetValidator();
     }
 }

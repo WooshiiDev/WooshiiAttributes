@@ -45,7 +45,7 @@ namespace WooshiiAttributes
         private List<SerializedData> m_serializedData;
         private GroupDrawer m_cachedGroupDrawer;
 
-        private Dictionary<Type, GlobalDrawer> m_globalDrawers;
+        private Dictionary<string, GlobalDrawer> m_globalDrawers;
         private List<PropertyInfo> m_properties;
 
         // Object Data
@@ -92,7 +92,7 @@ namespace WooshiiAttributes
                 FindDrawerTypes (typeof (GroupDrawer));
             }
 
-            m_globalDrawers = new Dictionary<Type, GlobalDrawer> ();
+            m_globalDrawers = new Dictionary<string, GlobalDrawer> ();
             m_serializedData = new List<SerializedData> ();
 
             m_visibleMethods = new List<IMethodDrawer> ();
@@ -177,14 +177,14 @@ namespace WooshiiAttributes
 
             EditorGUI.BeginChangeCheck ();
 
-            for (int i = 0; i < m_serializedData.Count; i++)
-            {
-                DrawProperty (m_serializedData[i]);
-            }
-
             foreach (GlobalDrawer drawer in m_globalDrawers.Values)
             {
                 drawer.OnGUI ();
+            }
+
+            for (int i = 0; i < m_serializedData.Count; i++)
+            {
+                DrawProperty (m_serializedData[i]);
             }
 
             if (EditorGUI.EndChangeCheck ())
@@ -280,17 +280,17 @@ namespace WooshiiAttributes
 
             Type type = attribute.GetType ();
 
-
+            string validator = attribute.GetValidator ();
             GlobalDrawer drawer;
 
-            if (m_globalDrawers.ContainsKey (type))
+            if (m_globalDrawers.ContainsKey (validator))
             {
-                drawer = m_globalDrawers[type];
+                drawer = m_globalDrawers[validator];
             }
             else
             {
                 drawer = CreateDrawer<GlobalDrawer> (attribute, serializedObject, _property);
-                m_globalDrawers.Add (type, drawer);
+                m_globalDrawers.Add (validator, drawer);
             }
 
             drawer.Register (attribute, _property);
