@@ -88,7 +88,6 @@ namespace WooshiiAttributes
         public static void OnGUI(PropertyInfo property, Object target)
         {
             string displayName = property.Name;
-            object value;
 
             PropertyType type = GetPropertyType (property.PropertyType);
 
@@ -105,96 +104,95 @@ namespace WooshiiAttributes
                     break;
 
                 case PropertyType.BOOLEAN:
-                    value = EditorGUILayout.Toggle (displayName, GetValueType<bool> (property, target));
+                    EditorGUILayout.Toggle (displayName, GetValueType<bool> (property, target));
                     break;
 
                 case PropertyType.STRING:
-                    value = EditorGUILayout.TextField (displayName, GetValueType<string> (property, target));
+                    EditorGUILayout.TextField (displayName, GetValueType<string> (property, target));
                     break;
 
                 case PropertyType.INTEGER:
-                    value = EditorGUILayout.IntField (displayName, GetValueType<int> (property, target));
+                    EditorGUILayout.IntField (displayName, GetValueType<int> (property, target));
                     break;
 
                 case PropertyType.FLOAT:
-                    value = EditorGUILayout.FloatField (displayName, GetValueType<float> (property, target));
+                    EditorGUILayout.FloatField (displayName, GetValueType<float> (property, target));
                     break;
 
                 case PropertyType.DOUBLE:
-                    value = EditorGUILayout.DoubleField (displayName, GetValueType<double> (property, target));
+                    EditorGUILayout.DoubleField (displayName, GetValueType<double> (property, target));
                     break;
 
                 case PropertyType.LONG:
-                    value = EditorGUILayout.LongField (displayName, GetValueType<long> (property, target));
+                    EditorGUILayout.LongField (displayName, GetValueType<long> (property, target));
                     break;
 
                 case PropertyType.ENUM:
-                    value = EditorGUILayout.EnumPopup (displayName, GetValueType<Enum> (property, target));
+                    EditorGUILayout.EnumPopup (displayName, GetValueType<Enum> (property, target));
                     break;
 
                 // Unity Types
 
                 case PropertyType.UNITY_OBJECT:
-                    value = EditorGUILayout.ObjectField (displayName, GetValueType<Object> (property, target), property.PropertyType, false);
+                    EditorGUILayout.ObjectField (displayName, GetValueType<Object> (property, target), property.PropertyType, false);
                     break;
 
                 case PropertyType.VECTOR2:
-                    value = EditorGUILayout.Vector2Field (displayName, GetValueType<Vector2> (property, target));
+                    EditorGUILayout.Vector2Field (displayName, GetValueType<Vector2> (property, target));
                     break;
 
                 case PropertyType.VECTOR3:
-                    value = EditorGUILayout.Vector3Field (displayName, GetValueType<Vector3> (property, target));
+                    EditorGUILayout.Vector3Field (displayName, GetValueType<Vector3> (property, target));
                     break;
 
                 case PropertyType.VECTOR4:
-                    value = EditorGUILayout.Vector4Field (displayName, GetValueType<Vector4> (property, target));
+                    EditorGUILayout.Vector4Field (displayName, GetValueType<Vector4> (property, target));
                     break;
 
                 case PropertyType.VECTOR2_INT:
-                    value = EditorGUILayout.Vector2IntField (displayName, GetValueType<Vector2Int> (property, target));
+                    EditorGUILayout.Vector2IntField (displayName, GetValueType<Vector2Int> (property, target));
                     break;
 
                 case PropertyType.VECTOR3_INT:
-                    value = EditorGUILayout.Vector3IntField (displayName, GetValueType<Vector3Int> (property, target));
+                    EditorGUILayout.Vector3IntField (displayName, GetValueType<Vector3Int> (property, target));
                     break;
 
                 // Colour
 
                 case PropertyType.COLOR:
-                    value = EditorGUILayout.ColorField (displayName, GetValueType<Color> (property, target));
+                    EditorGUILayout.ColorField (displayName, GetValueType<Color> (property, target));
                     break;
 
                 case PropertyType.GRADIENT:
-                    value = EditorGUILayout.GradientField (displayName, GetValueType<Gradient> (property, target));
+                    EditorGUILayout.GradientField (displayName, GetValueType<Gradient> (property, target));
                     break;
 
                 // Others
 
                 case PropertyType.LAYERMASK:
-                    value = (LayerMask)EditorGUILayout.MaskField (
-                        displayName, GetValueType<LayerMask> (property, target), InternalEditorUtility.layers);
+                    EditorGUILayout.MaskField (displayName, GetValueType<LayerMask> (property, target), InternalEditorUtility.layers);
                     break;
 
                 case PropertyType.ANIMATION_CURVE:
-                    value = EditorGUILayout.CurveField (displayName, GetValueType<AnimationCurve> (property, target));
+                    EditorGUILayout.CurveField (displayName, GetValueType<AnimationCurve> (property, target));
                     break;
 
                 // Areas
 
                 case PropertyType.RECT:
-                    value = EditorGUILayout.RectField (displayName, GetValueType<Rect> (property, target));
+                    EditorGUILayout.RectField (displayName, GetValueType<Rect> (property, target));
                     break;
 
                 case PropertyType.RECT_INT:
-                    value = EditorGUILayout.RectIntField (displayName, GetValueType<RectInt> (property, target));
+                    EditorGUILayout.RectIntField (displayName, GetValueType<RectInt> (property, target));
                     break;
 
                 case PropertyType.BOUNDS:
-                    value = EditorGUILayout.BoundsField (displayName, GetValueType<Bounds> (property, target));
+                    EditorGUILayout.BoundsField (displayName, GetValueType<Bounds> (property, target));
                     break;
 
                 case PropertyType.BOUNDS_INT:
-                    value = EditorGUILayout.BoundsIntField (displayName, GetValueType<BoundsInt> (property, target));
+                    EditorGUILayout.BoundsIntField (displayName, GetValueType<BoundsInt> (property, target));
                     break;
 
                 default:
@@ -209,9 +207,7 @@ namespace WooshiiAttributes
                 return default;
             }
 
-            object value = property.GetValue (target);
-
-            return (T)value;
+            return (T)property.GetValue (target);
         }
 
         private static PropertyType GetPropertyType(Type type)

@@ -14,7 +14,10 @@ namespace WooshiiAttributes
 
         [ClassProperty] public DisplayMode EnumProperty { get; private set; } = DisplayMode.EDITOR;
 
-        [ClassProperty] public Object ObjectProperty { get; private set; }
+        [ClassProperty] public Object ObjectProperty { get; }
+        [ClassProperty] public Transform TransformProperty { get; }
+        [ClassProperty] public GameObject GameObjectProperty { get; }
+        [ClassProperty] public Rigidbody RigidbodyProperty { get; }
 
         [ClassProperty] public Vector2 Vector2Property { get; private set; } = Vector2.one;
         [ClassProperty] public Vector3 Vector3Property { get; private set; } = Vector3.one;
