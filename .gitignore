@@ -51,6 +51,9 @@ ExportedObj/
 # Unity3D generated file on crash reports
 sysinfo.txt
 
+# Remove package lock so Unity stops complaining
+package-lock.*
+
 # Builds
 *.apk
 *.unitypackage
