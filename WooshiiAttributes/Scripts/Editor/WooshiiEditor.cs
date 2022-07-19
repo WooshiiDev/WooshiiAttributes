@@ -75,6 +75,8 @@ namespace WooshiiAttributes
         {
             m_targetType = target.GetType ();
 
+            // Get Required field data
+
             fields = ReflectionUtility.GetFields (target).ToArray ();
             methods = ReflectionUtility.GetMethods (target).ToArray ();
 
@@ -233,7 +235,7 @@ namespace WooshiiAttributes
             }
         }
 
-        // Instanciation
+        // Drawers
 
         private void FindDrawerTypes(Type _attributeType)
         {
@@ -252,8 +254,6 @@ namespace WooshiiAttributes
 
         private void GetMethodDrawers()
         {
-            methods = ReflectionUtility.GetMethods (target).ToArray ();
-
             foreach (MethodInfo method in methods)
             {
                 MethodButtonAttribute attribute = GetAttribute<MethodButtonAttribute> (method);
