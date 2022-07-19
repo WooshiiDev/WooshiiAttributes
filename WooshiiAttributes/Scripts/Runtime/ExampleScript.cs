@@ -24,10 +24,10 @@ namespace WooshiiAttributes
         [GlobalGroup ("Foldout Group Stats")] public ExampleData data;
 
         // ============ ReadOnly ============
-        [HeaderLine ("ReadOnly")]
+        [BeginGroup("ReadOnly", true, true, true)]
         [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
         [ReadOnly (DisplayMode.EDITOR)] public string readOnlyEditor = "Can see me in the Editor when not playing only.";
-        [ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
+        [EndGroup][ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
 
         [BeginGroup ("Group of stuff", true, true, true)]
         public int a;
@@ -45,7 +45,8 @@ namespace WooshiiAttributes
         [EndGroup ()] public int k;
 
         // ============ Basic Data Types ============
-        [HeaderLine ("Basic Types")]
+
+        [BeginGroup ("Basic Types", true, true, true)]
         [IntClamp (0, 10, true)] public int clampedInteger;
         [FloatClamp (0, 10, true)] public float clampedFloat;
 
@@ -53,12 +54,15 @@ namespace WooshiiAttributes
         [FloatSlider (0, 10)] public float floatSlider;
 
         [Vector2Clamp (0, 10)] public Vector2 clampedVector2;
-        [Vector3Clamp (0, 10)] public Vector3 clampedVector3;
+        [EndGroup][Vector3Clamp (0, 10)] public Vector3 clampedVector3;
+        
 
+        // ============ Comment Examples ============
+
+        [BeginGroup ("Comment Examples", true, true, true)]
         [Paragraph ("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#1000FF")]
         public string stringWithParagraph;
 
-        // ============ Comment Examples ============
         [Comment ("Get yer 2D space here!", CommentAttribute.MessageType.NONE)]
         [HeaderLine ("Comments")]
         public Vector2 vectorValue;
@@ -70,10 +74,11 @@ namespace WooshiiAttributes
         public string stringValue;
 
         [Comment ("Toggle value.\nTake caution when editing. Can be indecisive. Also likes to bite.", CommentAttribute.MessageType.ERROR)]
-        public bool boolValue;
+        [EndGroup ()] public bool boolValue;
 
         // ============ Array Based Examples ============
-        [HeaderLine ("Array Based")]
+
+        [BeginGroup ("Collections", true, true, true)]
         [ArrayElements] public float[] arrayElements;
 
         [Reorderable] public ExampleData[] childClassArray;
