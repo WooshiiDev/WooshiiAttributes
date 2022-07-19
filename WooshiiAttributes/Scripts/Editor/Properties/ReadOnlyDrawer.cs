@@ -26,32 +26,24 @@ namespace WooshiiAttributes
                 case DisplayMode.BOTH:
                     m_canShow = true;
                     break;
-
-                default:
-                    break;
             }
 
             if (m_canShow)
             {
-                //EditorGUI.BeginProperty (position, label, property);
-
                 GUI.enabled = false;
-                //EditorGUI.PropertyField (position, property, label, true);
-                EditorGUILayout.PropertyField (property, label, true);
+                EditorGUI.PropertyField (position, property, label);
                 GUI.enabled = true;
-
-                //EditorGUI.EndProperty ();
             }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            //if (canShow)
-            //    return base.GetPropertyHeight (property, label) * 10;
-            //else
-            //    return 0;
+            if (m_canShow)
+            {
+                return base.GetPropertyHeight (property, label);
+            }
 
-            return 0;
+            return -EditorGUIUtility.standardVerticalSpacing;
         }
     }
 }
