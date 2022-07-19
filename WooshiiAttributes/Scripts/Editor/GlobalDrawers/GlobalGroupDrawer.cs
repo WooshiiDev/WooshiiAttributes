@@ -8,6 +8,9 @@ namespace WooshiiAttributes
         private GlobalGroupAttribute Header => Attributes[0] as GlobalGroupAttribute;
         private bool foldout;
 
+        private const float HEADER_HEIGHT = 23F;
+        private const float FOOTER_HEIGHT = 3F;
+
         public GlobalGroupDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
         {
         }
@@ -25,7 +28,8 @@ namespace WooshiiAttributes
 
             if (isContained)
             {
-                EditorGUILayout.BeginVertical (EditorStyles.helpBox);
+                //EditorGUILayout.BeginVertical (EditorStyles.helpBox);
+                InspectorGUI.BeginContainer (GetTotalHeight ());
             }
 
             // Label
@@ -51,35 +55,21 @@ namespace WooshiiAttributes
                     GUILayout.Space (3f);
                 }
 
-                if (isContained)
+                for (int i = 0; i < Attributes.Count; i++)
                 {
-                    EditorGUI.indentLevel++;
-                }
-
-                for (int j = 0; j < Attributes.Count; j++)
-                {
-                    GlobalGroupAttribute groupAttribute = Attributes[j] as GlobalGroupAttribute;
+                    GlobalGroupAttribute groupAttribute = Attributes[i] as GlobalGroupAttribute;
 
                     if (groupAttribute.Name == name)
                     {
-                        EditorGUILayout.PropertyField (Properties[j]);
+                        EditorGUILayout.PropertyField (Properties[i], new GUIContent(Properties[i].displayName),  Properties[i].isExpanded);
                     }
                 }
-
-                if (isContained)
-                {
-                    EditorGUI.indentLevel--;
-                }
-            }
-
-            if (hasFoldout)
-            {
-                EditorGUILayout.EndFoldoutHeaderGroup ();
             }
 
             if (isContained)
             {
-                EditorGUILayout.EndVertical ();
+                //EditorGUILayout.EndVertical ();
+                InspectorGUI.EndInspectorContainer ();
             }
         }
 
@@ -100,12 +90,24 @@ namespace WooshiiAttributes
 
         private Rect GetFoldoutRect()
         {
-            Rect rect = GUILayoutUtility.GetLastRect ();
+            return GUILayoutUtility.GetLastRect ();
+        }
 
-            rect.width += rect.x - 16f;
-            rect.x = 16;
+        private float GetTotalHeight()
+        {
+            if (!foldout)
+            {
+                return 20f;
+            }
 
-            return rect;
+            float height = 0;
+
+            for (int i = 0; i < Properties.Count; i++)
+            {
+                height += EditorGUI.GetPropertyHeight (Properties[i], true) + EditorGUIUtility.standardVerticalSpacing;
+            }
+
+            return height + HEADER_HEIGHT + FOOTER_HEIGHT;
         }
     }
 }

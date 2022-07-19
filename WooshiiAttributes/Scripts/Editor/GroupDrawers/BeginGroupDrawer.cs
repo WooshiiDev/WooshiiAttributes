@@ -9,7 +9,10 @@ namespace WooshiiAttributes
 {
     public class BeginGroupDrawer : GroupDrawer<BeginGroupAttribute>
     {
+        private const float HEADER_HEIGHT = 23F;
         private static GUIStyle GroupStyle;
+
+        private bool m_needsIndent;
 
         public BeginGroupDrawer(BeginGroupAttribute _attribute, SerializedObject _serializedObject) : base (_attribute, _serializedObject)
         {
@@ -28,25 +31,26 @@ namespace WooshiiAttributes
 
             if (!isTitleGrouped)
             {
-                DrawHeader (titleName);
+               // DrawHeader (titleName);
             }
 
-            EditorGUILayout.BeginVertical (EditorStyles.helpBox);
+            //EditorGUILayout.BeginVertical (EditorStyles.helpBox);
+            InspectorGUI.BeginContainer (GetTotalHeight ());
 
             if (isTitleGrouped)
             {
-                DrawHeader (titleName);
+               DrawHeader (titleName);
             }
 
-            EditorGUI.indentLevel++;
             for (int i = 0; i < m_properties.Count; i++)
             {
                 SerializedProperty property = m_properties[i];
-                EditorGUILayout.PropertyField (property, true);
+                EditorGUILayout.PropertyField (property, property.isExpanded);
             }
-            EditorGUI.indentLevel--;
 
-            EditorGUILayout.EndVertical ();
+            InspectorGUI.EndInspectorContainer ();
+
+            GUILayout.Space (3f);
         }
 
         private void DrawHeader(string _name)
@@ -66,6 +70,18 @@ namespace WooshiiAttributes
             }
 
             GUILayout.Space (3f);
+        }
+
+        private float GetTotalHeight()
+        {
+            float height = 0;
+
+            for (int i = 0; i < m_properties.Count; i++)
+            {
+                height += EditorGUI.GetPropertyHeight (m_properties[i], true) + EditorGUIUtility.standardVerticalSpacing;
+            }
+
+            return height + EditorGUIUtility.standardVerticalSpacing + HEADER_HEIGHT;
         }
     }
 }

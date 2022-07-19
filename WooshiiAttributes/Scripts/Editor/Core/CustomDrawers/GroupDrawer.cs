@@ -30,7 +30,7 @@ namespace WooshiiAttributes
 
         }
 
-        public void RegisterProperty(SerializedProperty _property)
+        public virtual void RegisterProperty(SerializedProperty _property)
         {
             m_properties.Add (_property);
         }
