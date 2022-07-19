@@ -112,10 +112,10 @@ namespace WooshiiAttributes
                             case PropertyType.VECTOR4:
                                 value = default (Vector4);
                                 break;
-                            case PropertyType.VECTOR2INT:
+                            case PropertyType.VECTOR2_INT:
                                 value = default (Vector2Int);
                                 break;
-                            case PropertyType.VECTOR3INT:
+                            case PropertyType.VECTOR3_INT:
                                 value = default (Vector3Int);
                                 break;
                             case PropertyType.COLOR:
@@ -124,7 +124,7 @@ namespace WooshiiAttributes
                             case PropertyType.GRADIENT:
                                 value = default (Gradient);
                                 break;
-                            case PropertyType.LAYER_MASK:
+                            case PropertyType.LAYERMASK:
                                 value = default (LayerMask);
                                 break;
                             case PropertyType.ANIMATION_CURVE:
@@ -133,13 +133,13 @@ namespace WooshiiAttributes
                             case PropertyType.RECT:
                                 value = default (Rect);
                                 break;
-                            case PropertyType.RECTINT:
+                            case PropertyType.RECT_INT:
                                 value = default (RectInt);
                                 break;
                             case PropertyType.BOUNDS:
                                 value = default (Bounds);
                                 break;
-                            case PropertyType.BOUNDSINT:
+                            case PropertyType.BOUNDS_INT:
                                 value = default (BoundsInt);
                                 break;
                             case PropertyType.POSE:
@@ -232,11 +232,11 @@ namespace WooshiiAttributes
                                 value = EditorGUILayout.Vector4Field (name, (Vector4)value);
                                 break;
 
-                            case PropertyType.VECTOR2INT:
+                            case PropertyType.VECTOR2_INT:
                                 value = EditorGUILayout.Vector2IntField (name, (Vector2Int)value);
                                 break;
 
-                            case PropertyType.VECTOR3INT:
+                            case PropertyType.VECTOR3_INT:
                                 value = EditorGUILayout.Vector3IntField (name, (Vector3Int)value);
                                 break;
 
@@ -259,7 +259,7 @@ namespace WooshiiAttributes
 
                             // Others
 
-                            case PropertyType.LAYER_MASK:
+                            case PropertyType.LAYERMASK:
                                 value = (LayerMask)EditorGUILayout.MaskField (name, (LayerMask)value, InternalEditorUtility.layers);
                                 break;
 
@@ -279,7 +279,7 @@ namespace WooshiiAttributes
                                 value = EditorGUILayout.RectField (name, (Rect)value);
                                 break;
 
-                            case PropertyType.RECTINT:
+                            case PropertyType.RECT_INT:
                                 value = EditorGUILayout.RectIntField (name,(RectInt)value);
                                 break;
 
@@ -287,7 +287,7 @@ namespace WooshiiAttributes
                                 value = EditorGUILayout.BoundsField (name, (Bounds)value);
                                 break;
 
-                            case PropertyType.BOUNDSINT:
+                            case PropertyType.BOUNDS_INT:
                                 value = EditorGUILayout.BoundsIntField (name, (BoundsInt)value);
                                 break;
 
