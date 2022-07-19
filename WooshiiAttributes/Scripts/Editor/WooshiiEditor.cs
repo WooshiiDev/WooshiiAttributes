@@ -382,24 +382,14 @@ namespace WooshiiAttributes
             return GetAttribute<T> (field);
         }
 
-        private T GetAttribute<T>(FieldInfo _field) where T : Attribute
+        private T GetAttribute<T>(MemberInfo _member) where T : Attribute
         {
-            if (_field == null)
+            if (_member == null)
             {
                 throw new ArgumentNullException ();
             }
 
-            return _field.GetCustomAttribute<T> ();
-        }
-
-        private T GetAttribute<T>(MethodInfo _method) where T : MethodButtonAttribute
-        {
-            if (_method == null)
-            {
-                throw new ArgumentNullException ();
-            }
-
-            return _method.GetCustomAttribute<T> ();
+            return _member.GetCustomAttribute<T> ();
         }
 
         private FieldInfo GetObjectField(string _name)
