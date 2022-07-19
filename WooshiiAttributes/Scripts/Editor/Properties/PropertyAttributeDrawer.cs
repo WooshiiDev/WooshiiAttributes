@@ -50,7 +50,7 @@ namespace WooshiiAttributes
 
     public static class NativePropertyDrawer
     {
-        private static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
+        public static Dictionary<Type, PropertyType> PropertyTypes = new Dictionary<Type, PropertyType> ()
         {
             { typeof(bool)          , PropertyType.BOOLEAN  },
             { typeof(string)        , PropertyType.STRING   },

@@ -52,7 +52,7 @@ namespace WooshiiAttributes
 
         [IntSlider (0, 10)] public int integerSlider;
         [FloatSlider (0, 10)] public float floatSlider;
-
+        
         [Vector2Clamp (0, 10)] public Vector2 clampedVector2;
         [EndGroup][Vector3Clamp (0, 10)] public Vector3 clampedVector3;
         
@@ -84,10 +84,37 @@ namespace WooshiiAttributes
         [Reorderable] public ExampleData[] childClassArray;
         [Reorderable] public int[] intArray;
 
+        // ============ Methods ============
+
         [MethodButton ()]
         public void ExampleMethod()
         {
             Debug.Log ("Example Method");
+        }
+
+        [MethodButton ()]
+        public void ExampleMethod(int a, int b)
+        {
+            Debug.Log (string.Format("{0} + {1} = {2}", a, b, a + b));
+        }
+
+        [MethodButton ("Example Method With Parameters", 10, "Hello World", true)]
+        public void AnotherExampleMethod(int intParameter, string stringParameter, bool booleanParameter)
+        {
+            Debug.Log (intParameter);
+            Debug.Log (stringParameter);
+            Debug.Log (booleanParameter);
+        }
+
+        [MethodButton ("Example Method With Complex Parameters", 10, "Hello World", true)]
+        public void AComplexMethod(float evalTime, Gradient gradient, AnimationCurve curve)
+        {
+            string format = string.Format (
+                "Gradient Colour - {0}, Animation Curve Value - {1}", gradient.Evaluate (evalTime), curve.Evaluate (evalTime));
+
+            Debug.Log (format);
+
+            transform.position += Vector3.up * 10;
         }
     }
 }
