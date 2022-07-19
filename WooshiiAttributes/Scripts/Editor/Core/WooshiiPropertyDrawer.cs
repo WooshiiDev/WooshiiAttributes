@@ -8,11 +8,6 @@ namespace WooshiiAttributes
         //Cached
         protected float m_lineHeight = EditorGUIUtility.singleLineHeight;
 
-        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
-        {
-            return base.GetPropertyHeight (_property, _label);
-        }
-
         //Custom Methods
         protected void DrawBackground(Rect _rect, Color _color)
         {
