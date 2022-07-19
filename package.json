@@ -1,7 +1,7 @@
 {
   "name": "com.wooshii.attributes",
   "displayName": "WooshiiAttributes",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "unity": "2018.4",
   "description": "WooshiiAttributes is my collection of attributes that I've either used in previous projects or have wanted to add myself to extend Unity's Inspector functionality.",
   "keywords": [
