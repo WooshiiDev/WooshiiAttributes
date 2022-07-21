@@ -205,7 +205,10 @@ namespace WooshiiAttributes
                 }
             }
 
-            Repaint ();
+            if (RequiresConstantRepaint())
+            {
+                Repaint();
+            }
         }
 
         // GUI 
