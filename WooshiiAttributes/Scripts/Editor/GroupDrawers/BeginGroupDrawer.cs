@@ -45,7 +45,7 @@ namespace WooshiiAttributes
             for (int i = 0; i < m_properties.Count; i++)
             {
                 SerializedProperty property = m_properties[i];
-                EditorGUILayout.PropertyField (property, property.isExpanded);
+                EditorGUILayout.PropertyField (property, new GUIContent(property.displayName), property.isExpanded);
             }
 
             InspectorGUI.EndInspectorContainer ();
