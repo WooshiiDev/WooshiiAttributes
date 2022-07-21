@@ -38,8 +38,6 @@ namespace WooshiiAttributes
 
             _position.height = GetParagraphHeight ();
 
-            Debug.Log(m_backgroundColor);
-
             GUI.backgroundColor = m_backgroundColor;
             EditorGUI.LabelField (_position, Target.Text, SmallStyle);
             GUI.backgroundColor = oldBackgroundColour;
