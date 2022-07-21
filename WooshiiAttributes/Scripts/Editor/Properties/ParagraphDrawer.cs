@@ -16,31 +16,33 @@ namespace WooshiiAttributes
 
         public override void OnGUI(Rect _position)
         {
+            Color oldBackgroundColour = GUI.backgroundColor;
+
             if (SmallStyle == null)
             {
                 SmallStyle = new GUIStyle (GUI.skin.box)
                 {
                     alignment = Target.Anchor,
                 };
+            }
 
-                if (ColorUtility.TryParseHtmlString (Target.TextColor, out m_textColor))
-                {
-                    SmallStyle.normal.textColor = m_textColor;
-                }
+            if (ColorUtility.TryParseHtmlString(Target.TextColor, out m_textColor))
+            {
+                SmallStyle.normal.textColor = m_textColor;
+            }
 
-                if (!ColorUtility.TryParseHtmlString (Target.BackgroundColour, out m_backgroundColor))
-                {
-                    m_backgroundColor = GUI.color;
-                }
+            if (!ColorUtility.TryParseHtmlString(Target.BackgroundColour, out m_backgroundColor))
+            {
+                m_backgroundColor = oldBackgroundColour;
             }
 
             _position.height = GetParagraphHeight ();
 
-            Color oldGUIColour = GUI.color;
+            Debug.Log(m_backgroundColor);
 
             GUI.backgroundColor = m_backgroundColor;
             EditorGUI.LabelField (_position, Target.Text, SmallStyle);
-            GUI.backgroundColor = oldGUIColour;
+            GUI.backgroundColor = oldBackgroundColour;
         }
 
         public override float GetHeight()
