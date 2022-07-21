@@ -142,35 +142,14 @@ namespace WooshiiAttributes
 
             if (m_properties.Count > 0)
             {
-                GUIStyle style = EditorStyles.helpBox;
-                EditorGUILayout.BeginVertical (style);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+                EditorGUILayout.LabelField("Read Only Properties", EditorStyles.boldLabel);
 
-                EditorGUILayout.LabelField ("Read Only Properties", EditorStyles.boldLabel);
                 EditorGUI.BeginDisabledGroup (true);
-                bool canWrite = false;
 
                 for (int i = 0; i < m_properties.Count; i++)
                 {
-                    if (!canWrite && m_properties[i].CanWrite)
-                    {
-                        EditorGUI.EndDisabledGroup ();
-
-                        EditorGUILayout.EndVertical ();
-
-
-                        canWrite = true;
-
-                        EditorGUILayout.BeginVertical (style);
-                        EditorGUILayout.LabelField ("Writable Properties", EditorStyles.boldLabel);
-                        EditorGUI.BeginDisabledGroup (true);
-                    }
-
                     NativePropertyDrawer.OnGUI (m_properties[i], target);
-                }
-
-                if (!canWrite)
-                {
-                    EditorGUILayout.EndVertical ();
                 }
 
                 EditorGUILayout.EndVertical ();
