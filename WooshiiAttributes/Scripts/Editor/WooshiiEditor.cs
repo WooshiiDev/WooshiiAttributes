@@ -8,7 +8,7 @@ using UnityEngine;
 namespace WooshiiAttributes
 {
     [CanEditMultipleObjects]
-    [CustomEditor (typeof (MonoBehaviour), true)]
+    [CustomEditor(typeof(MonoBehaviour), true)]
     public class WooshiiEditor : Editor
     {
         private class SerializedData
@@ -31,6 +31,8 @@ namespace WooshiiAttributes
         }
 
         // Static Data
+
+        private const BindingFlags DEFAULT_BINDING_FLAGS = ReflectionUtility.DEFAULT_FLAGS;
 
         /// <summary>
         /// Dictionary with a key value pair linking custom attributes to their corresponding drawer type
@@ -68,39 +70,39 @@ namespace WooshiiAttributes
 
         private void OnEnable()
         {
-            Initialize ();
+            Initialize();
         }
 
         private void Initialize()
         {
-            m_targetType = target.GetType ();
+            m_targetType = target.GetType();
 
             // Get Required field data
 
-            fields = ReflectionUtility.GetFields (target).ToArray ();
-            methods = ReflectionUtility.GetMethods (target).ToArray ();
+            fields = ReflectionUtility.GetFields(target).ToArray();
+            methods = ReflectionUtility.GetMethods(target).ToArray();
 
-            m_properties = ReflectionUtility.GetProperties (target, condition: HasValidAttribute<ClassPropertyAttribute>).ToList ();
-            m_properties.Sort ((a, b) => a.CanWrite.CompareTo (b.CanWrite));
+            m_properties = ReflectionUtility.GetProperties(target, condition: HasValidAttribute<ClassPropertyAttribute>).ToList();
+            m_properties.Sort((a, b) => a.CanWrite.CompareTo(b.CanWrite));
 
             if (AllDrawers == null)
             {
-                AllDrawers = new Dictionary<Type, Type> ();
+                AllDrawers = new Dictionary<Type, Type>();
 
                 //TODO: [Damian] Merge type finding and change all to interfaces
-                FindDrawerTypes (typeof (GlobalDrawer));
-                FindDrawerTypes (typeof (ArrayDrawer));
-                FindDrawerTypes (typeof (IMethodDrawer));
-                FindDrawerTypes (typeof (GroupDrawer));
+                FindDrawerTypes(typeof(GlobalDrawer));
+                FindDrawerTypes(typeof(ArrayDrawer));
+                FindDrawerTypes(typeof(IMethodDrawer));
+                FindDrawerTypes(typeof(GroupDrawer));
             }
 
-            m_globalDrawers = new Dictionary<string, GlobalDrawer> ();
-            m_serializedData = new List<SerializedData> ();
+            m_globalDrawers = new Dictionary<string, GlobalDrawer>();
+            m_serializedData = new List<SerializedData>();
 
-            m_visibleMethods = new List<IMethodDrawer> ();
-            m_visibleProperties = SerializedUtility.GetAllVisibleProperties (serializedObject);
+            m_visibleMethods = new List<IMethodDrawer>();
+            m_visibleProperties = SerializedUtility.GetAllVisibleProperties(serializedObject);
 
-            GetMethodDrawers ();
+            GetMethodDrawers();
 
             // We need all the properties and their corresponding fields
             int actualIndex = 0;
@@ -108,16 +110,16 @@ namespace WooshiiAttributes
             {
                 SerializedProperty property = m_visibleProperties[i];
 
-                bool hasGlobal = GetGlobalDrawer (property);
-                m_serializedData.Add (new SerializedData (GetObjectField (property), property, hasGlobal));
+                bool hasGlobal = GetGlobalDrawer(property);
+                m_serializedData.Add(new SerializedData(GetObjectField(property), property, hasGlobal));
 
-                GetArrayDrawer (property);
-                GetGroupDrawer (property);
+                GetArrayDrawer(property);
+                GetGroupDrawer(property);
 
                 if (m_cachedGroupDrawer != null && !m_serializedData[actualIndex].isGlobal)
                 {
-                    m_cachedGroupDrawer.RegisterProperty (property);
-                    m_visibleProperties.RemoveAt (i);
+                    m_cachedGroupDrawer.RegisterProperty(property);
+                    m_visibleProperties.RemoveAt(i);
 
                     i--;
                 }
@@ -135,7 +137,7 @@ namespace WooshiiAttributes
         {
             if (m_serializedData == null)
             {
-                Initialize ();
+                Initialize();
             }
 
             m_cachedGroupDrawer = null;
@@ -145,42 +147,42 @@ namespace WooshiiAttributes
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                 EditorGUILayout.LabelField("Read Only Properties", EditorStyles.boldLabel);
 
-                EditorGUI.BeginDisabledGroup (true);
+                EditorGUI.BeginDisabledGroup(true);
 
                 for (int i = 0; i < m_properties.Count; i++)
                 {
-                    NativePropertyDrawer.OnGUI (m_properties[i], target);
+                    NativePropertyDrawer.OnGUI(m_properties[i], target);
                 }
 
-                EditorGUILayout.EndVertical ();
-                EditorGUI.EndDisabledGroup ();
+                EditorGUILayout.EndVertical();
+                EditorGUI.EndDisabledGroup();
             }
 
-            EditorGUI.BeginChangeCheck ();
+            EditorGUI.BeginChangeCheck();
 
             foreach (GlobalDrawer drawer in m_globalDrawers.Values)
             {
-                drawer.OnGUI ();
+                drawer.OnGUI();
             }
 
             for (int i = 0; i < m_serializedData.Count; i++)
             {
-                DrawProperty (m_serializedData[i]);
+                DrawProperty(m_serializedData[i]);
             }
 
-            if (EditorGUI.EndChangeCheck ())
+            if (EditorGUI.EndChangeCheck())
             {
-                serializedObject.ApplyModifiedProperties ();
+                serializedObject.ApplyModifiedProperties();
             }
 
             if (m_visibleMethods.Count > 0)
             {
-                EditorGUILayout.Space ();
-                EditorGUILayout.LabelField ("Exposed Methods", EditorStyles.boldLabel);
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Exposed Methods", EditorStyles.boldLabel);
 
                 for (int i = 0; i < m_visibleMethods.Count; i++)
                 {
-                    m_visibleMethods[i].OnGUI ();
+                    m_visibleMethods[i].OnGUI();
                 }
             }
 
@@ -202,24 +204,24 @@ namespace WooshiiAttributes
             if (_data.hasGroup)
             {
                 m_cachedGroupDrawer = _data.m_groupDrawer;
-                _data.m_groupDrawer.OnGUI ();
+                _data.m_groupDrawer.OnGUI();
                 return;
             }
 
             // Do not draw grouped variables
-            if (m_cachedGroupDrawer != null && m_cachedGroupDrawer.Properties.Contains (_data.m_property))
+            if (m_cachedGroupDrawer != null && m_cachedGroupDrawer.Properties.Contains(_data.m_property))
             {
                 return;
             }
 
             if (_data.m_arrayDrawer != null)
             {
-                _data.m_arrayDrawer.OnGUI ();
+                _data.m_arrayDrawer.OnGUI();
             }
             else
             {
 
-                EditorGUILayout.PropertyField (_data.m_property, true);
+                EditorGUILayout.PropertyField(_data.m_property, true);
             }
         }
 
@@ -227,7 +229,7 @@ namespace WooshiiAttributes
 
         private void FindDrawerTypes(Type _attributeType)
         {
-            foreach (Type type in ReflectionUtility.GetTypeSubclasses (_attributeType, true))
+            foreach (Type type in ReflectionUtility.GetTypeSubclasses(_attributeType, true))
             {
                 Type baseType = type.BaseType;
 
@@ -236,7 +238,7 @@ namespace WooshiiAttributes
                     continue;
                 }
 
-                AllDrawers.Add (baseType.GetGenericArguments ()[0], type);
+                AllDrawers.Add(baseType.GetGenericArguments()[0], type);
             }
         }
 
@@ -244,76 +246,76 @@ namespace WooshiiAttributes
         {
             foreach (MethodInfo method in methods)
             {
-                MethodButtonAttribute attribute = GetAttribute<MethodButtonAttribute> (method);
+                MethodButtonAttribute attribute = GetAttribute<MethodButtonAttribute>(method);
 
                 if (attribute == null)
                 {
                     continue;
                 }
 
-                MethodButtonDrawer drawer = new MethodButtonDrawer (attribute, target, method);
+                MethodButtonDrawer drawer = new MethodButtonDrawer(attribute, target, method);
 
-                m_visibleMethods.Add (drawer);
+                m_visibleMethods.Add(drawer);
             }
         }
 
         private bool GetGlobalDrawer(SerializedProperty _property)
         {
-            GlobalAttribute attribute = GetAttribute<GlobalAttribute> (_property);
+            GlobalAttribute attribute = GetAttribute<GlobalAttribute>(_property);
 
             if (attribute == null)
             {
                 return false;
             }
 
-            Type type = attribute.GetType ();
+            Type type = attribute.GetType();
 
-            string validator = attribute.GetIdenifier ();
+            string validator = attribute.GetIdenifier();
             GlobalDrawer drawer;
 
-            if (m_globalDrawers.ContainsKey (validator))
+            if (m_globalDrawers.ContainsKey(validator))
             {
                 drawer = m_globalDrawers[validator];
             }
             else
             {
-                drawer = CreateDrawer<GlobalDrawer> (attribute, serializedObject, _property);
-                m_globalDrawers.Add (validator, drawer);
+                drawer = CreateDrawer<GlobalDrawer>(attribute, serializedObject, _property);
+                m_globalDrawers.Add(validator, drawer);
             }
 
-            drawer.Register (attribute, _property);
+            drawer.Register(attribute, _property);
 
             return true;
         }
 
         private void GetArrayDrawer(SerializedProperty _property)
         {
-            ArrayAttribute attribute = GetAttribute<ArrayAttribute> (_property);
+            ArrayAttribute attribute = GetAttribute<ArrayAttribute>(_property);
 
             if (attribute == null)
             {
                 return;
             }
 
-            Type attributeType = attribute.GetType ();
+            Type attributeType = attribute.GetType();
 
-            if (TryGetData (_property, out SerializedData _data))
+            if (TryGetData(_property, out SerializedData _data))
             {
-                ArrayDrawer drawer = CreateDrawer<ArrayDrawer> (attribute, serializedObject, _property);
+                ArrayDrawer drawer = CreateDrawer<ArrayDrawer>(attribute, serializedObject, _property);
                 _data.m_arrayDrawer = drawer;
             }
         }
 
         private void GetGroupDrawer(SerializedProperty _property)
         {
-            BeginGroupAttribute beginAttribute = GetAttribute<BeginGroupAttribute> (_property);
-            EndGroupAttribute endAttribute = GetAttribute<EndGroupAttribute> (_property);
+            BeginGroupAttribute beginAttribute = GetAttribute<BeginGroupAttribute>(_property);
+            EndGroupAttribute endAttribute = GetAttribute<EndGroupAttribute>(_property);
 
             if (endAttribute != null)
             {
                 if (m_cachedGroupDrawer != null)
                 {
-                    m_cachedGroupDrawer.RegisterProperty (_property);
+                    m_cachedGroupDrawer.RegisterProperty(_property);
                     m_cachedGroupDrawer = null;
                 }
 
@@ -325,9 +327,9 @@ namespace WooshiiAttributes
                 return;
             }
 
-            if (TryGetData (_property, out SerializedData data))
+            if (TryGetData(_property, out SerializedData data))
             {
-                GroupDrawer drawer = CreateDrawer<GroupDrawer> (beginAttribute, beginAttribute, serializedObject);
+                GroupDrawer drawer = CreateDrawer<GroupDrawer>(beginAttribute, beginAttribute, serializedObject);
 
                 data.hasGroup = true;
                 data.m_groupDrawer = drawer;
@@ -338,14 +340,14 @@ namespace WooshiiAttributes
 
         private T CreateDrawer<T>(Attribute _attribute, params object[] _args)
         {
-            return (T)Activator.CreateInstance (AllDrawers[_attribute.GetType ()], _args);
+            return (T)Activator.CreateInstance(AllDrawers[_attribute.GetType()], _args);
         }
 
         // Helpers
 
         private bool TryGetData(SerializedProperty _property, out SerializedData _data)
         {
-            _data = m_serializedData.FirstOrDefault (t => t.m_property == _property);
+            _data = m_serializedData.FirstOrDefault(t => t.m_property == _property);
 
             return _data != null;
         }
@@ -354,38 +356,42 @@ namespace WooshiiAttributes
 
         private bool HasValidAttribute<T>(MemberInfo _member) where T : Attribute
         {
-            return _member.GetCustomAttribute<T> () != null;
+            return _member.GetCustomAttribute<T>() != null;
         }
 
-        private T GetAttribute<T>(SerializedProperty _property) where T : Attribute
+        private T GetAttribute<T>(SerializedProperty _property, BindingFlags _flags = DEFAULT_BINDING_FLAGS) where T : Attribute
         {
-            FieldInfo field = m_targetType.GetField (_property.name);
+            FieldInfo field = m_targetType.GetField(_property.name, _flags);
 
-            return GetAttribute<T> (field);
+            if (field == null)
+            {
+                throw new NullReferenceException();
+            }
+
+            return GetAttribute<T>(field);
         }
 
         private T GetAttribute<T>(MemberInfo _member) where T : Attribute
         {
             if (_member == null)
             {
-                throw new ArgumentNullException ();
+                throw new ArgumentNullException();
             }
 
-            return _member.GetCustomAttribute<T> ();
+            return _member.GetCustomAttribute<T>();
         }
 
         private FieldInfo GetObjectField(string _name)
         {
-            return fields.FirstOrDefault (field => field.Name == name);
+            return fields.FirstOrDefault(field => field.Name == name);
         }
 
         private FieldInfo GetObjectField(SerializedProperty _property)
         {
-            return GetObjectField (_property.name);
+            return GetObjectField(_property.name);
         }
     }
 }
-
 
 // Serialized Data
 
