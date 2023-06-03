@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
@@ -25,7 +25,7 @@ namespace WooshiiAttributes
         private static void BeginContainer(Rect rect)
         {
             EditorGUILayout.BeginVertical ();
-            GUI.Box (rect, "", EditorStyles.helpBox);
+            GUI.Box (rect, "", GUI.skin.box);
         }
 
         // --- Foldout ---
