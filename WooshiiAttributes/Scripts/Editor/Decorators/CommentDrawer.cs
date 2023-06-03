@@ -1,4 +1,4 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
@@ -9,6 +9,7 @@ namespace WooshiiAttributes
     internal class CommentDrawer : WooshiiDecoratorDrawer
     {
         private const float HEIGHT_PADDING = 4f;
+        private const float ICON_SIZE = 68f;
 
         private CommentAttribute Target => attribute as CommentAttribute;
 
@@ -59,13 +60,13 @@ namespace WooshiiAttributes
             float width = EditorGUIUtility.currentViewWidth;
             float minHeight = singleLine * 2f;
 
-            // Icon, Scrollbar, Indent
             if (Target.messageType != CommentAttribute.MessageType.NONE)
             {
-                width -= 68;
+                width -= ICON_SIZE;
             }
 
             //Need a little extra for correct sizing of InfoBox
+
             float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Target.text), width);
             return Mathf.Max (minHeight, actualHeight);
         }
