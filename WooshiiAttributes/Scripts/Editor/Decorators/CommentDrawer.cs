@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
@@ -12,13 +12,13 @@ namespace WooshiiAttributes
 
         private CommentAttribute Target => attribute as CommentAttribute;
 
-        public override void OnGUI(Rect _rect)
+        public override void OnGUI(Rect rect)
         {
-            float indent = GetIndentLength (_rect);
+            float indent = GetIndentLength (rect);
 
-            _rect.Set (
-                _rect.x + indent, _rect.y,
-                _rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
+            rect.Set (
+                rect.x + indent, rect.y,
+                rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
 
             MessageType messageType = MessageType.None;
 
@@ -37,7 +37,7 @@ namespace WooshiiAttributes
                     break;
             }
 
-            EditorGUI.HelpBox (_rect, Target.text, messageType);
+            EditorGUI.HelpBox (rect, Target.text, messageType);
         }
 
         public static float GetIndentLength(Rect _sourceRect)
