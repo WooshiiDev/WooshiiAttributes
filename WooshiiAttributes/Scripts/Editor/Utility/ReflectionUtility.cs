@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -34,7 +34,7 @@ namespace WooshiiAttributes
         /// <returns>Returns a field if one is found, otherwise will return null</returns>
         public static FieldInfo GetField(Object _target, string _name, BindingFlags _flags = DEFAULT_FLAGS)
         {
-            return GetField(_target.GetType(), _name);
+            return GetField(_target.GetType(), _name, _flags);
         }
 
         public static IEnumerable<FieldInfo> GetFields(Object _instance, BindingFlags _flags = DEFAULT_FLAGS)
@@ -57,16 +57,16 @@ namespace WooshiiAttributes
             return GetFields (_instance.GetType (), _flags).Where (condition);
         }
 
-        // Properties
+        // - Properties
 
         public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DEFAULT_FLAGS, Predicate<PropertyInfo> condition = null)
         {
-            return GetProperties (_target.GetType (), DEFAULT_FLAGS, condition);
+            return GetProperties (_target.GetType (), _flags, condition);
         }
 
         public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DEFAULT_FLAGS, Predicate<PropertyInfo> condition = null)
         {
-            return _type.GetProperties (DEFAULT_FLAGS).Where (prop => condition.Invoke(prop));
+            return _type.GetProperties (_flags).Where (prop => condition.Invoke(prop));
         }
 
         /// <summary>
