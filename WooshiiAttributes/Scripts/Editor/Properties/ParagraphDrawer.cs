@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 
 namespace WooshiiAttributes
@@ -14,7 +14,7 @@ namespace WooshiiAttributes
         private Color m_textColor;
         private Color m_backgroundColor;
 
-        public override void OnGUI(Rect _position)
+        public override void OnGUI(Rect position)
         {
             Color oldBackgroundColour = GUI.backgroundColor;
 
@@ -36,10 +36,10 @@ namespace WooshiiAttributes
                 m_backgroundColor = oldBackgroundColour;
             }
 
-            _position.height = GetParagraphHeight ();
+            position.height = GetParagraphHeight ();
 
             GUI.backgroundColor = m_backgroundColor;
-            EditorGUI.LabelField (_position, Target.Text, SmallStyle);
+            EditorGUI.LabelField (position, Target.Text, SmallStyle);
             GUI.backgroundColor = oldBackgroundColour;
         }
 
