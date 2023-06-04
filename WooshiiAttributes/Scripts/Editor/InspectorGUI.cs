@@ -1,11 +1,11 @@
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 namespace WooshiiAttributes
 {
     public static class InspectorGUI
     {
-        public const float INSPECTOR_MARGIN_X = 4f;
+        public const float INSPECTOR_MARGIN_X = 2f;
 
         // Containers
 
@@ -54,7 +54,7 @@ namespace WooshiiAttributes
             EditorGUILayout.EndVertical ();
 
             Rect rect = GUILayoutUtility.GetLastRect ();
-            rect.y += rect.height + EditorGUIUtility.standardVerticalSpacing - 1;
+            rect.y += rect.height;
 
             return rect;
         }
@@ -63,9 +63,7 @@ namespace WooshiiAttributes
         {
             Rect rect = GetNextRect ();
 
-            rect.width += rect.x - INSPECTOR_MARGIN_X;
-            rect.x = INSPECTOR_MARGIN_X;
-
+            rect.x -= INSPECTOR_MARGIN_X;
             rect.height = EditorGUI.GetPropertyHeight (property, includeChildren);
 
             return rect;
@@ -75,8 +73,8 @@ namespace WooshiiAttributes
         {
             Rect rect = GetNextRect ();
 
-            rect.width += rect.x - INSPECTOR_MARGIN_X;
-            rect.x = INSPECTOR_MARGIN_X;
+            rect.x -= INSPECTOR_MARGIN_X;
+            rect.width += INSPECTOR_MARGIN_X * 2f;
 
             rect.height = height;
 
