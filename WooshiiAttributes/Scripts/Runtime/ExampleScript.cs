@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 #pragma warning disable CS0649
 
@@ -24,12 +24,12 @@ namespace WooshiiAttributes
         [GlobalGroup ("Foldout Group Stats")] public ExampleData data;
 
         // ============ ReadOnly ============
-        [BeginGroup("ReadOnly", true, true, true)]
+        [Group("ReadOnly", true, true, true)]
         [ReadOnly (DisplayMode.BOTH)] public string readOnlyAll = "Can see me at all times. Can't edit me though.";
         [ReadOnly (DisplayMode.EDITOR)] public string readOnlyEditor = "Can see me in the Editor when not playing only.";
         [EndGroup][ReadOnly (DisplayMode.PLAYING)] public string readOnlyPlay = "Can see me when Playing only.";
 
-        [BeginGroup ("Group of stuff", true, true, true)]
+        [Group ("Group of stuff", true, true, true)]
         public int a;
         public int b;
         public int c;
@@ -46,7 +46,7 @@ namespace WooshiiAttributes
 
         // ============ Basic Data Types ============
 
-        [BeginGroup ("Basic Types", true, true, true)]
+        [Group ("Basic Types", true, true, true)]
         [IntClamp (0, 10, true)] public int clampedInteger;
         [FloatClamp (0, 10, true)] public float clampedFloat;
 
@@ -59,8 +59,8 @@ namespace WooshiiAttributes
 
         // ============ Comment Examples ============
 
-        [BeginGroup ("Comment Examples", true, true, true)]
-        [Paragraph ("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#1000FF")]
+        [Group ("Comment Examples", true, true, true)]
+        [Paragraph("This be a string with a paragraph. Go ahead. Type stuff. Yes.", "#D2D2D2", "#1000FF")]
         public string stringWithParagraph;
 
         [Comment ("Get yer 2D space here!", CommentAttribute.MessageType.NONE)]
@@ -78,7 +78,7 @@ namespace WooshiiAttributes
 
         // ============ Array Based Examples ============
 
-        [BeginGroup ("Collections", true, true, true)]
+        [Group("Collections", true, true, true)]
         [ArrayElements] public float[] arrayElements;
 
         [Reorderable] public ExampleData[] childClassArray;
