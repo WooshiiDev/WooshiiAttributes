@@ -18,7 +18,7 @@ namespace WooshiiAttributes
             float indent = GetIndentLength (rect);
 
             rect.Set (
-                rect.x + indent, rect.y,
+                rect.x + indent, rect.y + 4f,
                 rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
 
             MessageType messageType = MessageType.None;
