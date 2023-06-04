@@ -24,7 +24,7 @@ namespace WooshiiAttributes
 
         private static void BeginContainer(Rect rect)
         {
-            EditorGUILayout.BeginVertical ();
+            EditorGUILayout.BeginVertical();
             GUI.Box (rect, "", GUI.skin.box);
         }
 
