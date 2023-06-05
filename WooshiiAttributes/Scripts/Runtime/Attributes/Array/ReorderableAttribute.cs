@@ -3,7 +3,7 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    public class ReorderableAttribute : ArrayAttribute
+    public class ReorderableAttribute : WooshiiAttribute// ArrayAttribute
     {
     }
 }

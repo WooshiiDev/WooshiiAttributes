@@ -4,48 +4,53 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
-    public class ReorderableDrawer : ArrayDrawer<ReorderableAttribute>
+    [RegisterDrawer]
+    public class ReorderableDrawer : GUIDrawer<ReorderableAttribute>
     {
         // --- Draw Refs ---
         private ReorderableList m_list;
 
-        public ReorderableDrawer(SerializedObject _parent, SerializedProperty _property) : base (_parent, _property)
+        private SerializedProperty Property => properties[0].SerializedValue;
+
+        public ReorderableDrawer(ReorderableAttribute attribute) : base(attribute) { }
+
+        public override void OnGUI()
         {
             if (m_list == null)
             {
-                m_list = new ReorderableList (SerializedObject, SerializedProperty, true, true, true, true)
+                GUIProperty property = properties[0];
+                SerializedProperty prop = property.SerializedValue;
+
+                m_list = new ReorderableList(prop.serializedObject, prop, true, true, true, true)
                 {
                     drawHeaderCallback = DrawHeader,
                     drawElementCallback = DrawElement,
                     elementHeightCallback = GetElementHeight,
                 };
             }
-        }
 
-        protected override void OnGUI_Internal()
-        {
-            EditorGUILayout.Space ();
+            EditorGUILayout.Space();
 
-            m_list.DoLayoutList ();
+            m_list.DoLayoutList();
 
-            EditorGUILayout.Space ();
+            EditorGUILayout.Space();
         }
 
         private void DrawHeader(Rect _rect)
         {
-            string label = $"{SerializedProperty.displayName} ({SerializedProperty.arrayElementType})";
+            string label = $"{Property.displayName} ({Property.arrayElementType})";
 
             EditorGUI.LabelField (_rect, label);
         }
 
         private void DrawElement(Rect _rect, int _index, bool _isActive, bool _isFocused)
         {
-            if (_index > SerializedProperty.arraySize)
+            if (_index > Property.arraySize)
             {
                 return;
             }
 
-            SerializedProperty property = SerializedProperty.GetArrayElementAtIndex (_index);
+            SerializedProperty property = Property.GetArrayElementAtIndex (_index);
 
             if (property == null)
             {
@@ -60,12 +65,12 @@ namespace WooshiiAttributes
 
         private float GetElementHeight(int _index)
         {
-            if (_index > SerializedProperty.arraySize)
+            if (_index > Property.arraySize)
             {
                 return 19f;
             }
 
-            SerializedProperty element = SerializedProperty.GetArrayElementAtIndex (_index);
+            SerializedProperty element = Property.GetArrayElementAtIndex (_index);
 
             if (element == null)
             {
