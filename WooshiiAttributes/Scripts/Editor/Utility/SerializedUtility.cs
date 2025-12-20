@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
@@ -9,15 +9,15 @@ namespace WooshiiAttributes
     public static class SerializedUtility
     {
         private static readonly string[] excludedPropertyTypes =
-          {
+        {
             "PPtr<MonoScript>",
             "ArraySize",
-            };
+        };
 
         private static readonly string[] excludedPropertyNames =
-            {
+        {
             "m_Script",
-            };
+        };
 
 
         /// <summary>
