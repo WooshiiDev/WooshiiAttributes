@@ -2,7 +2,7 @@
 
 namespace WooshiiAttributes
 {
-    [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage (AttributeTargets.Field | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class EndGroupAttribute : GroupAttribute
     {
         public EndGroupAttribute()
