@@ -13,6 +13,11 @@ namespace WooshiiAttributes
 
         public static bool HasInitialized { get; private set; }
 
+        static PropertyGUICache()
+        {
+            Collect();
+        }
+
         public static void Collect()
         {
             if (HasInitialized)
@@ -78,11 +83,6 @@ namespace WooshiiAttributes
 
         public void OnEnable()
         {
-            if (!PropertyGUICache.HasInitialized)
-            {
-                PropertyGUICache.Collect();
-            }
-
             CreateSerializedDrawers();
             CreateMethodDrawers();
         }
