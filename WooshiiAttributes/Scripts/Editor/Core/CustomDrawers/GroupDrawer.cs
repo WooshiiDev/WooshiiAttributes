@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
-    public class GroupDrawer : IGroupDrawer
+    public class GroupDrawer : GUIDrawerBase
     {
         protected SerializedObject m_serializedObject;
         public SerializedObject SerializedObject => m_serializedObject;
@@ -25,10 +25,7 @@ namespace WooshiiAttributes
             m_properties = new List<SerializedProperty> ();
         }
 
-        public virtual void OnGUI()
-        {
-
-        }
+        public override void OnGUI() { }
 
         public void RegisterProperty(SerializedProperty _property)
         {

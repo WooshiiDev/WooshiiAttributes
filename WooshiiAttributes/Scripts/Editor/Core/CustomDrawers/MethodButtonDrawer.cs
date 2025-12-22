@@ -7,7 +7,8 @@ using UnityEditorInternal;
 
 namespace WooshiiAttributes
 {
-    public class MethodButtonDrawer : IMethodDrawer
+    [GUIDrawer(typeof(MethodButtonAttribute))]
+    public class MethodButtonDrawer : GUIDrawerBase<MethodInfo>// IMethodDrawer
     {
         protected struct ParameterData
         {
@@ -36,7 +37,7 @@ namespace WooshiiAttributes
 
         protected bool hasArguments = false;
 
-        public MethodButtonDrawer(MethodButtonAttribute _attribute, Object _target, MethodInfo _info)
+        public MethodButtonDrawer(MethodButtonAttribute _attribute, Object _target, MethodInfo _info) : base(_info)
         {
             this._attribute = _attribute;
 
@@ -155,7 +156,7 @@ namespace WooshiiAttributes
             }
         }
 
-        public virtual void OnGUI()
+        public override void OnGUI()
         {
             if (hasArguments)
             {
@@ -327,6 +328,4 @@ namespace WooshiiAttributes
             MethodInfo.Invoke (_target, parameterValues);
         }
     }
-
-
 }
