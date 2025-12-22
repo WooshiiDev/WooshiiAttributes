@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -9,6 +9,7 @@ namespace WooshiiAttributes
     internal static class PropertyGUICache
     {
         private static Dictionary<Type, Type> s_drawerLookup = new Dictionary<Type, Type>();
+
         private static readonly Type s_fallbackDrawerType = typeof(SerializedPropertyDrawer);
 
         public static bool HasInitialized { get; private set; }
@@ -22,21 +23,17 @@ namespace WooshiiAttributes
 
             foreach (Type t in ReflectionUtility.GetTypeSubclasses(typeof(GUIDrawerBase), true))
             {
-                GUIDrawerAttribute attribute = t.GetCustomAttribute<GUIDrawerAttribute>();
+                GUIDrawerAttribute attribute = t.GetCustomAttribute<GUIDrawerAttribute>(true);
+
                 if (attribute == null)
                 {
                     continue;
-                }
+                } 
 
-                s_drawerLookup.Add(attribute.Element.GetType(), t);
+                s_drawerLookup.Add(attribute.Element, t);
             }
 
             HasInitialized = true;
-        }
-
-        public static GUIDrawerBase CreateDrawer(GUIElementAttribute guiElement)
-        {
-            return CreateDrawerFromType(GetDrawerTypeFromElement(guiElement));
         }
 
         public static GUIDrawerBase CreateDrawer(SerializedProperty property)
@@ -44,19 +41,35 @@ namespace WooshiiAttributes
             return new SerializedPropertyDrawer(property);
         }
 
-        private static GUIDrawerBase CreateDrawerFromType(Type drawerType)
+        public static GUIDrawerBase CreateDrawer(object target, MethodInfo method)
+        {
+            MethodButtonAttribute attr = method.GetCustomAttribute<MethodButtonAttribute>();
+            return CreateDrawer(attr, attr, target, method);
+        }
+
+        private static GUIDrawerBase CreateDrawer(GUIElementAttribute attr, params object[] args)
+        {
+            if (attr == null)
+            {
+                return null;
+            }
+
+            return CreateDrawerFromDrawerType(GetDrawerTypeFromAttribute(attr), args);
+        }
+
+        private static GUIDrawerBase CreateDrawerFromDrawerType(Type drawerType, params object[] args)
         {
             if (drawerType == null)
             {
                 drawerType = s_fallbackDrawerType;
             }
-
-            return (GUIDrawerBase)Activator.CreateInstance(drawerType);
+            
+            return (GUIDrawerBase)Activator.CreateInstance(drawerType, args);
         }
 
-        private static Type GetDrawerTypeFromElement(GUIElementAttribute guiElement)
+        private static Type GetDrawerTypeFromAttribute(GUIElementAttribute guiElement)
         {
-            if (!s_drawerLookup.TryGetValue(guiElement.GetType(), out Type drawerType))
+            if (!s_drawerLookup.TryGetValue(guiElement. GetType(), out Type drawerType))
             {
                 drawerType = s_fallbackDrawerType;
             }

@@ -45,11 +45,6 @@ namespace WooshiiAttributes
         }
     }
 
-    public class GUIElementAttribute : Attribute
-    {
-
-    }
-
     public interface ICustomPropertyDrawer
     {
         Type AttributeType { get; }
