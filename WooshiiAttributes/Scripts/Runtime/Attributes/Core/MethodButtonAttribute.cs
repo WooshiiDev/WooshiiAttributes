@@ -3,7 +3,7 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class MethodButtonAttribute : Attribute
+    public class MethodButtonAttribute : GUIElementAttribute
     {
         public string MethodName { get; set; }
         public object[] Arguments { get; private set; }

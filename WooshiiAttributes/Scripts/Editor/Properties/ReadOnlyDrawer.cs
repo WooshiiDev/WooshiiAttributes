@@ -7,7 +7,7 @@ namespace WooshiiAttributes
     public class ReadOnlyDrawer : WooshiiPropertyDrawer
     {
         private ReadOnlyAttribute m_target;
-        private bool m_canShow;
+        private bool m_shown;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -16,42 +16,35 @@ namespace WooshiiAttributes
             switch (m_target.m_displayMode)
             {
                 case DisplayMode.EDITOR:
-                    m_canShow = !EditorApplication.isPlaying;
+                    m_shown = !EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.PLAYING:
-                    m_canShow = EditorApplication.isPlaying;
+                    m_shown = EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.BOTH:
-                    m_canShow = true;
+                    m_shown = true;
                     break;
 
                 default:
                     break;
             }
 
-            if (m_canShow)
+            if (m_shown)
             {
-                //EditorGUI.BeginProperty (position, label, property);
-
                 GUI.enabled = false;
-                //EditorGUI.PropertyField (position, property, label, true);
-                EditorGUILayout.PropertyField (property, label, true);
+                EditorGUI.PropertyField (position, property, label, true);
                 GUI.enabled = true;
-
-                //EditorGUI.EndProperty ();
             }
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            //if (canShow)
-            //    return base.GetPropertyHeight (property, label) * 10;
-            //else
-            //    return 0;
-
-            return 0;
+            if (m_shown)
+                return EditorGUI.GetPropertyHeight(property, label, property.isExpanded) + EditorGUIUtility.standardVerticalSpacing;
+            else
+                return 0;
         }
     }
 }
