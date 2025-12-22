@@ -7,6 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    [GUIDrawer(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : GroupDrawer<BeginGroupAttribute>
     {
         private static GUIStyle GroupStyle;
@@ -39,10 +40,9 @@ namespace WooshiiAttributes
             }
 
             EditorGUI.indentLevel++;
-            for (int i = 0; i < m_properties.Count; i++)
+            for (int i = 0; i < m_drawers.Count; i++)
             {
-                SerializedProperty property = m_properties[i];
-                EditorGUILayout.PropertyField (property, true);
+                m_drawers[i].OnGUI();
             }
             EditorGUI.indentLevel--;
 

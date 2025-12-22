@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
@@ -15,21 +12,31 @@ namespace WooshiiAttributes
         protected Type m_attributeType;
         public Type AttributeType => m_attributeType;
 
-        protected List<SerializedProperty> m_properties;
-        public List<SerializedProperty> Properties => m_properties;
-
-        public SerializedProperty StartProperty => m_properties[0];
+        protected List<GUIDrawerBase> m_drawers = new List<GUIDrawerBase>();
+        public IEnumerable<GUIDrawerBase> Drawers => m_drawers;
+       
+        public GUIDrawerBase First
+        {
+            get
+            {
+                if (m_drawers.Count == 0)
+                {
+                    return null;
+                }
+                return m_drawers[0];
+            }
+        }
 
         public GroupDrawer(SerializedObject _serializedObject)
         {
-            m_properties = new List<SerializedProperty> ();
+            m_serializedObject = _serializedObject;
         }
 
         public override void OnGUI() { }
 
-        public void RegisterProperty(SerializedProperty _property)
+        public void RegisterProperty(GUIDrawerBase drawer)
         {
-            m_properties.Add (_property);
+            m_drawers.Add(drawer);
         }
     }
 
