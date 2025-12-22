@@ -1,4 +1,4 @@
-using Codice.Client.BaseCommands;
+﻿using Codice.Client.BaseCommands;
 using Codice.Client.Common.GameUI;
 using System;
 using System.Collections.Generic;
@@ -126,24 +126,15 @@ namespace WooshiiAttributes
         {
             foreach (SerializedProperty property in SerializedUtility.GetAllVisibleProperties(serializedObject))
             {
-                FieldInfo field = GetPropertyField(property);
-                bool hasGroup = HasGroup(field);
-               
                 GUIDrawerBase drawer = PropertyGUICache.CreateDrawer(property);
-                GroupDrawer group = null;
-                if (hasGroup || usingGroup)
+
+                if (drawer == null)
                 {
-                    group = GetOrCreateGroup(field.GetCustomAttribute<GroupAttribute>());
+                    continue;
                 }
 
-                if (group != null)
-                {
-                    group.RegisterProperty(drawer);
-                }
-                else
-                {
-                    guiDrawers.Add(drawer);
-                }
+                FieldInfo field = GetPropertyField(property);
+                RegisterDrawer(field, drawer);
             }
         }
         
@@ -158,23 +149,26 @@ namespace WooshiiAttributes
                     continue;
                 }
 
-                bool hasGroup = HasGroup(method);
-                GroupDrawer group = null;
-                if (hasGroup || usingGroup)
-                {
-                    group = GetOrCreateGroup(method.GetCustomAttribute<GroupAttribute>());
-                }
-
-                if (group != null)
-                {
-                    group.RegisterProperty(drawer);
-                }
-                else
-                {
-                    guiDrawers.Add(drawer);
-                }
+                RegisterDrawer(method, drawer);
             }
         }
+
+        private void RegisterDrawer(MemberInfo member, GUIDrawerBase drawer)
+        {
+            bool hasGroup = HasGroup(member);
+            GroupDrawer group = null;
+            if (hasGroup || usingGroup)
+            {
+                group = GetOrCreateGroup(member.GetCustomAttribute<GroupAttribute>());
+            }
+
+            if (group != null)
+            {
+                group.RegisterProperty(drawer);
+            }
+            else
+            {
+                guiDrawers.Add(drawer);
             }
         }
 
@@ -195,11 +189,6 @@ namespace WooshiiAttributes
             }
 
             return drawer;
-        }
-
-        private bool HasGroup(SerializedProperty property)
-        {
-            return HasGroup(GetPropertyField(property));
         }
 
         private bool HasGroup(MemberInfo member)
