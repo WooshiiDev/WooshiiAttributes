@@ -17,7 +17,7 @@ namespace WooshiiAttributes
         {
             Collect();
         }
-
+        
         public static void Collect()
         {
             if (HasInitialized)
@@ -39,9 +39,9 @@ namespace WooshiiAttributes
             HasInitialized = true;
         }
 
-        public static GroupDrawer CreateGroup(GroupAttribute attribute, SerializedObject target)
+        public static GroupDrawer CreateGroupDrawer(GroupAttribute attribute, SerializedObject target)
         {
-            return CreateDrawer(attribute, attribute, target) as GroupDrawer;
+            return CreateDrawer<GroupDrawer>(attribute, attribute, target);
         }
 
         public static GUIDrawerBase CreateDrawer(SerializedProperty property)
@@ -49,25 +49,24 @@ namespace WooshiiAttributes
             return new SerializedPropertyDrawer(property);
         }
 
-        public static GUIDrawerBase CreateDrawer(object target, MethodInfo method)
+        public static GUIDrawerBase CreateDrawer(MethodInfo method, MethodButtonAttribute attribute, object target)
         {
-            MethodButtonAttribute attr = method.GetCustomAttribute<MethodButtonAttribute>();
-            return CreateDrawer(attr, attr, target, method);
+            return CreateDrawer<GUIDrawerBase>(attribute, attribute, target, method);
         }
 
-        private static GUIDrawerBase CreateDrawer(GUIElementAttribute attr, params object[] args)
+        public static T CreateDrawer<T>(GUIElementAttribute attribute, params object[] args) where T : GUIDrawerBase
         {
-            if (attr == null)
+            if (attribute == null)
             {
                 return null;
             }
 
-            if (!s_drawerLookup.TryGetValue(attr.GetType(), out Type drawerType))
+            if (!s_drawerLookup.TryGetValue(attribute.GetType(), out Type drawerType))
             {
                 drawerType = s_fallbackDrawerType;
             }
 
-            return (GUIDrawerBase)Activator.CreateInstance(drawerType, args);
+            return (T)Activator.CreateInstance(drawerType, args);
         }
     }
 
@@ -109,14 +108,14 @@ namespace WooshiiAttributes
         {
             foreach (SerializedProperty property in SerializedUtility.GetAllVisibleProperties(serializedObject))
             {
-                GUIDrawerBase drawer = PropertyGUICache.CreateDrawer(property);
+                FieldInfo field = ReflectionUtility.GetField(target, property.name);
 
-                if (drawer == null)
+                if (field == null)
                 {
                     continue;
                 }
 
-                RegisterDrawer(ReflectionUtility.GetField(target, property.name), drawer);
+                RegisterDrawer(field, PropertyGUICache.CreateDrawer(property));
             }
         }
         
@@ -124,14 +123,14 @@ namespace WooshiiAttributes
         {
             foreach (MethodInfo method in ReflectionUtility.GetMethods(target.GetType()))
             {
-                GUIDrawerBase drawer = PropertyGUICache.CreateDrawer(target, method);
+                MethodButtonAttribute button = method.GetCustomAttribute<MethodButtonAttribute>();
 
-                if (drawer == null)
+                if (button == null)
                 {
                     continue;
                 }
 
-                RegisterDrawer(method, drawer);
+                RegisterDrawer(method, PropertyGUICache.CreateDrawer(method, button, target));
             }
         }
 
@@ -156,7 +155,7 @@ namespace WooshiiAttributes
             
             if (!groupLookup.TryGetValue(group.GroupName, out GroupDrawer drawer))
             {
-                drawer = PropertyGUICache.CreateGroup(group, serializedObject);
+                drawer = PropertyGUICache.CreateGroupDrawer(group, serializedObject);
                 guiDrawers.Add(drawer);
                 groupLookup.Add(group.GroupName, drawer);
             }
