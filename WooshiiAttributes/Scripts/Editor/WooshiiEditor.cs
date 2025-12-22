@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
@@ -83,6 +83,7 @@ namespace WooshiiAttributes
     public class WooshiiEditor : Editor
     {
         private List<GUIDrawerBase> guiDrawer = new List<GUIDrawerBase>();
+        private List<GUIDrawerBase> methodDrawers = new List<GUIDrawerBase>();
 
         public void OnEnable()
         {
@@ -91,10 +92,8 @@ namespace WooshiiAttributes
                 PropertyGUICache.Collect();
             }
 
-            foreach (SerializedProperty property in SerializedUtility.GetAllVisibleProperties(serializedObject))
-            {
-                guiDrawer.Add(PropertyGUICache.CreateDrawer(property));
-            }
+            CreateSerializedDrawers();
+            CreateMethodDrawers();
         }
 
         public override void OnInspectorGUI()
@@ -108,9 +107,38 @@ namespace WooshiiAttributes
             {
                 guiDrawer[i].OnGUI();
             }
+
+            for (int i = 0; i < methodDrawers.Count; i++)
+            {
+                methodDrawers[i].OnGUI();
+            }
+
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
+            }
+        }
+    
+        private void CreateSerializedDrawers()
+        {
+            foreach (SerializedProperty property in SerializedUtility.GetAllVisibleProperties(serializedObject))
+            {
+                guiDrawer.Add(PropertyGUICache.CreateDrawer(property));
+            }
+        }
+
+        private void CreateMethodDrawers()
+        {
+            foreach (MethodInfo method in ReflectionUtility.GetMethods(target.GetType()))
+            {
+                GUIDrawerBase drawer = PropertyGUICache.CreateDrawer(target, method);
+
+                if (drawer == null)
+                {
+                    continue;
+                }
+
+                methodDrawers.Add(drawer);
             }
         }
     }
