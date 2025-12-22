@@ -1,11 +1,8 @@
-﻿using Codice.Client.BaseCommands;
-using Codice.Client.Common.GameUI;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace WooshiiAttributes
 {
@@ -39,7 +36,7 @@ namespace WooshiiAttributes
 
         public static GroupDrawer CreateGroup(GroupAttribute attribute, SerializedObject target)
         {
-            return CreateDrawerFromDrawerType(GetDrawerTypeFromAttribute(attribute), attribute, target) as GroupDrawer;
+            return CreateDrawer(attribute, attribute, target) as GroupDrawer;
         }
 
         public static GUIDrawerBase CreateDrawer(SerializedProperty property)
@@ -59,27 +56,13 @@ namespace WooshiiAttributes
             {
                 return null;
             }
-            return CreateDrawerFromDrawerType(GetDrawerTypeFromAttribute(attr), args);
-        }
 
-        private static GUIDrawerBase CreateDrawerFromDrawerType(Type drawerType, params object[] args)
-        {
-            if (drawerType == null)
+            if (!s_drawerLookup.TryGetValue(attr.GetType(), out Type drawerType))
             {
                 drawerType = s_fallbackDrawerType;
             }
-            
+
             return (GUIDrawerBase)Activator.CreateInstance(drawerType, args);
-        }
-
-        private static Type GetDrawerTypeFromAttribute(GUIElementAttribute guiElement)
-        {
-            if (!s_drawerLookup.TryGetValue(guiElement.GetType(), out Type drawerType))
-            {
-                drawerType = s_fallbackDrawerType;
-            }
-
-            return drawerType;
         }
     }
 
@@ -133,8 +116,7 @@ namespace WooshiiAttributes
                     continue;
                 }
 
-                FieldInfo field = GetPropertyField(property);
-                RegisterDrawer(field, drawer);
+                RegisterDrawer(ReflectionUtility.GetField(target, property.name), drawer);
             }
         }
         
@@ -155,16 +137,9 @@ namespace WooshiiAttributes
 
         private void RegisterDrawer(MemberInfo member, GUIDrawerBase drawer)
         {
-            bool hasGroup = HasGroup(member);
-            GroupDrawer group = null;
-            if (hasGroup || usingGroup)
+            if (HasGroup(member))
             {
-                group = GetOrCreateGroup(member.GetCustomAttribute<GroupAttribute>());
-            }
-
-            if (group != null)
-            {
-                group.RegisterProperty(drawer);
+                currentGroup.RegisterProperty(drawer);
             }
             else
             {
@@ -184,8 +159,6 @@ namespace WooshiiAttributes
                 drawer = PropertyGUICache.CreateGroup(group, serializedObject);
                 guiDrawers.Add(drawer);
                 groupLookup.Add(group.GroupName, drawer);
-                currentGroup = drawer;
-                usingGroup = true;
             }
 
             return drawer;
@@ -193,26 +166,21 @@ namespace WooshiiAttributes
 
         private bool HasGroup(MemberInfo member)
         {
-            GroupAttribute attribute = member.GetCustomAttribute<GroupAttribute>(true);
-
-            if (attribute is EndGroupAttribute)
+            foreach (GroupAttribute attribute in member.GetCustomAttributes<GroupAttribute>(true))
             {
-                usingGroup = false;
-                currentGroup = null;
-                return false;
+                if (attribute is EndGroupAttribute)
+                {
+                    currentGroup = null;
+                    usingGroup = false;
+                }
+                else
+                {
+                    currentGroup = GetOrCreateGroup(attribute);
+                    usingGroup = true;
+                }
             }
 
-            if (attribute == null)
-            {
-                return usingGroup;
-            }
-
-            return true;
-        }
-
-        private FieldInfo GetPropertyField(SerializedProperty property)
-        {
-            return ReflectionUtility.GetField(target, property.name);
+            return usingGroup;
         }
     }
 }
