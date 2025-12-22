@@ -3,7 +3,7 @@
 namespace WooshiiAttributes
 {
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
-    public class GroupAttribute : Attribute
+    public class GroupAttribute : GUIElementAttribute
     {
         public string GroupName { get; set; } = null;
 
