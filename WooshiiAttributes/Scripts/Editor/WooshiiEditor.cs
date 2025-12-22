@@ -1,4 +1,4 @@
-﻿using Codice.Client.BaseCommands;
+using Codice.Client.BaseCommands;
 using Codice.Client.Common.GameUI;
 using System;
 using System.Collections.Generic;
@@ -88,7 +88,6 @@ namespace WooshiiAttributes
     public class WooshiiEditor : Editor
     {
         private readonly List<GUIDrawerBase> guiDrawers = new List<GUIDrawerBase>();
-        private readonly List<GUIDrawerBase> methodDrawers = new List<GUIDrawerBase>();
         private readonly Dictionary<string, GroupDrawer> groupLookup = new Dictionary<string, GroupDrawer>();
 
         private bool usingGroup = false;
@@ -115,11 +114,6 @@ namespace WooshiiAttributes
             for (int i = 0; i < guiDrawers.Count; ++i)
             {
                 guiDrawers[i].OnGUI();
-            }
-
-            for (int i = 0; i < methodDrawers.Count; i++)
-            {
-                methodDrawers[i].OnGUI();
             }
 
             if (EditorGUI.EndChangeCheck())
@@ -177,8 +171,10 @@ namespace WooshiiAttributes
                 }
                 else
                 {
-                    methodDrawers.Add(drawer);
+                    guiDrawers.Add(drawer);
                 }
+            }
+        }
             }
         }
 
@@ -200,7 +196,6 @@ namespace WooshiiAttributes
 
             return drawer;
         }
-
 
         private bool HasGroup(SerializedProperty property)
         {
