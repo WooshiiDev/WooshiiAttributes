@@ -85,6 +85,18 @@ namespace WooshiiAttributes
         }
 
         /// <summary>
+        /// Create a <see cref="GroupDrawer"/>.
+        /// </summary>
+        /// <param name="property">The target property.</param>
+        /// <param name="attribute">The attribute on the method.</param>
+        /// <param name="target">The target object this attribute is in.</param>
+        /// <returns>Returns the created drawer.</returns>
+        public static GUIDrawerBase CreateDrawer(PropertyInfo property, NativePropertyAttribute attribute, object target)
+        {
+            return CreateDrawer<GUIDrawerBase>(attribute, attribute, target, property);
+        }
+
+        /// <summary>
         /// Create a drawe of the given type.
         /// </summary>
         /// <typeparam name="T">The type of drawer to create.</typeparam>
@@ -123,6 +135,7 @@ namespace WooshiiAttributes
         public void OnEnable()
         {
             CreateSerializedDrawers();
+            CreatePropertyDrawers();
             CreateMethodDrawers();
         }
 
@@ -174,8 +187,28 @@ namespace WooshiiAttributes
             }
         }
 
+        private void CreatePropertyDrawers()
+        {
+            foreach (PropertyInfo property in ReflectionUtility.GetProperties(target.GetType()))
+            {
+                NativePropertyAttribute attribute = property.GetCustomAttribute<NativePropertyAttribute>();
+                
+                if (attribute == null)
+                {
+                    return;
+                }
+
+                RegisterDrawer(property, PropertyGUICache.CreateDrawer(property, attribute, target));
+            }
+        }
+
         private void RegisterDrawer(MemberInfo member, GUIDrawerBase drawer)
         {
+            if (drawer == null)
+            {
+                return;
+            }
+
             if (HasGroup(member))
             {
                 _currentGroup.RegisterProperty(drawer);
