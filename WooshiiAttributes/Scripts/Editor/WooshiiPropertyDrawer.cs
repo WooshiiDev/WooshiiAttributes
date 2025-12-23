@@ -6,7 +6,8 @@ namespace WooshiiAttributes
     public class WooshiiPropertyDrawer : PropertyDrawer
     {
         //Cached
-        protected float m_lineHeight = EditorGUIUtility.singleLineHeight;
+
+        protected float _lineHeight = EditorGUIUtility.singleLineHeight;
 
         public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
@@ -14,6 +15,7 @@ namespace WooshiiAttributes
         }
 
         //Custom Methods
+
         protected void DrawBackground(Rect _rect, Color _color)
         {
             GUI.color = _color;

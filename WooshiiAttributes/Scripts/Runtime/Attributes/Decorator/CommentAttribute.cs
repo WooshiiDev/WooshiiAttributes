@@ -6,7 +6,7 @@ namespace WooshiiAttributes
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
     public class CommentAttribute : PropertyAttribute
     {
-        public readonly string text;
+        public readonly string Text;
 
         public enum MessageType { NONE, WARNING, INFO, ERROR }
 
@@ -18,7 +18,7 @@ namespace WooshiiAttributes
         /// <param name="text">Text to show</param>
         public CommentAttribute(string text)
         {
-            this.text = text;
+            Text = text;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace WooshiiAttributes
         /// <param name="messageType">Message display type</param>
         public CommentAttribute(string text, MessageType messageType)
         {
-            this.text = text;
+            Text = text;
             this.messageType = messageType;
         }
     }

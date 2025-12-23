@@ -11,11 +11,11 @@
         /// <summary>
         /// The target object to draw.
         /// </summary>
-        protected T target;
+        protected T _target;
 
         public GUIDrawerBase(T target)
         {
-            this.target = target;
+            this._target = target;
         }
     }
 }

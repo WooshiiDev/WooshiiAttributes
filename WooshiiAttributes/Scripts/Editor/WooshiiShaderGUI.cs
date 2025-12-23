@@ -12,31 +12,32 @@ public class WooshiiShaderGUI : ShaderGUI
 
     // State
 
-    private bool m_isRotating;
+    private bool _isRotating;
 
     // Mesh 
-    private int m_selectedMesh = 0;
 
-    private Mesh m_targetMesh;
+    private int _selectedMesh = 0;
 
-    private Vector2 m_previewDir = new Vector2 (120f, -20f);
-    private Vector3 m_offset;
+    private Mesh _targetMesh;
 
-    private PreviewRenderUtility m_previewRenderUtility;
-    private float m_fov;
+    private Vector2 _previewDir = new Vector2 (120f, -20f);
+    private Vector3 _offset;
+
+    private PreviewRenderUtility _previewRenderUtility;
+    private float _fov;
 
     // Reflection Fields
 
-    private FieldInfo selectedField = null;
+    private FieldInfo _selectedField = null;
 
-    private MethodInfo m_renderMeshMethod = null;
-    private MethodInfo m_dragMethod = null;
+    private MethodInfo _renderMeshMethod = null;
+    private MethodInfo _dragMethod = null;
 
-    private Type m_modelInspectorType = null;
-    private Type m_previewGUIType = null;
-
+    private Type _modelInspectorType = null;
+    private Type _previewGUIType = null;
 
     //Will leak if the render is not handled after the GUI is disabled
+
     ~WooshiiShaderGUI()
     {
         CleanUpRender ();
@@ -50,10 +51,10 @@ public class WooshiiShaderGUI : ShaderGUI
     {
         base.OnClosed (_material);
 
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.Cleanup ();
-            m_previewRenderUtility = null;
+            _previewRenderUtility.Cleanup ();
+            _previewRenderUtility = null;
         }
     }
 
@@ -94,7 +95,7 @@ public class WooshiiShaderGUI : ShaderGUI
         }
         else
         {
-            if (m_targetMesh == null)
+            if (_targetMesh == null)
             {
                 base.OnMaterialInteractivePreviewGUI (_materialEditor, _rect, _background);
                 return;
@@ -102,37 +103,37 @@ public class WooshiiShaderGUI : ShaderGUI
 
             Material mat = _materialEditor.target as Material;
 
-            if (m_previewRenderUtility == null)
+            if (_previewRenderUtility == null)
             {
-                m_previewRenderUtility = new PreviewRenderUtility ();
-                m_previewRenderUtility.AddSingleGO (GameObject.CreatePrimitive (PrimitiveType.Plane));
+                _previewRenderUtility = new PreviewRenderUtility ();
+                _previewRenderUtility.AddSingleGO (GameObject.CreatePrimitive (PrimitiveType.Plane));
 
 #if UNITY_2017_1_OR_NEWER
-                m_fov = m_previewRenderUtility.cameraFieldOfView = 30f;
+                _fov = _previewRenderUtility.cameraFieldOfView = 30f;
 #else
 			    fov = m_previewRenderUtility.m_CameraFieldOfView = 30f;
 #endif
             }
 
-            if (m_previewGUIType == null)
+            if (_previewGUIType == null)
             {
-                m_previewGUIType = Type.GetType (GUI_SRC);
-                m_dragMethod = m_previewGUIType.GetMethod ("Drag2D", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                _previewGUIType = Type.GetType (GUI_SRC);
+                _dragMethod = _previewGUIType.GetMethod ("Drag2D", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             }
 
-            if (m_modelInspectorType == null)
+            if (_modelInspectorType == null)
             {
-                m_modelInspectorType = Type.GetType (MODEL_SRC);
-                m_renderMeshMethod = m_modelInspectorType.GetMethod ("RenderMeshPreview", BindingFlags.Static | BindingFlags.NonPublic);
+                _modelInspectorType = Type.GetType (MODEL_SRC);
+                _renderMeshMethod = _modelInspectorType.GetMethod ("RenderMeshPreview", BindingFlags.Static | BindingFlags.NonPublic);
             }
 
-            m_previewDir = (Vector2)m_dragMethod.Invoke (m_previewGUIType, new object[] { m_previewDir, _rect });
+            _previewDir = (Vector2)_dragMethod.Invoke (_previewGUIType, new object[] { _previewDir, _rect });
 
             if (Event.current.type == EventType.Repaint)
             {
-                m_previewRenderUtility.BeginPreview (_rect, _background);
-                m_renderMeshMethod.Invoke (m_modelInspectorType, new object[] { m_targetMesh, m_previewRenderUtility, mat, null, m_previewDir, -1 });
-                m_previewRenderUtility.EndAndDrawPreview (_rect);
+                _previewRenderUtility.BeginPreview (_rect, _background);
+                _renderMeshMethod.Invoke (_modelInspectorType, new object[] { _targetMesh, _previewRenderUtility, mat, null, _previewDir, -1 });
+                _previewRenderUtility.EndAndDrawPreview (_rect);
             }
         }
     }
@@ -148,20 +149,20 @@ public class WooshiiShaderGUI : ShaderGUI
 
         EditorGUI.BeginChangeCheck ();
 
-        m_targetMesh = (Mesh)EditorGUILayout.ObjectField (m_targetMesh, typeof (Mesh), false, GUILayout.MaxWidth (120));
+        _targetMesh = (Mesh)EditorGUILayout.ObjectField (_targetMesh, typeof (Mesh), false, GUILayout.MaxWidth (120));
         DrawFOVSlider (_materialEditor);
 
-        if (m_targetMesh != null)
+        if (_targetMesh != null)
         {
             if (EditorGUI.EndChangeCheck ())
             {
-                if (selectedField == null)
+                if (_selectedField == null)
                 {
-                    selectedField = typeof (MaterialEditor).GetField ("m_SelectedMesh", BindingFlags.Instance | BindingFlags.NonPublic);
+                    _selectedField = typeof (MaterialEditor).GetField ("m_SelectedMesh", BindingFlags.Instance | BindingFlags.NonPublic);
                 }
 
                 //Store mesh selection
-                m_selectedMesh = (int)selectedField.GetValue (_materialEditor);
+                _selectedMesh = (int)_selectedField.GetValue (_materialEditor);
             }
         }
     }
@@ -170,22 +171,22 @@ public class WooshiiShaderGUI : ShaderGUI
 
     private void CleanUpRender()
     {
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.Cleanup ();
-            m_previewRenderUtility = null;
+            _previewRenderUtility.Cleanup ();
+            _previewRenderUtility = null;
         }
     }
 
     private void DrawFOVSlider(MaterialEditor _materialEditor)
     {
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.lights[0].color = EditorGUILayout.ColorField (m_previewRenderUtility.lights[0].color, GUILayout.MaxWidth (120));
-            m_previewRenderUtility.lights[1].color = EditorGUILayout.ColorField (m_previewRenderUtility.lights[1].color, GUILayout.MaxWidth (120));
+            _previewRenderUtility.lights[0].color = EditorGUILayout.ColorField (_previewRenderUtility.lights[0].color, GUILayout.MaxWidth (120));
+            _previewRenderUtility.lights[1].color = EditorGUILayout.ColorField (_previewRenderUtility.lights[1].color, GUILayout.MaxWidth (120));
 
 #if UNITY_2017_1_OR_NEWER
-            m_previewRenderUtility.cameraFieldOfView = m_fov;
+            _previewRenderUtility.cameraFieldOfView = _fov;
 #else
 			m_previewRenderUtility.m_CameraFieldOfView = fov;
 #endif

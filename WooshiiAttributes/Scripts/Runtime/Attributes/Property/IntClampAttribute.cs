@@ -6,10 +6,10 @@ public class IntClampAttribute : PropertyAttribute
     public int Max { get; }
     public bool ShowClamp { get; }
 
-    public IntClampAttribute(int _min, int _max, bool _showClamp = false)
+    public IntClampAttribute(int min, int max, bool showClamp = false)
     {
-        Min = _min;
-        Max = _max;
-        ShowClamp = _showClamp;
+        Min = min;
+        Max = max;
+        ShowClamp = showClamp;
     }
 }

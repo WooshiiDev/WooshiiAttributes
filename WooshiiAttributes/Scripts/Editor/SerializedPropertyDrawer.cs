@@ -8,7 +8,7 @@ namespace WooshiiAttributes
 
         public override void OnGUI()
         {
-            EditorGUILayout.PropertyField(target);
+            EditorGUILayout.PropertyField(_target);
         }
     }
 }

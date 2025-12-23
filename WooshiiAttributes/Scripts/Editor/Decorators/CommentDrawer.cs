@@ -12,13 +12,13 @@ namespace WooshiiAttributes
 
         private CommentAttribute Target => attribute as CommentAttribute;
 
-        public override void OnGUI(Rect _rect)
+        public override void OnGUI(Rect rect)
         {
-            float indent = GetIndentLength (_rect);
+            float indent = GetIndentLength (rect);
 
-            _rect.Set (
-                _rect.x + indent, _rect.y,
-                _rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
+            rect.Set (
+                rect.x + indent, rect.y,
+                rect.width - indent, GetBoxHeight () - HEIGHT_PADDING * 0.5f);
 
             MessageType messageType = MessageType.None;
 
@@ -37,13 +37,13 @@ namespace WooshiiAttributes
                     break;
             }
 
-            EditorGUI.HelpBox (_rect, Target.text, messageType);
+            EditorGUI.HelpBox (rect, Target.Text, messageType);
         }
 
-        public static float GetIndentLength(Rect _sourceRect)
+        public static float GetIndentLength(Rect sourceRect)
         {
-            Rect indentRect = EditorGUI.IndentedRect (_sourceRect);
-            float indentLength = indentRect.x - _sourceRect.x;
+            Rect indentRect = EditorGUI.IndentedRect (sourceRect);
+            float indentLength = indentRect.x - sourceRect.x;
 
             return indentLength;
         }
@@ -66,7 +66,7 @@ namespace WooshiiAttributes
             }
 
             //Need a little extra for correct sizing of InfoBox
-            float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Target.text), width);
+            float actualHeight = EditorStyles.helpBox.CalcHeight (new GUIContent (Target.Text), width);
             return Mathf.Max (minHeight, actualHeight);
         }
     }

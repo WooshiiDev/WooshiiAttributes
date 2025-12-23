@@ -74,11 +74,11 @@ namespace WooshiiAttributes
     [CustomEditor (typeof (MonoBehaviour), true)]
     public class WooshiiEditor : Editor
     {
-        private readonly List<GUIDrawerBase> guiDrawers = new List<GUIDrawerBase>();
-        private readonly Dictionary<string, GroupDrawer> groupLookup = new Dictionary<string, GroupDrawer>();
+        private readonly List<GUIDrawerBase> _guiDrawers = new List<GUIDrawerBase>();
+        private readonly Dictionary<string, GroupDrawer> _groupLookup = new Dictionary<string, GroupDrawer>();
 
-        private bool usingGroup = false;
-        private GroupDrawer currentGroup;
+        private bool _usingGroup = false;
+        private GroupDrawer _currentGroup;
 
         public void OnEnable()
         {
@@ -93,9 +93,9 @@ namespace WooshiiAttributes
             EditorGUI.EndDisabledGroup();
 
             EditorGUI.BeginChangeCheck();
-            for (int i = 0; i < guiDrawers.Count; ++i)
+            for (int i = 0; i < _guiDrawers.Count; ++i)
             {
-                guiDrawers[i].OnGUI();
+                _guiDrawers[i].OnGUI();
             }
 
             if (EditorGUI.EndChangeCheck())
@@ -138,11 +138,11 @@ namespace WooshiiAttributes
         {
             if (HasGroup(member))
             {
-                currentGroup.RegisterProperty(drawer);
+                _currentGroup.RegisterProperty(drawer);
             }
             else
             {
-                guiDrawers.Add(drawer);
+                _guiDrawers.Add(drawer);
             }
         }
 
@@ -150,14 +150,14 @@ namespace WooshiiAttributes
         {
             if (group == null)
             {
-                return currentGroup;
+                return _currentGroup;
             }
             
-            if (!groupLookup.TryGetValue(group.GroupName, out GroupDrawer drawer))
+            if (!_groupLookup.TryGetValue(group.GroupName, out GroupDrawer drawer))
             {
                 drawer = PropertyGUICache.CreateGroupDrawer(group, serializedObject);
-                guiDrawers.Add(drawer);
-                groupLookup.Add(group.GroupName, drawer);
+                _guiDrawers.Add(drawer);
+                _groupLookup.Add(group.GroupName, drawer);
             }
 
             return drawer;
@@ -169,17 +169,17 @@ namespace WooshiiAttributes
             {
                 if (attribute is EndGroupAttribute)
                 {
-                    currentGroup = null;
-                    usingGroup = false;
+                    _currentGroup = null;
+                    _usingGroup = false;
                 }
                 else
                 {
-                    currentGroup = GetOrCreateGroup(attribute);
-                    usingGroup = true;
+                    _currentGroup = GetOrCreateGroup(attribute);
+                    _usingGroup = true;
                 }
             }
 
-            return usingGroup;
+            return _usingGroup;
         }
     }
 }

@@ -10,18 +10,18 @@ namespace WooshiiAttributes
     [GUIDrawer(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : GroupDrawer<BeginGroupAttribute>
     {
-        private static GUIStyle GroupStyle;
+        private static GUIStyle s_groupStyle;
 
-        public BeginGroupDrawer(BeginGroupAttribute _attribute, SerializedObject _serializedObject) : base (_attribute, _serializedObject)
+        public BeginGroupDrawer(BeginGroupAttribute attribute, SerializedObject serializedObject) : base (attribute, serializedObject)
         {
 
         }
 
         public override void OnGUI()
         {
-            if (GroupStyle == null)
+            if (s_groupStyle == null)
             {
-                GroupStyle = EditorStyles.boldLabel;
+                s_groupStyle = EditorStyles.boldLabel;
             }
 
             bool isTitleGrouped = attribute.TitleGrouped;
@@ -40,22 +40,22 @@ namespace WooshiiAttributes
             }
 
             EditorGUI.indentLevel++;
-            for (int i = 0; i < m_drawers.Count; i++)
+            for (int i = 0; i < _drawers.Count; i++)
             {
-                m_drawers[i].OnGUI();
+                _drawers[i].OnGUI();
             }
             EditorGUI.indentLevel--;
 
             EditorGUILayout.EndVertical ();
         }
 
-        private void DrawHeader(string _name)
+        private void DrawHeader(string name)
         {
-            EditorGUILayout.LabelField (_name, GroupStyle);
+            EditorGUILayout.LabelField (name, s_groupStyle);
 
             if (attribute.TitleUnderlined)
             {
-                Color color = GroupStyle.normal.textColor;
+                Color color = s_groupStyle.normal.textColor;
                 Rect rect = GUILayoutUtility.GetLastRect ();
                 rect.y += rect.height - 1;
 

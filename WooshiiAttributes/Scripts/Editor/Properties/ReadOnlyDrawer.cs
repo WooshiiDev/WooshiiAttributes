@@ -6,32 +6,32 @@ namespace WooshiiAttributes
     [CustomPropertyDrawer (typeof (ReadOnlyAttribute))]
     public class ReadOnlyDrawer : WooshiiPropertyDrawer
     {
-        private ReadOnlyAttribute m_target;
-        private bool m_shown;
+        private ReadOnlyAttribute _target;
+        private bool _shown;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            m_target = attribute as ReadOnlyAttribute;
+            _target = attribute as ReadOnlyAttribute;
 
-            switch (m_target.m_displayMode)
+            switch (_target._displayMode)
             {
                 case DisplayMode.EDITOR:
-                    m_shown = !EditorApplication.isPlaying;
+                    _shown = !EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.PLAYING:
-                    m_shown = EditorApplication.isPlaying;
+                    _shown = EditorApplication.isPlaying;
                     break;
 
                 case DisplayMode.BOTH:
-                    m_shown = true;
+                    _shown = true;
                     break;
 
                 default:
                     break;
             }
 
-            if (m_shown)
+            if (_shown)
             {
                 GUI.enabled = false;
                 EditorGUI.PropertyField (position, property, label, true);
@@ -41,7 +41,7 @@ namespace WooshiiAttributes
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            if (m_shown)
+            if (_shown)
                 return EditorGUI.GetPropertyHeight(property, label, property.isExpanded) + EditorGUIUtility.standardVerticalSpacing;
             else
                 return 0;

@@ -7,7 +7,7 @@ namespace WooshiiAttributes
 {
     public static class TypeUtility
     {
-        private readonly static Dictionary<Type, PropertyType> TypeDictionary = new Dictionary<Type, PropertyType> ()
+        private readonly static Dictionary<Type, PropertyType> s_typeDictionary = new Dictionary<Type, PropertyType> ()
         {
             // Standard Types
 
@@ -48,27 +48,25 @@ namespace WooshiiAttributes
             { typeof(Pose)          , PropertyType.POSE},
         };
 
-        public static PropertyType GetPropertyTypeFromType(Type _type)
+        public static PropertyType GetPropertyTypeFromType(Type type)
         {
-            if (_type == null)
+            if (type == null)
             {
                 return PropertyType.INVALID;
             }
 
-            if (_type.IsEnum)
+            if (type.IsEnum)
             {
                 return PropertyType.ENUM;
             }
 
-            if (TypeDictionary.ContainsKey(_type))
+            if (s_typeDictionary.ContainsKey(type))
             {
-                return TypeDictionary[_type];
+                return s_typeDictionary[type];
             }
 
             return PropertyType.INVALID;
         }
-
-        
     }
 
     public enum PropertyType

@@ -9,12 +9,12 @@ namespace WooshiiAttributes
     [AttributeUsage (AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class HeaderLineAttribute : PropertyAttribute
     {
-        public readonly string text;
+        public readonly string Text;
 
         //Constructor
         public HeaderLineAttribute(string text)
         {
-            this.text = text;
+            this.Text = text;
         }
     }
 }

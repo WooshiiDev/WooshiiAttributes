@@ -13,15 +13,15 @@ namespace WooshiiAttributes
 
         }
 
-        public MethodButtonAttribute(string _methodName)
+        public MethodButtonAttribute(string methodName)
         {
-            MethodName = _methodName;
+            MethodName = methodName;
         }
 
-        public MethodButtonAttribute(string _methodName, params object[] _args)
+        public MethodButtonAttribute(string methodName, params object[] args)
         {
-            MethodName = _methodName;
-            Arguments = _args;
+            MethodName = methodName;
+            Arguments = args;
         }
     }
 }

@@ -16,49 +16,46 @@ namespace WooshiiAttributes
             public object value;
             public string name;
 
-            public ParameterData(string _name, object _value, PropertyType _type)
+            public ParameterData(string name, object value, PropertyType type)
             {
-                name = _name;
-                value = _value;
-                type = _type;
+                this.name = name;
+                this.value = value;
+                this.type = type;
             }
         }
 
         protected MethodButtonAttribute _attribute;
-        public MethodButtonAttribute Attribute => _attribute;
-
         protected Object _target;
-        public Object Target => _target;
-
         protected MethodInfo _methodInfo;
+        protected ParameterData[] _parameterData;
+        protected bool _hasArguments = false;
+
+        public MethodButtonAttribute Attribute => _attribute;
         public MethodInfo MethodInfo => _methodInfo;
-
-        protected ParameterData[] m_parameterData;
-
-        protected bool hasArguments = false;
-
-        public MethodButtonDrawer(MethodButtonAttribute _attribute, Object _target, MethodInfo _info) : base(_info)
+        public Object Target => _target;
+       
+        public MethodButtonDrawer(MethodButtonAttribute attribute, Object target, MethodInfo info) : base(info)
         {
-            this._attribute = _attribute;
+            this._attribute = attribute;
 
-            this._target = _target;
-            this._methodInfo = _info;
+            this._target = target;
+            this._methodInfo = info;
 
-            if (_attribute.MethodName == null)
+            if (attribute.MethodName == null)
             {
-                _attribute.MethodName = _methodInfo.Name;
+                attribute.MethodName = _methodInfo.Name;
             }
 
             // Get parameters and set parameter data
-            ParameterInfo[] parameters = _info.GetParameters ();
+            ParameterInfo[] parameters = info.GetParameters ();
             int paramLength = parameters.Length;
 
-            hasArguments = paramLength > 0;
+            _hasArguments = paramLength > 0;
 
-            m_parameterData = new ParameterData[parameters.Length];
+            _parameterData = new ParameterData[parameters.Length];
 
             // Need to iterate through all args and handle their values
-            if (hasArguments)
+            if (_hasArguments)
             {
                 for (int i = 0; i < paramLength; i++)
                 {
@@ -151,14 +148,14 @@ namespace WooshiiAttributes
                         }
                     }
 
-                    m_parameterData[i] = new ParameterData(parameterInfo.Name, value, propertyType);
+                    _parameterData[i] = new ParameterData(parameterInfo.Name, value, propertyType);
                 }
             }
         }
 
         public override void OnGUI()
         {
-            if (hasArguments)
+            if (_hasArguments)
             {
                 EditorGUILayout.BeginVertical (GUI.skin.box);
                 {
@@ -167,11 +164,11 @@ namespace WooshiiAttributes
                         CallMethod ();
                     }
 
-                    for (int i = 0; i < m_parameterData.Length; i++)
+                    for (int i = 0; i < _parameterData.Length; i++)
                     {
                         EditorGUI.BeginChangeCheck ();
 
-                        ParameterData arg = m_parameterData[i];
+                        ParameterData arg = _parameterData[i];
                         string name = arg.name;
                         object value = arg.value;
 
@@ -252,7 +249,7 @@ namespace WooshiiAttributes
                                 if (value == null)
                                 {
                                     arg.value = value = new Gradient ();
-                                    m_parameterData[i] = arg;
+                                    _parameterData[i] = arg;
                                 }
 
                                 value = EditorGUILayout.GradientField (name, (Gradient)value);
@@ -268,7 +265,7 @@ namespace WooshiiAttributes
                                 if (value == null)
                                 {
                                     arg.value = value = new AnimationCurve ();
-                                    m_parameterData[i] = arg;
+                                    _parameterData[i] = arg;
                                 }
 
                                 value = EditorGUILayout.CurveField (name, (AnimationCurve)value);
@@ -300,7 +297,7 @@ namespace WooshiiAttributes
                         if (EditorGUI.EndChangeCheck ())
                         {
                             arg.value = value;
-                            m_parameterData[i] = arg;
+                            _parameterData[i] = arg;
                         }
                     }
                  
@@ -318,11 +315,11 @@ namespace WooshiiAttributes
 
         protected void CallMethod()
         {
-            object[] parameterValues = new object[m_parameterData.Length];
+            object[] parameterValues = new object[_parameterData.Length];
 
             for (int i = 0; i < parameterValues.Length; i++)
             {
-                parameterValues[i] = m_parameterData[i].value;
+                parameterValues[i] = _parameterData[i].value;
             }
 
             MethodInfo.Invoke (_target, parameterValues);

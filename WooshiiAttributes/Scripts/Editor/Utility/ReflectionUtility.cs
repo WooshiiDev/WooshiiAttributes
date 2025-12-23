@@ -6,13 +6,11 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
-
-
     public static class ReflectionUtility
     {
         // BindingFlags
 
-        private const BindingFlags DefaultFlags = BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+        private const BindingFlags DEFAULT_FLAGS = BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
         // Types
 
@@ -23,46 +21,46 @@ namespace WooshiiAttributes
 
         // Fields
 
-        public static FieldInfo GetField(Object _target, string _name, BindingFlags _flags = DefaultFlags)
+        public static FieldInfo GetField(Object _target, string _name, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return GetField(_target.GetType(), _name);
         }
 
-        public static FieldInfo GetField(Type _type, string _name, BindingFlags _flags = DefaultFlags)
+        public static FieldInfo GetField(Type _type, string _name, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return _type.GetField (_name, _flags);
         }
 
-        public static IEnumerable<FieldInfo> GetFields(Object _instance, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<FieldInfo> GetFields(Object _instance, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return GetFields(_instance.GetType(), _flags);
         }
 
-        public static IEnumerable<FieldInfo> GetFields(Type _type, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<FieldInfo> GetFields(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return _type.GetFields (_flags);
         }
 
-        public static IEnumerable<FieldInfo> GetFields(Object _instance, Func<FieldInfo, bool> condition, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<FieldInfo> GetFields(Object _instance, Func<FieldInfo, bool> condition, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return GetFields (_instance.GetType(), _flags).Where (condition);
         }
 
-        public static IEnumerable<FieldInfo> GetFields(Type _type, Func<FieldInfo, bool> condition, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<FieldInfo> GetFields(Type _type, Func<FieldInfo, bool> condition, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return _type.GetFields (_flags).Where (condition);
         }
 
         // Properties
 
-        public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DEFAULT_FLAGS)
         {
-            return GetProperties (_target.GetType (), DefaultFlags);
+            return GetProperties (_target.GetType (), DEFAULT_FLAGS);
         }
 
-        public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
         {
-            return _type.GetProperties (DefaultFlags);
+            return _type.GetProperties (DEFAULT_FLAGS);
         }
 
         /// <summary>
@@ -86,12 +84,12 @@ namespace WooshiiAttributes
 
         // Methods
 
-        public static IEnumerable<MethodInfo> GetMethods(Object _instance, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<MethodInfo> GetMethods(Object _instance, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return GetMethods (_instance.GetType (), _flags);
         }
 
-        public static IEnumerable<MethodInfo> GetMethods(Type _type, BindingFlags _flags = DefaultFlags)
+        public static IEnumerable<MethodInfo> GetMethods(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
         {
             return _type.GetMethods ();
         }
