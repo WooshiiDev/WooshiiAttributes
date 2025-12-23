@@ -3,19 +3,28 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Represents when a field can be displayed.
+    /// </summary>
     public enum DisplayMode { EDITOR, PLAYING, BOTH }
 
+    /// <summary>
+    /// Set a field to readonly.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class ReadOnlyAttribute : PropertyAttribute
     {
-        public readonly DisplayMode m_displayMode;
+        /// <summary>
+        /// When to display this field.
+        /// </summary>
+        public readonly DisplayMode _displayMode;
 
         /// <summary>
         /// Display a readonly value in the inspector
         /// </summary>
         public ReadOnlyAttribute()
         {
-            m_displayMode = DisplayMode.BOTH;
+            _displayMode = DisplayMode.BOTH;
         }
 
         /// <summary>
@@ -24,7 +33,7 @@ namespace WooshiiAttributes
         /// <param name="_displayMode">When is the value displayed</param>
         public ReadOnlyAttribute(DisplayMode _displayMode)
         {
-            this.m_displayMode = _displayMode;
+            this._displayMode = _displayMode;
         }
     }
 }

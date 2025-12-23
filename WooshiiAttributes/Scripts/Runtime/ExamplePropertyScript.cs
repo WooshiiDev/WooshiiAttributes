@@ -4,30 +4,30 @@ namespace WooshiiAttributes
 {
     public class ExamplePropertyScript : MonoBehaviour
     {
-        [ClassProperty] public bool BooleanProperty { get; set; }
-        [ClassProperty] public string StringProperty { get; private set; } = "Hello World;";
+        [NativeProperty] public bool BooleanProperty { get; set; }
+        [NativeProperty] public string StringProperty { get; private set; } = "Hello World;";
 
-        [ClassProperty] public int IntegerProperty { get; private set; } = 4444;
-        [ClassProperty] public float FloatProperty { get; private set; } = 4444f;
-        [ClassProperty] public double DoubleProperty { get; private set; } = 4444d;
-        [ClassProperty] public long LongProperty { get; private set; } = 4444L;
+        [NativeProperty] public int IntegerProperty { get; private set; } = 4444;
+        [NativeProperty] public float FloatProperty { get; private set; } = 4444f;
+        [NativeProperty] public double DoubleProperty { get; private set; } = 4444d;
+        [NativeProperty] public long LongProperty { get; private set; } = 4444L;
 
-        [ClassProperty] public DisplayMode EnumProperty { get; private set; } = DisplayMode.EDITOR;
+        [NativeProperty] public DisplayMode EnumProperty { get; private set; } = DisplayMode.EDITOR;
 
-        [ClassProperty] public Object ObjectProperty { get; private set; }
+        [NativeProperty] public Object ObjectProperty { get; private set; }
 
-        [ClassProperty] public Vector2 Vector2Property { get; private set; } = Vector2.one;
-        [ClassProperty] public Vector3 Vector3Property { get; private set; } = Vector3.one;
-        [ClassProperty] public Vector4 Vector4Property { get; private set; } = Vector4.one;
+        [NativeProperty] public Vector2 Vector2Property { get; private set; } = Vector2.one;
+        [NativeProperty] public Vector3 Vector3Property { get; private set; } = Vector3.one;
+        [NativeProperty] public Vector4 Vector4Property { get; private set; } = Vector4.one;
 
-        [ClassProperty] public Vector2Int Vector2IntProperty { get; private set; } = Vector2Int.one;
-        [ClassProperty] public Vector3Int Vector3IntProperty { get; private set; } = Vector3Int.one;
+        [NativeProperty] public Vector2Int Vector2IntProperty { get; private set; } = Vector2Int.one;
+        [NativeProperty] public Vector3Int Vector3IntProperty { get; private set; } = Vector3Int.one;
 
-        [ClassProperty] public Color ColorProperty { get; private set; } = Color.red;
-        [ClassProperty] public Gradient GradientProperty { get; private set; } = new Gradient ();
+        [NativeProperty] public Color ColorProperty { get; private set; } = Color.red;
+        [NativeProperty] public Gradient GradientProperty { get; private set; } = new Gradient ();
 
-        [ClassProperty] public LayerMask LayerProperty { get; private set; } = ~1;
-        [ClassProperty] public AnimationCurve CurveProperty { get; private set; } = new AnimationCurve ()
+        [NativeProperty] public LayerMask LayerProperty { get; private set; } = ~1;
+        [NativeProperty] public AnimationCurve CurveProperty { get; private set; } = new AnimationCurve ()
         {
             keys = new Keyframe[]
             {
@@ -37,11 +37,11 @@ namespace WooshiiAttributes
             }
         };
 
-        [ClassProperty] public Rect RectProperty { get; set; }
-        [ClassProperty] public RectInt RectIntProperty { get; set; }
+        [NativeProperty] public Rect RectProperty { get; set; }
+        [NativeProperty] public RectInt RectIntProperty { get; set; }
 
-        [ClassProperty] public Bounds boundsa { get; set; }
-        [ClassProperty] public BoundsInt boundsb { get; set; }
+        [NativeProperty] public Bounds boundsa { get; set; }
+        [NativeProperty] public BoundsInt boundsb { get; set; }
 
         public void Update()
         {
