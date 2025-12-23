@@ -6,93 +6,146 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Utility methods to collect Reflection data
+    /// </summary>
     public static class ReflectionUtility
     {
-        // BindingFlags
+        // - BindingFlags
 
         private const BindingFlags DEFAULT_FLAGS = BindingFlags.Public | BindingFlags.Default | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
 
-        // Types
+        // - Types
 
-        public static IEnumerable<Type> GetTypeSubclasses(Type _type, bool _avoidAbstract = true)
+        /// <summary>
+        /// Get the subclasses of a type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="avoidAbstract">Should abstract types be ignored.</param>
+        /// <returns>Returns a collection of subclasses found.</returns>
+        public static IEnumerable<Type> GetTypeSubclasses(Type type, bool avoidAbstract = true)
         {
-            return _type.Assembly.GetTypes ().Where (t => t.IsSubclassOf (_type));
+            return type.Assembly.GetTypes().Where(t => t.IsSubclassOf(type));
         }
 
-        // Fields
+        // - Fields
 
-        public static FieldInfo GetField(Object _target, string _name, BindingFlags _flags = DEFAULT_FLAGS)
+        /// <summary>
+        /// Get a field on a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="name">The name of the field.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the field if one is found.</returns>
+        public static FieldInfo GetField(Object type, string name, BindingFlags flags = DEFAULT_FLAGS)
         {
-            return GetField(_target.GetType(), _name);
-        }
-
-        public static FieldInfo GetField(Type _type, string _name, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return _type.GetField (_name, _flags);
-        }
-
-        public static IEnumerable<FieldInfo> GetFields(Object _instance, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return GetFields(_instance.GetType(), _flags);
-        }
-
-        public static IEnumerable<FieldInfo> GetFields(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return _type.GetFields (_flags);
-        }
-
-        public static IEnumerable<FieldInfo> GetFields(Object _instance, Func<FieldInfo, bool> condition, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return GetFields (_instance.GetType(), _flags).Where (condition);
-        }
-
-        public static IEnumerable<FieldInfo> GetFields(Type _type, Func<FieldInfo, bool> condition, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return _type.GetFields (_flags).Where (condition);
-        }
-
-        // Properties
-
-        public static IEnumerable<PropertyInfo> GetProperties(Object _target, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return GetProperties (_target.GetType (), DEFAULT_FLAGS);
-        }
-
-        public static IEnumerable<PropertyInfo> GetProperties(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
-        {
-            return _type.GetProperties (DEFAULT_FLAGS);
+            return GetField(type.GetType(), name, flags);
         }
 
         /// <summary>
-        /// Get the value of the property on the target object
+        /// Get a field on a given type.
         /// </summary>
-        /// <typeparam name="T">The type to get</typeparam>
-        /// <param name="_target">The target instance</param>
-        /// <param name="_info">The property info we want the value of</param>
-        /// <returns></returns>
-        public static T GetTargetPropertyValue<T>(object _target, PropertyInfo _info)
+        /// <param name="type">The target type.</param>
+        /// <param name="name">The name of the field.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the field if one is found.</returns>
+        public static FieldInfo GetField(Type type, string name, BindingFlags flags = DEFAULT_FLAGS)
         {
-            if (_info.CanRead)
-            {
-                return default;
-            }
-
-            object value = _info.GetValue (_target);
-
-            return (T)value; 
+            return type.GetField(name, flags);
         }
 
-        // Methods
-
-        public static IEnumerable<MethodInfo> GetMethods(Object _instance, BindingFlags _flags = DEFAULT_FLAGS)
+        /// <summary>
+        /// Get a collection of fields for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of fields found.</returns>
+        public static IEnumerable<FieldInfo> GetFields(Object type, BindingFlags flags = DEFAULT_FLAGS)
         {
-            return GetMethods (_instance.GetType (), _flags);
+            return GetFields(type.GetType(), flags);
         }
 
-        public static IEnumerable<MethodInfo> GetMethods(Type _type, BindingFlags _flags = DEFAULT_FLAGS)
+        /// <summary>
+        /// Get a collection of fields for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of fields found.</returns>
+        public static IEnumerable<FieldInfo> GetFields(Type type, BindingFlags flags = DEFAULT_FLAGS)
         {
-            return _type.GetMethods ();
+            return type.GetFields(flags);
         }
 
+        /// <summary>
+        /// Get a collection of fields for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="condition">The required condition for a valid field.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of fields found.</returns>
+        public static IEnumerable<FieldInfo> GetFields(Object type, Func<FieldInfo, bool> condition, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return GetFields(type.GetType(), flags).Where(condition);
+        }
+
+        /// <summary>
+        /// Get a collection of fields for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="condition">The required condition for a valid field.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of fields found.</returns>
+        public static IEnumerable<FieldInfo> GetFields(Type type, Func<FieldInfo, bool> condition, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return type.GetFields(flags).Where(condition);
+        }
+
+        // - Properties
+
+        /// <summary>
+        /// Get a collection of properties for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of properties found.</returns>
+        public static IEnumerable<PropertyInfo> GetProperties(Object type, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return GetProperties(type.GetType(), DEFAULT_FLAGS);
+        }
+
+        /// <summary>
+        /// Get a collection of properties for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of properties found.</returns>
+        public static IEnumerable<PropertyInfo> GetProperties(Type type, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return type.GetProperties(DEFAULT_FLAGS);
+        }
+
+        // - Methods
+
+        /// <summary>
+        /// Get a collection of methods for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of methods found.</returns>
+        public static IEnumerable<MethodInfo> GetMethods(Object type, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return GetMethods(type.GetType(), flags);
+        }
+
+        /// <summary>
+        /// Get a collection of methods for a given type.
+        /// </summary>
+        /// <param name="type">The target type.</param>
+        /// <param name="flags">The reflection flags.</param>
+        /// <returns>Returns the collection of methods found.</returns>
+        public static IEnumerable<MethodInfo> GetMethods(Type type, BindingFlags flags = DEFAULT_FLAGS)
+        {
+            return type.GetMethods(flags);
+        }
     }
 }

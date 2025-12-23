@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 
-public class IntClampAttribute : PropertyAttribute
+namespace WooshiiAttributes
 {
-    public int Min { get; }
-    public int Max { get; }
-    public bool ShowClamp { get; }
-
-    public IntClampAttribute(int min, int max, bool showClamp = false)
+    /// <summary>
+    /// Clamp the field to the given range. Must be a supported value type.
+    /// </summary>
+    public class IntClampAttribute : PropertyAttribute
     {
-        Min = min;
-        Max = max;
-        ShowClamp = showClamp;
+        public int Min { get; }
+        public int Max { get; }
+        public bool ShowClamp { get; }
+
+        public IntClampAttribute(int min, int max, bool showClamp = false)
+        {
+            Min = min;
+            Max = max;
+            ShowClamp = showClamp;
+        }
     }
 }

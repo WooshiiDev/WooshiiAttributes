@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Adds add/remove controls to array elemennts.
+    /// </summary>
     [CustomPropertyDrawer (typeof (ArrayElementsAttribute))]
     public class ArrayElementsDrawer : WooshiiPropertyDrawer
     {

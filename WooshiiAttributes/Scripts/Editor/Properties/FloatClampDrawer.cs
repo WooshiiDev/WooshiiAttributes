@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Clamps an numerical control to a given float range. Must be a supported type.
+    /// </summary>
     [CustomPropertyDrawer (typeof (FloatClampAttribute))]
     public class FloatClampDrawer : WooshiiPropertyDrawer
     {

@@ -3,29 +3,41 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw a comment above the field.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
     public class CommentAttribute : PropertyAttribute
     {
-        public readonly string Text;
-
+        /// <summary>
+        /// Represents various message types.
+        /// </summary>
         public enum MessageType { NONE, WARNING, INFO, ERROR }
 
-        public MessageType messageType = MessageType.INFO;
+        /// <summary>
+        /// The comment text.
+        /// </summary>
+        public readonly string Text;
 
         /// <summary>
-        /// Display a comment
+        /// The type of message.
         /// </summary>
-        /// <param name="text">Text to show</param>
+        public readonly MessageType messageType = MessageType.INFO;
+
+        /// <summary>
+        /// Display a comment.
+        /// </summary>
+        /// <param name="text">The text to show.</param>
         public CommentAttribute(string text)
         {
             Text = text;
         }
 
         /// <summary>
-        /// Display a comment
+        /// Display a comment.
         /// </summary>
-        /// <param name="text">Text to show</param>
-        /// <param name="messageType">Message display type</param>
+        /// <param name="text">The text to show.</param>
+        /// <param name="messageType">The message display type.</param>
         public CommentAttribute(string text, MessageType messageType)
         {
             Text = text;

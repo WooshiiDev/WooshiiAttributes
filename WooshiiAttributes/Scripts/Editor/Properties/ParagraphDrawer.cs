@@ -3,6 +3,9 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a paragraph above a field.
+    /// </summary>
     [CustomPropertyDrawer(typeof(ParagraphAttribute))]
     public class ParagraphDrawer : WooshiiDecoratorDrawer
     {

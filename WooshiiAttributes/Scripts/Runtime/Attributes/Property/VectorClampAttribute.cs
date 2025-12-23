@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Clamps Vector3 components to a given range.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Vector3ClampAttribute : PropertyAttribute
     {
@@ -23,6 +26,9 @@ namespace WooshiiAttributes
         }
     }
 
+    /// <summary>
+    /// Clamps Vector2 components to a given range.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Vector2ClampAttribute : PropertyAttribute
     {

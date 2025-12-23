@@ -4,14 +4,23 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Utility methods to help collect serialized data.
+    /// </summary>
     public static class SerializedUtility
     {
+        /// <summary>
+        /// Property values to ignore when collecting properties.
+        /// </summary>
         private static readonly string[] s_excludedPropertyTypes =
         {
             "PPtr<MonoScript>",
             "ArraySize",
         };
 
+        /// <summary>
+        /// Property names to ignore when collection properties.
+        /// </summary>
         private static readonly string[] s_excludedPropertyNames =
         {
             "m_Script",
@@ -19,10 +28,10 @@ namespace WooshiiAttributes
 
 
         /// <summary>
-        /// Get all visible properties of a serialized object
+        /// Get all visible properties of a serialized object.
         /// </summary>
-        /// <param name="target">The target serialized object</param>
-        /// <returns>Returns a list of public serialized properties</returns>
+        /// <param name="target">The target serialized object.</param>
+        /// <returns>Returns a list of public serialized properties.</returns>
         public static List<SerializedProperty> GetAllVisibleProperties(SerializedObject target)
         {
             List<SerializedProperty> properties = new List<SerializedProperty> ();
@@ -56,11 +65,11 @@ namespace WooshiiAttributes
         }
 
         /// <summary>
-        /// Draw a <see cref="SerializedProperty"/> that will automatically apply changes 
+        /// Draw a <see cref="SerializedProperty"/> that will automatically apply changes .
         /// </summary>
-        /// <param name="property">The property to draw</param>
-        /// <param name="showChildren">Should children of this property been shown</param>
-        /// <param name="options">Optional layout options</param>
+        /// <param name="property">The property to draw.</param>
+        /// <param name="showChildren">Should children of this property been shown.</param>
+        /// <param name="options">Optional layout options.</param>
         public static void AutoProperty(SerializedProperty property, bool showChildren, params EditorGUILayout[] options)
         {
             EditorGUI.BeginChangeCheck ();

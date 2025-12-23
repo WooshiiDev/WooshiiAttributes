@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw a group of <see cref="GUIDrawerBase"/>.
+    /// </summary>
     [GUIDrawer(typeof(BeginGroupAttribute))]
     public class BeginGroupDrawer : GroupDrawer<BeginGroupAttribute>
     {

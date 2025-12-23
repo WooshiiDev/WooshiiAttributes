@@ -7,6 +7,9 @@ using UnityEditorInternal;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw a button representing a method.
+    /// </summary>
     [GUIDrawer(typeof(MethodButtonAttribute))]
     public class MethodButtonDrawer : GUIDrawerBase<MethodInfo>// IMethodDrawer
     {

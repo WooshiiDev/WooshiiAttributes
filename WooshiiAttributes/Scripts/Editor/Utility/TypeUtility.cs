@@ -5,6 +5,9 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Utility class helpiong convert some Type data.
+    /// </summary>
     public static class TypeUtility
     {
         private readonly static Dictionary<Type, PropertyType> s_typeDictionary = new Dictionary<Type, PropertyType> ()
@@ -48,6 +51,11 @@ namespace WooshiiAttributes
             { typeof(Pose)          , PropertyType.POSE},
         };
 
+        /// <summary>
+        /// Get an enum value representing a given type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>Returns the enum value representing a type. Will return <see cref="PropertyType.INVALID"/> if it cannot find a valid value.</returns>
         public static PropertyType GetPropertyTypeFromType(Type type)
         {
             if (type == null)
@@ -69,9 +77,12 @@ namespace WooshiiAttributes
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum PropertyType
     {
-        // --- Standard Types ---
+        // - Standard Types
 
         INVALID = -1,
 
@@ -87,7 +98,7 @@ namespace WooshiiAttributes
 
         ENUM = 7,
 
-        // --- Unity Types ---
+        // - Unity Types
 
         UNITY_OBJECT = 8,
 
@@ -103,8 +114,6 @@ namespace WooshiiAttributes
 
         LAYER_MASK = 16,
         ANIMATION_CURVE = 17,
-
-        // Other unity types - find through serializable properties
 
         RECT = 18,
         RECTINT = 19,

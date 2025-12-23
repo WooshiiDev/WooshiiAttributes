@@ -6,10 +6,17 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
-    internal static class PropertyGUICache
+    /// <summary>
+    /// Handles the cache and creation of <see cref="GUIDrawerBase"/> related data.
+    /// </summary>
+    public static class PropertyGUICache
     {
+        // - Static
+
         private static readonly Dictionary<Type, Type> s_drawerLookup = new Dictionary<Type, Type>();
         private static readonly Type s_fallbackDrawerType = typeof(SerializedPropertyDrawer);
+
+        // - Properties
 
         public static bool HasInitialized { get; private set; }
 
@@ -18,6 +25,11 @@ namespace WooshiiAttributes
             Collect();
         }
         
+        // - Methods
+
+        /// <summary>
+        /// Cache all <see cref="GUIDrawerBase"/> types. Can only be run once per Unity reload.
+        /// </summary>
         public static void Collect()
         {
             if (HasInitialized)
@@ -39,21 +51,46 @@ namespace WooshiiAttributes
             HasInitialized = true;
         }
 
+        /// <summary>
+        /// Create a <see cref="GroupDrawer"/>.
+        /// </summary>
+        /// <param name="attribute">The group attribute.</param>
+        /// <param name="target">The target object this attribute is in.</param>
+        /// <returns>Returns the created drawer.</returns>
         public static GroupDrawer CreateGroupDrawer(GroupAttribute attribute, SerializedObject target)
         {
             return CreateDrawer<GroupDrawer>(attribute, attribute, target);
         }
 
+        /// <summary>
+        /// Create a <see cref="GroupDrawer"/>.
+        /// </summary>
+        /// <param name="property">The target property.</param>
+        /// <returns>Returns the created drawer.</returns>
         public static GUIDrawerBase CreateDrawer(SerializedProperty property)
         {
             return new SerializedPropertyDrawer(property);
         }
 
+        /// <summary>
+        /// Create a <see cref="GroupDrawer"/>.
+        /// </summary>
+        /// <param name="method">The target method.</param>
+        /// <param name="attribute">The attribute on the method.</param>
+        /// <param name="target">The target object this attribute is in.</param>
+        /// <returns>Returns the created drawer.</returns>
         public static GUIDrawerBase CreateDrawer(MethodInfo method, MethodButtonAttribute attribute, object target)
         {
             return CreateDrawer<GUIDrawerBase>(attribute, attribute, target, method);
         }
 
+        /// <summary>
+        /// Create a drawe of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type of drawer to create.</typeparam>
+        /// <param name="attribute">The target attribute.</param>
+        /// <param name="args">The args for the drawer.</param>
+        /// <returns>Returns the created drawer. If the attribute is null, no drawer will be created.</returns>
         public static T CreateDrawer<T>(GUIElementAttribute attribute, params object[] args) where T : GUIDrawerBase
         {
             if (attribute == null)
@@ -70,6 +107,9 @@ namespace WooshiiAttributes
         }
     }
 
+    /// <summary>
+    /// The base editor to enable the drawing of attributes..
+    /// </summary>
     [CanEditMultipleObjects]
     [CustomEditor (typeof (MonoBehaviour), true)]
     public class WooshiiEditor : Editor

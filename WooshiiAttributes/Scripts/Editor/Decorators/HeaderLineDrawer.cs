@@ -3,11 +3,18 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw an underlined header.
+    /// </summary>
     [CustomPropertyDrawer (typeof (HeaderLineAttribute))]
     public class HeaderLineDrawer : WooshiiDecoratorDrawer
     {
+        // - Properties
+
         private GUIStyle _style = new GUIStyle (EditorStyles.boldLabel);
         private HeaderLineAttribute Target => attribute as HeaderLineAttribute;
+
+        // - Methods
 
         public override void OnGUI(Rect rect)
         {
@@ -17,12 +24,12 @@ namespace WooshiiAttributes
                 EditorGUI.LabelField (rect, Target.Text.ToUpper (), _style);
 
                 //Move to new line and set following line height
-                rect.y += singleLine + 1;
+                rect.y += _singleLine + 1;
                 rect.height = 1;
             }
             else
             {
-                rect.y += singleLine / 2f + 1;
+                rect.y += _singleLine / 2f + 1;
                 rect.height = 1;
             }
 
@@ -32,14 +39,12 @@ namespace WooshiiAttributes
                 c = _style.normal.textColor;
             }
 
-            //Draw spacer
             WooshiiGUI.CreateLineSpacer (EditorGUI.IndentedRect (rect), c, rect.height);
         }
 
-        //How tall the GUI is for this decorator
         public override float GetHeight()
         {
-            return singleLine * 1.25f;
+            return _singleLine * 1.25f;
         }
     }
 }

@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a slider for a float range.
+    /// </summary>
     [CustomPropertyDrawer (typeof (FloatSliderAttribute))]
     public class FloatSliderDrawer : WooshiiPropertyDrawer
     {

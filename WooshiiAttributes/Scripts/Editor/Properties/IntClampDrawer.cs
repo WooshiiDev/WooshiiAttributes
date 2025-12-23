@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Clamps an numerical control to a given int range. Must be a supported type.
+    /// </summary>
     [CustomPropertyDrawer (typeof (IntClampAttribute))]
     public class IntClampDrawer : WooshiiPropertyDrawer
     {

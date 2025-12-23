@@ -3,11 +3,16 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw a control as readonly.
+    /// </summary>
     [CustomPropertyDrawer (typeof (ReadOnlyAttribute))]
     public class ReadOnlyDrawer : WooshiiPropertyDrawer
     {
         private ReadOnlyAttribute _target;
         private bool _shown;
+
+        // - Methods
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

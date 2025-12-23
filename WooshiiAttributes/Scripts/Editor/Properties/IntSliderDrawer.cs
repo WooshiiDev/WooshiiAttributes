@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a slider for an integer range.
+    /// </summary>
     [CustomPropertyDrawer (typeof (IntSliderAttribute))]
     public class IntSliderDrawer : WooshiiPropertyDrawer
     {

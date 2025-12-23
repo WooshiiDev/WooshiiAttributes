@@ -9,9 +9,11 @@ namespace WooshiiAttributes
     [AttributeUsage (AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class HeaderLineAttribute : PropertyAttribute
     {
+        /// <summary>
+        /// The title for this header.
+        /// </summary>
         public readonly string Text;
 
-        //Constructor
         public HeaderLineAttribute(string text)
         {
             this.Text = text;

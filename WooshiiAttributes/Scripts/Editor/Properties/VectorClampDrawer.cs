@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a clamped Vector2.
+    /// </summary>
     [CustomPropertyDrawer (typeof (Vector2ClampAttribute))]
     public class Vector2ClampDrawer : WooshiiPropertyDrawer
     {
@@ -33,6 +36,9 @@ namespace WooshiiAttributes
         }
     }
 
+    /// <summary>
+    /// Draws a clamped Vector3.
+    /// </summary>
     [CustomPropertyDrawer (typeof (Vector3ClampAttribute))]
     public class Vector3ClampDrawer : WooshiiPropertyDrawer
     {

@@ -57,7 +57,7 @@ namespace WooshiiAttributes
         private float GetBoxHeight()
         {
             float width = EditorGUIUtility.currentViewWidth;
-            float minHeight = singleLine * 2f;
+            float minHeight = _singleLine * 2f;
 
             // Icon, Scrollbar, Indent
             if (Target.messageType != CommentAttribute.MessageType.NONE)

@@ -2,6 +2,9 @@
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// The base attribute representing any custom drawers.
+    /// </summary>
     public class GUIDrawerAttribute : Attribute
     {
         /// <summary>
