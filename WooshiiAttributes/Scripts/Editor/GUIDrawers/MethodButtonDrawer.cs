@@ -27,6 +27,7 @@ namespace WooshiiAttributes
             }
         }
 
+        protected object _target;
         protected MethodButtonAttribute _attribute;
         protected MethodInfo _methodInfo;
         protected ParameterData[] _parameterData;
@@ -35,8 +36,9 @@ namespace WooshiiAttributes
         public MethodButtonAttribute Attribute => _attribute;
         public MethodInfo MethodInfo => _methodInfo;
        
-        public MethodButtonDrawer(MethodButtonAttribute attribute, Object target, MethodInfo info) : base(info)
+        public MethodButtonDrawer(MethodButtonAttribute attribute, object target, MethodInfo info) : base(info)
         {
+            _target = target;
             _attribute = attribute;
             _methodInfo = info;
 

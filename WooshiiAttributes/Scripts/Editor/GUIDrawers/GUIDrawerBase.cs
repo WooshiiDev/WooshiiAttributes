@@ -16,13 +16,13 @@
     public abstract class GUIDrawerBase<T> : GUIDrawerBase
     {
         /// <summary>
-        /// The target object to draw.
+        /// The data tied to this drawer.
         /// </summary>
-        protected T _target;
+        protected T _data;
 
-        public GUIDrawerBase(T target)
+        public GUIDrawerBase(T data)
         {
-            this._target = target;
+            _data = data;
         }
     }
 }
