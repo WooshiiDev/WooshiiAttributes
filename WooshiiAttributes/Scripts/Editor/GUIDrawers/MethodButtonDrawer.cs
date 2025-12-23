@@ -28,21 +28,17 @@ namespace WooshiiAttributes
         }
 
         protected MethodButtonAttribute _attribute;
-        protected Object _target;
         protected MethodInfo _methodInfo;
         protected ParameterData[] _parameterData;
         protected bool _hasArguments = false;
 
         public MethodButtonAttribute Attribute => _attribute;
         public MethodInfo MethodInfo => _methodInfo;
-        public Object Target => _target;
        
         public MethodButtonDrawer(MethodButtonAttribute attribute, Object target, MethodInfo info) : base(info)
         {
-            this._attribute = attribute;
-
-            this._target = target;
-            this._methodInfo = info;
+            _attribute = attribute;
+            _methodInfo = info;
 
             if (attribute.MethodName == null)
             {
