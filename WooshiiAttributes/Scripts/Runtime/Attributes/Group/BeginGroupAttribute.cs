@@ -2,6 +2,9 @@
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Begin a group.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class BeginGroupAttribute : GroupAttribute
     {

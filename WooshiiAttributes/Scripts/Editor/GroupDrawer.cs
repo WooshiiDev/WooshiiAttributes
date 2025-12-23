@@ -4,47 +4,62 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Base class for group drawers.
+    /// </summary>
     public class GroupDrawer : GUIDrawerBase
     {
-        protected SerializedObject m_serializedObject;
-        public SerializedObject SerializedObject => m_serializedObject;
+        // - Fields
+      
+        protected SerializedObject _serializedObject;
+        protected Type _attributeType;
+        protected List<GUIDrawerBase> _drawers = new List<GUIDrawerBase>();
 
-        protected Type m_attributeType;
-        public Type AttributeType => m_attributeType;
+        // - Properties
 
-        protected List<GUIDrawerBase> m_drawers = new List<GUIDrawerBase>();
-        public IEnumerable<GUIDrawerBase> Drawers => m_drawers;
-       
+        public SerializedObject SerializedObject => _serializedObject;
+        public Type AttributeType => _attributeType;
+        public IEnumerable<GUIDrawerBase> Drawers => _drawers;
+
         public GUIDrawerBase First
         {
             get
             {
-                if (m_drawers.Count == 0)
+                if (_drawers.Count == 0)
                 {
                     return null;
                 }
-                return m_drawers[0];
+                return _drawers[0];
             }
         }
 
-        public GroupDrawer(SerializedObject _serializedObject)
+        public GroupDrawer(SerializedObject serializedObject)
         {
-            m_serializedObject = _serializedObject;
+            this._serializedObject = serializedObject;
         }
+        
+        // - Methods
 
         public override void OnGUI() { }
 
+        /// <summary>
+        /// Add a drawer to this group.
+        /// </summary>
+        /// <param name="drawer">The drawer.</param>
         public void RegisterProperty(GUIDrawerBase drawer)
         {
-            m_drawers.Add(drawer);
+            _drawers.Add(drawer);
         }
     }
 
+    /// <summary>
+    /// Base class for group drawers.
+    /// </summary>
     public class GroupDrawer<T> : GroupDrawer
     {
         public T attribute;
 
-        public GroupDrawer(T attribute, SerializedObject _serializedObject) : base(_serializedObject)
+        public GroupDrawer(T attribute, SerializedObject serializedObject) : base(serializedObject)
         {
             this.attribute = attribute;
         }

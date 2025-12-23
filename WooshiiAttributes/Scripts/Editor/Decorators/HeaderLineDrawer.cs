@@ -3,43 +3,48 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draw an underlined header.
+    /// </summary>
     [CustomPropertyDrawer (typeof (HeaderLineAttribute))]
     public class HeaderLineDrawer : WooshiiDecoratorDrawer
     {
-        private HeaderLineAttribute Target => attribute as HeaderLineAttribute;
-        private GUIStyle m_style = new GUIStyle (EditorStyles.boldLabel);
+        // - Properties
 
-        public override void OnGUI(Rect _rect)
+        private GUIStyle _style = new GUIStyle (EditorStyles.boldLabel);
+        private HeaderLineAttribute Target => attribute as HeaderLineAttribute;
+
+        // - Methods
+
+        public override void OnGUI(Rect rect)
         {
             //Draw label
-            if (!string.IsNullOrWhiteSpace (Target.text))
+            if (!string.IsNullOrWhiteSpace (Target.Text))
             {
-                EditorGUI.LabelField (_rect, Target.text.ToUpper (), m_style);
+                EditorGUI.LabelField (rect, Target.Text.ToUpper (), _style);
 
                 //Move to new line and set following line height
-                _rect.y += singleLine + 1;
-                _rect.height = 1;
+                rect.y += _singleLine + 1;
+                rect.height = 1;
             }
             else
             {
-                _rect.y += singleLine / 2f + 1;
-                _rect.height = 1;
+                rect.y += _singleLine / 2f + 1;
+                rect.height = 1;
             }
 
             Color c = Color.gray;
             if (EditorGUIUtility.isProSkin)
             {
-                c = m_style.normal.textColor;
+                c = _style.normal.textColor;
             }
 
-            //Draw spacer
-            WooshiiGUI.CreateLineSpacer (EditorGUI.IndentedRect (_rect), c, _rect.height);
+            WooshiiGUI.CreateLineSpacer (EditorGUI.IndentedRect (rect), c, rect.height);
         }
 
-        //How tall the GUI is for this decorator
         public override float GetHeight()
         {
-            return singleLine * 1.25f;
+            return _singleLine * 1.25f;
         }
     }
 }

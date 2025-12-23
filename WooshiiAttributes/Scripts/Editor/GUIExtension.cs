@@ -2,86 +2,90 @@
 using UnityEditor;
 using UnityEngine;
 
-public static class WooshiiGUI
+namespace WooshiiAttributes
 {
-    private readonly static GUIStyle style = new GUIStyle (EditorStyles.boldLabel);
-
-    //public static EditorDrawProfile EditorProfile => AssetDatabase.LoadAssetAtPath ("Assets/Editor/_Settings/Design/Base Style.asset", typeof (EditorDrawProfile)) as EditorDrawProfile;
-
-    public static void CreateLineSpacer()
+    /// <summary>
+    /// Utilities and helper GUI methods to make drawing custom GUIs more convenient.
+    /// </summary>
+    public static class WooshiiGUI
     {
-        EditorGUILayout.LabelField ("", GUI.skin.horizontalSlider);
-    }
+        private readonly static GUIStyle s_style = new GUIStyle(EditorStyles.boldLabel);
 
-    public static void CreateLineSpacer(Color _color)
-    {
-        Color oldColour = GUI.color;
-
-        GUI.color = _color;
-        EditorGUILayout.LabelField ("", GUI.skin.horizontalSlider);
-        GUI.color = oldColour;
-    }
-
-    public static void CreateLineSpacer(Rect _rect, Color _color, float _height = 2)
-    {
-        _rect.height = _height;
-
-        Color oldColour = GUI.color;
-
-        GUI.color = _color;
-        EditorGUI.DrawRect (_rect, _color);
-        GUI.color = oldColour;
-    }
-
-    public static void CreateNewSection(string _title)
-    {
-        EditorGUILayout.BeginVertical ();
+        public static void CreateLineSpacer()
         {
-            CreateLineSpacer ();
-            CreateSubSection (_title, style);
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
-        EditorGUILayout.EndVertical ();
-    }
 
-    public static void CreateNewSection(string _title, Action _onDrawCallback)
-    {
-        EditorGUILayout.BeginVertical ();
+        public static void CreateLineSpacer(Color color)
         {
-            CreateLineSpacer ();
+            Color oldColour = GUI.color;
 
-            EditorGUILayout.BeginHorizontal ();
-            CreateSubSection (_title, style);
-            _onDrawCallback?.Invoke ();
-
-            EditorGUILayout.EndHorizontal ();
+            GUI.color = color;
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            GUI.color = oldColour;
         }
-        EditorGUILayout.EndVertical ();
-    }
 
-    public static void CreateSubSection(string _title, GUIStyle _skin = null)
-    {
-        EditorGUILayout.LabelField (_title, style);
-    }
-
-    public static void CreateCenteredSection(string _title, int _fontSize = 16)
-    {
-        //Draw label
-        GUIStyle boldStyle = new GUIStyle (style)
+        public static void CreateLineSpacer(Rect rect, Color color, float height = 2)
         {
-            alignment = TextAnchor.MiddleCenter,
-            fontSize = _fontSize
-        };
+            rect.height = height;
 
-        EditorGUILayout.LabelField (_title.ToUpper (), boldStyle);
-        Rect rect = GUILayoutUtility.GetLastRect ();
+            Color oldColour = GUI.color;
 
-        //Move to new line and set following line height
-        rect.y += rect.height + 1;
-        rect.height = 1;
+            GUI.color = color;
+            EditorGUI.DrawRect(rect, color);
+            GUI.color = oldColour;
+        }
 
-        //Draw spacer
-        CreateLineSpacer (rect, Color.white, rect.height);
+        public static void CreateNewSection(string title)
+        {
+            EditorGUILayout.BeginVertical();
+            {
+                CreateLineSpacer();
+                CreateSubSection(title);
+            }
+            EditorGUILayout.EndVertical();
+        }
 
-        GUILayout.Space (6f);
+        public static void CreateNewSection(string title, Action onDrawCallback)
+        {
+            EditorGUILayout.BeginVertical();
+            {
+                CreateLineSpacer();
+
+                EditorGUILayout.BeginHorizontal();
+                CreateSubSection(title);
+                onDrawCallback?.Invoke();
+
+                EditorGUILayout.EndHorizontal();
+            }
+            EditorGUILayout.EndVertical();
+        }
+
+        public static void CreateSubSection(string title)
+        {
+            EditorGUILayout.LabelField(title, s_style);
+        }
+
+        public static void CreateCenteredSection(string title, int fontSize = 16)
+        {
+            //Draw label
+            GUIStyle boldStyle = new GUIStyle(s_style)
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = fontSize
+            };
+
+            EditorGUILayout.LabelField(title.ToUpper(), boldStyle);
+            Rect rect = GUILayoutUtility.GetLastRect();
+
+            //Move to new line and set following line height
+            rect.y += rect.height + 1;
+            rect.height = 1;
+
+            //Draw spacer
+            CreateLineSpacer(rect, Color.white, rect.height);
+
+            GUILayout.Space(6f);
+        }
     }
 }

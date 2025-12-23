@@ -5,83 +5,91 @@ using UnityEngine;
 
 #pragma warning disable 649, IDE0044
 
+/// <summary>
+/// Base ShaderGUI class to add extra functionality to the material preview view.
+/// </summary>
 public class WooshiiShaderGUI : ShaderGUI
 {
+    /// <summary>
+    /// Full type name for the GUI Preview
+    /// </summary>
     private const string GUI_SRC = "PreviewGUI, UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+
+    /// <summary>
+    /// Full type name for the Model Inspector
+    /// </summary>
     private const string MODEL_SRC = "UnityEditor.ModelInspector, UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
 
-    // State
+    // - Fields
 
-    private bool m_isRotating;
+    private int _selectedMesh = 0;
+    private Mesh _targetMesh;
 
-    // Mesh 
-    private int m_selectedMesh = 0;
+    private bool _isRotating;
+    private float _fov;
 
-    private Mesh m_targetMesh;
+    private Vector2 _previewDir = new Vector2(120f, -20f);
+    private Vector3 _offset;
 
-    private Vector2 m_previewDir = new Vector2 (120f, -20f);
-    private Vector3 m_offset;
+    private PreviewRenderUtility _previewRenderUtility;
 
-    private PreviewRenderUtility m_previewRenderUtility;
-    private float m_fov;
+    private FieldInfo _selectedField = null;
 
-    // Reflection Fields
+    private MethodInfo _renderMeshMethod = null;
+    private MethodInfo _dragMethod = null;
 
-    private FieldInfo selectedField = null;
+    private Type _modelInspectorType = null;
+    private Type _previewGUIType = null;
 
-    private MethodInfo m_renderMeshMethod = null;
-    private MethodInfo m_dragMethod = null;
-
-    private Type m_modelInspectorType = null;
-    private Type m_previewGUIType = null;
-
-
-    //Will leak if the render is not handled after the GUI is disabled
     ~WooshiiShaderGUI()
     {
+        //Will leak if the render is not handled after the GUI is disabled
         CleanUpRender ();
     }
 
-    #region Overridden Methods
+    // - Methods
 
 #if UNITY_2018_2_OR_NEWER
-
-    public override void OnClosed(Material _material)
+    public override void OnClosed(Material material)
     {
-        base.OnClosed (_material);
+        base.OnClosed (material);
 
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.Cleanup ();
-            m_previewRenderUtility = null;
+            _previewRenderUtility.Cleanup ();
+            _previewRenderUtility = null;
         }
     }
-
 #endif
 
-    public override void OnGUI(MaterialEditor _materialEditor, MaterialProperty[] _properties)
+    /// <summary>
+    /// Draw the custom GUI.
+    /// </summary>
+    /// <param name="materialEditor">The material editor currently being drawn to.</param>
+    /// <param name="properties">The material properties.</param>
+    public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] properties)
     {
-        base.OnGUI (_materialEditor, _properties);
+        base.OnGUI (materialEditor, properties);
     }
 
     /// <summary>
-    /// Small Preview GUI in the top left corner [default]
+    /// Small Preview GUI in the top left corner.
     /// </summary>
-    /// <param name="_materialEditor">Current Material Editor</param>
-    /// <param name="_rect">Full Sized rect of GUI</param>
-    /// <param name="_background">Background style of GUI</param>
-    public override void OnMaterialPreviewGUI(MaterialEditor _materialEditor, Rect _rect, GUIStyle _background)
+    /// <param name="materialEditor">The current material editor.</param>
+    /// <param name="rect">The draw rect.</param>
+    /// <param name="background">The background style.</param>
+    public override void OnMaterialPreviewGUI(MaterialEditor materialEditor, Rect rect, GUIStyle background)
     {
-        base.OnMaterialPreviewGUI (_materialEditor, _rect, _background);
+        base.OnMaterialPreviewGUI (materialEditor, rect, background);
     }
 
     /// <summary>
-    /// Handle the display of the material preview
+    /// Handle the GUI of the material preview.
     /// </summary>
-    /// <param name="_materialEditor">Current Material Editor</param>
-    /// <param name="_rect">Fullsized rect for the interactive preview</param>
-    /// <param name="_background">Background data for the interactive preview</param>
-    public override void OnMaterialInteractivePreviewGUI(MaterialEditor _materialEditor, Rect _rect, GUIStyle _background)
+    /// <param name="materialEditor">The current material editor.</param>
+    /// <param name="rect">The full rect for the interactive preview.</param>
+    /// <param name="background">The background data for the interactive preview.</param>
+    public override void OnMaterialInteractivePreviewGUI(MaterialEditor materialEditor, Rect rect, GUIStyle background)
     {
         if (!ShaderUtil.hardwareSupportsRectRenderTexture)
         {
@@ -90,56 +98,60 @@ public class WooshiiShaderGUI : ShaderGUI
                 return;
             }
 
-            EditorGUI.DropShadowLabel (new Rect (_rect.x, _rect.y, _rect.width, 40f), "Material preview \nnot available");
+            EditorGUI.DropShadowLabel (new Rect (rect.x, rect.y, rect.width, 40f), "Material preview \nnot available");
         }
         else
         {
-            if (m_targetMesh == null)
+            if (_targetMesh == null)
             {
-                base.OnMaterialInteractivePreviewGUI (_materialEditor, _rect, _background);
+                base.OnMaterialInteractivePreviewGUI (materialEditor, rect, background);
                 return;
             }
 
-            Material mat = _materialEditor.target as Material;
+            Material mat = materialEditor.target as Material;
 
-            if (m_previewRenderUtility == null)
+            if (_previewRenderUtility == null)
             {
-                m_previewRenderUtility = new PreviewRenderUtility ();
-                m_previewRenderUtility.AddSingleGO (GameObject.CreatePrimitive (PrimitiveType.Plane));
+                _previewRenderUtility = new PreviewRenderUtility ();
+                _previewRenderUtility.AddSingleGO (GameObject.CreatePrimitive (PrimitiveType.Plane));
 
 #if UNITY_2017_1_OR_NEWER
-                m_fov = m_previewRenderUtility.cameraFieldOfView = 30f;
+                _fov = _previewRenderUtility.cameraFieldOfView = 30f;
 #else
 			    fov = m_previewRenderUtility.m_CameraFieldOfView = 30f;
 #endif
             }
 
-            if (m_previewGUIType == null)
+            if (_previewGUIType == null)
             {
-                m_previewGUIType = Type.GetType (GUI_SRC);
-                m_dragMethod = m_previewGUIType.GetMethod ("Drag2D", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                _previewGUIType = Type.GetType (GUI_SRC);
+                _dragMethod = _previewGUIType.GetMethod ("Drag2D", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             }
 
-            if (m_modelInspectorType == null)
+            if (_modelInspectorType == null)
             {
-                m_modelInspectorType = Type.GetType (MODEL_SRC);
-                m_renderMeshMethod = m_modelInspectorType.GetMethod ("RenderMeshPreview", BindingFlags.Static | BindingFlags.NonPublic);
+                _modelInspectorType = Type.GetType (MODEL_SRC);
+                _renderMeshMethod = _modelInspectorType.GetMethod ("RenderMeshPreview", BindingFlags.Static | BindingFlags.NonPublic);
             }
 
-            m_previewDir = (Vector2)m_dragMethod.Invoke (m_previewGUIType, new object[] { m_previewDir, _rect });
+            _previewDir = (Vector2)_dragMethod.Invoke (_previewGUIType, new object[] { _previewDir, rect });
 
             if (Event.current.type == EventType.Repaint)
             {
-                m_previewRenderUtility.BeginPreview (_rect, _background);
-                m_renderMeshMethod.Invoke (m_modelInspectorType, new object[] { m_targetMesh, m_previewRenderUtility, mat, null, m_previewDir, -1 });
-                m_previewRenderUtility.EndAndDrawPreview (_rect);
+                _previewRenderUtility.BeginPreview (rect, background);
+                _renderMeshMethod.Invoke (_modelInspectorType, new object[] { _targetMesh, _previewRenderUtility, mat, null, _previewDir, -1 });
+                _previewRenderUtility.EndAndDrawPreview (rect);
             }
         }
     }
 
-    public override void OnMaterialPreviewSettingsGUI(MaterialEditor _materialEditor)
+    /// <summary>
+    /// Handle the GUI of the material preview settings.
+    /// </summary>
+    /// <param name="materialEditor">The current material editor.</param>
+    public override void OnMaterialPreviewSettingsGUI(MaterialEditor materialEditor)
     {
-        base.OnMaterialPreviewSettingsGUI (_materialEditor);
+        base.OnMaterialPreviewSettingsGUI (materialEditor);
 
         if (!ShaderUtil.hardwareSupportsRectRenderTexture)
         {
@@ -148,44 +160,42 @@ public class WooshiiShaderGUI : ShaderGUI
 
         EditorGUI.BeginChangeCheck ();
 
-        m_targetMesh = (Mesh)EditorGUILayout.ObjectField (m_targetMesh, typeof (Mesh), false, GUILayout.MaxWidth (120));
-        DrawFOVSlider (_materialEditor);
+        _targetMesh = (Mesh)EditorGUILayout.ObjectField (_targetMesh, typeof (Mesh), false, GUILayout.MaxWidth (120));
+        DrawFOVSlider (materialEditor);
 
-        if (m_targetMesh != null)
+        if (_targetMesh != null)
         {
             if (EditorGUI.EndChangeCheck ())
             {
-                if (selectedField == null)
+                if (_selectedField == null)
                 {
-                    selectedField = typeof (MaterialEditor).GetField ("m_SelectedMesh", BindingFlags.Instance | BindingFlags.NonPublic);
+                    _selectedField = typeof (MaterialEditor).GetField ("m_SelectedMesh", BindingFlags.Instance | BindingFlags.NonPublic);
                 }
 
                 //Store mesh selection
-                m_selectedMesh = (int)selectedField.GetValue (_materialEditor);
+                _selectedMesh = (int)_selectedField.GetValue (materialEditor);
             }
         }
     }
 
-    #endregion Overridden Methods
-
     private void CleanUpRender()
     {
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.Cleanup ();
-            m_previewRenderUtility = null;
+            _previewRenderUtility.Cleanup ();
+            _previewRenderUtility = null;
         }
     }
 
-    private void DrawFOVSlider(MaterialEditor _materialEditor)
+    private void DrawFOVSlider(MaterialEditor materialEditor)
     {
-        if (m_previewRenderUtility != null)
+        if (_previewRenderUtility != null)
         {
-            m_previewRenderUtility.lights[0].color = EditorGUILayout.ColorField (m_previewRenderUtility.lights[0].color, GUILayout.MaxWidth (120));
-            m_previewRenderUtility.lights[1].color = EditorGUILayout.ColorField (m_previewRenderUtility.lights[1].color, GUILayout.MaxWidth (120));
+            _previewRenderUtility.lights[0].color = EditorGUILayout.ColorField (_previewRenderUtility.lights[0].color, GUILayout.MaxWidth (120));
+            _previewRenderUtility.lights[1].color = EditorGUILayout.ColorField (_previewRenderUtility.lights[1].color, GUILayout.MaxWidth (120));
 
 #if UNITY_2017_1_OR_NEWER
-            m_previewRenderUtility.cameraFieldOfView = m_fov;
+            _previewRenderUtility.cameraFieldOfView = _fov;
 #else
 			m_previewRenderUtility.m_CameraFieldOfView = fov;
 #endif

@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a clamped Vector2.
+    /// </summary>
     [CustomPropertyDrawer (typeof (Vector2ClampAttribute))]
     public class Vector2ClampDrawer : WooshiiPropertyDrawer
     {
@@ -10,7 +13,7 @@ namespace WooshiiAttributes
 
         public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            _label.text = _label.text + $" [{Target.m_min}-{Target.m_max}]";
+            _label.text = _label.text + $" [{Target.Min}-{Target.Max}]";
 
             EditorGUI.BeginChangeCheck ();
 
@@ -20,10 +23,10 @@ namespace WooshiiAttributes
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Target.value[i] = Mathf.Clamp (_property.vector2Value[i], Target.m_min, Target.m_max);
+                    Target.Value[i] = Mathf.Clamp (_property.vector2Value[i], Target.Min, Target.Max);
                 }
 
-                _property.vector2Value = Target.value;
+                _property.vector2Value = Target.Value;
             }
         }
 
@@ -33,6 +36,9 @@ namespace WooshiiAttributes
         }
     }
 
+    /// <summary>
+    /// Draws a clamped Vector3.
+    /// </summary>
     [CustomPropertyDrawer (typeof (Vector3ClampAttribute))]
     public class Vector3ClampDrawer : WooshiiPropertyDrawer
     {
@@ -40,7 +46,7 @@ namespace WooshiiAttributes
 
         public override void OnGUI(Rect _position, SerializedProperty _property, GUIContent _label)
         {
-            _label.text = _label.text + $" [{Target.m_min}-{Target.m_max}]";
+            _label.text = _label.text + $" [{Target.Min}-{Target.Max}]";
 
             EditorGUI.BeginChangeCheck ();
 
@@ -50,7 +56,7 @@ namespace WooshiiAttributes
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    Target.value[i] = Mathf.Clamp (_property.vector3Value[i], Target.m_min, Target.m_max);
+                    Target.value[i] = Mathf.Clamp (_property.vector3Value[i], Target.Min, Target.Max);
                 }
 
                 _property.vector3Value = Target.value;

@@ -3,43 +3,46 @@ using UnityEditor;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a paragraph above a field.
+    /// </summary>
     [CustomPropertyDrawer(typeof(ParagraphAttribute))]
     public class ParagraphDrawer : WooshiiDecoratorDrawer
     {
         private const float HEIGHT_PADDING = 4f;
-        private static GUIStyle SmallStyle;
+        private static GUIStyle _smallStyle;
+
+        private Color _textColor;
+        private Color _backgroundColor;
 
         private ParagraphAttribute Target => attribute as ParagraphAttribute;
 
-        private Color m_textColor;
-        private Color m_backgroundColor;
-
-        public override void OnGUI(Rect _position)
+        public override void OnGUI(Rect position)
         {
-            if (SmallStyle == null)
+            if (_smallStyle == null)
             {
-                SmallStyle = new GUIStyle (GUI.skin.box)
+                _smallStyle = new GUIStyle (GUI.skin.box)
                 {
                     alignment = Target.Anchor,
                 };
 
-                if (ColorUtility.TryParseHtmlString (Target.TextColor, out m_textColor))
+                if (ColorUtility.TryParseHtmlString (Target.TextColor, out _textColor))
                 {
-                    SmallStyle.normal.textColor = m_textColor;
+                    _smallStyle.normal.textColor = _textColor;
                 }
 
-                if (!ColorUtility.TryParseHtmlString (Target.BackgroundColour, out m_backgroundColor))
+                if (!ColorUtility.TryParseHtmlString (Target.BackgroundColour, out _backgroundColor))
                 {
-                    m_backgroundColor = GUI.color;
+                    _backgroundColor = GUI.color;
                 }
             }
 
-            _position.height = GetParagraphHeight ();
+            position.height = GetParagraphHeight ();
 
             Color oldGUIColour = GUI.color;
 
-            GUI.backgroundColor = m_backgroundColor;
-            EditorGUI.LabelField (_position, Target.Text, SmallStyle);
+            GUI.backgroundColor = _backgroundColor;
+            EditorGUI.LabelField (position, Target.Text, _smallStyle);
             GUI.backgroundColor = oldGUIColour;
         }
 
@@ -50,12 +53,12 @@ namespace WooshiiAttributes
 
         private float GetParagraphHeight()
         {
-            if (SmallStyle == null)
+            if (_smallStyle == null)
             {
                 return 19f;
             }
 
-            return SmallStyle.CalcHeight (new GUIContent (Target.Text), EditorGUIUtility.currentViewWidth);
+            return _smallStyle.CalcHeight (new GUIContent (Target.Text), EditorGUIUtility.currentViewWidth);
         }
     }
 }

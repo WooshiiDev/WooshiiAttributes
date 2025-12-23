@@ -3,17 +3,22 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Base class for cusatom property drawers.
+    /// </summary>
     public class WooshiiPropertyDrawer : PropertyDrawer
     {
-        //Cached
-        protected float m_lineHeight = EditorGUIUtility.singleLineHeight;
+        // - Fields
+
+        protected float _lineHeight = EditorGUIUtility.singleLineHeight;
+
+        // - Methods
 
         public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
             return base.GetPropertyHeight (_property, _label);
         }
 
-        //Custom Methods
         protected void DrawBackground(Rect _rect, Color _color)
         {
             GUI.color = _color;

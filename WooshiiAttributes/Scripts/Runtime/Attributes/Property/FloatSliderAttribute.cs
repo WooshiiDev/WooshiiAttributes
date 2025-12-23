@@ -1,13 +1,26 @@
 ﻿using UnityEngine;
 
-public class FloatSliderAttribute : PropertyAttribute
+namespace WooshiiAttributes
 {
-    public float Min { get; }
-    public float Max { get; }
-
-    public FloatSliderAttribute(float _min, float _max)
+    /// <summary>
+    /// Clamp the field to the given float range. Must be a supported value type.
+    /// </summary>
+    public class FloatSliderAttribute : PropertyAttribute
     {
-        Min = _min;
-        Max = _max;
+        /// <summary>
+        /// The minimum value.
+        /// </summary>
+        public float Min { get; }
+
+        /// <summary>
+        /// The maximum value.
+        /// </summary>
+        public float Max { get; }
+
+        public FloatSliderAttribute(float min, float max)
+        {
+            Min = min;
+            Max = max;
+        }
     }
 }
