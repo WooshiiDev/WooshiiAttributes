@@ -1,35 +1,42 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
-using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Utility methods to help collect serialized data.
+    /// </summary>
     public static class SerializedUtility
     {
-        private static readonly string[] excludedPropertyTypes =
-          {
+        /// <summary>
+        /// Property values to ignore when collecting properties.
+        /// </summary>
+        private static readonly string[] s_excludedPropertyTypes =
+        {
             "PPtr<MonoScript>",
             "ArraySize",
-            };
+        };
 
-        private static readonly string[] excludedPropertyNames =
-            {
+        /// <summary>
+        /// Property names to ignore when collection properties.
+        /// </summary>
+        private static readonly string[] s_excludedPropertyNames =
+        {
             "m_Script",
-            };
+        };
 
 
         /// <summary>
-        /// Get all visible properties of a serialized object
+        /// Get all visible properties of a serialized object.
         /// </summary>
-        /// <param name="_target">The target serialized object</param>
-        /// <returns>Returns a list of public serialized properties</returns>
-        public static List<SerializedProperty> GetAllVisibleProperties(SerializedObject _target)
+        /// <param name="target">The target serialized object.</param>
+        /// <returns>Returns a list of public serialized properties.</returns>
+        public static List<SerializedProperty> GetAllVisibleProperties(SerializedObject target)
         {
             List<SerializedProperty> properties = new List<SerializedProperty> ();
 
-            using (SerializedProperty iterator = _target.GetIterator ())
+            using (SerializedProperty iterator = target.GetIterator ())
             {
                 if (iterator.NextVisible (true))
                 {
@@ -38,17 +45,17 @@ namespace WooshiiAttributes
                         string name = iterator.name;
                         string type = iterator.type;
 
-                        if (excludedPropertyNames.Contains (name))
+                        if (s_excludedPropertyNames.Contains (name))
                         {
                             continue;
                         }
 
-                        if (excludedPropertyTypes.Contains (type))
+                        if (s_excludedPropertyTypes.Contains (type))
                         {
                             continue;
                         }
 
-                        properties.Add (_target.FindProperty (iterator.name));
+                        properties.Add (target.FindProperty (iterator.name));
                     }
                     while (iterator.NextVisible (false));
                 }
@@ -58,20 +65,20 @@ namespace WooshiiAttributes
         }
 
         /// <summary>
-        /// Draw a <see cref="SerializedProperty"/> that will automatically apply changes 
+        /// Draw a <see cref="SerializedProperty"/> that will automatically apply changes .
         /// </summary>
-        /// <param name="_property">The property to draw</param>
-        /// <param name="_showChildren">Should children of this property been shown</param>
-        /// <param name="_options">Optional layout options</param>
-        public static void AutoProperty(SerializedProperty _property, bool _showChildren, params EditorGUILayout[] _options)
+        /// <param name="property">The property to draw.</param>
+        /// <param name="showChildren">Should children of this property been shown.</param>
+        /// <param name="options">Optional layout options.</param>
+        public static void AutoProperty(SerializedProperty property, bool showChildren, params EditorGUILayout[] options)
         {
             EditorGUI.BeginChangeCheck ();
 
-            EditorGUILayout.PropertyField (_property, _showChildren);
+            EditorGUILayout.PropertyField (property, showChildren);
 
             if (EditorGUI.EndChangeCheck())
             {
-                _property.serializedObject.ApplyModifiedProperties ();
+                property.serializedObject.ApplyModifiedProperties ();
             }
         }
     }

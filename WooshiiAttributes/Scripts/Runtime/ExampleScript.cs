@@ -34,10 +34,10 @@ namespace WooshiiAttributes
 
         [EndGroup ()] public int k;
 
-        [HeaderLineGroupAttribute ("Header Line Group Stats")] public int health, speed, damage;
-        [HeaderGroup ("Header Group Stats")] public int otherHealth, otherSpeed, otherDamage;
-        [ContainedGroup ("Contained Group Stats")] public int containedHealth, containedSpeed, containedDamage;
-        [FoldoutGroup ("Foldout Group Stats")] public int foldedHealth, foldedSpeed, foldedDamage;
+        public int health, speed, damage;
+        public int otherHealth, otherSpeed, otherDamage;
+        public int containedHealth, containedSpeed, containedDamage;
+        public int foldedHealth, foldedSpeed, foldedDamage;
 
         // ============ ReadOnly ============
 
@@ -48,13 +48,10 @@ namespace WooshiiAttributes
 
         // ============ Basic Data Types ============
 
-        [HeaderLine ("Basic Types")]
         [IntClamp (0, 10, true)] public int clampedInteger;
         [FloatClamp (0, 10, true)] public float clampedFloat;
-
         [IntSlider (0, 10)] public int integerSlider;
         [FloatSlider (0, 10)] public float floatSlider;
-        
         [Vector2Clamp (0, 10)] public Vector2 clampedVector2;
         [Vector3Clamp (0, 10)] public Vector3 clampedVector3;
 
@@ -81,8 +78,8 @@ namespace WooshiiAttributes
         [HeaderLine ("Array Based")]
         [ArrayElements] public float[] arrayElements;
 
-        [Reorderable] public ExampleData[] childClassArray;
-        [Reorderable] public int[] intArray;
+        public ExampleData[] childClassArray;
+        public int[] intArray;
 
         // ============ Methods ============
 

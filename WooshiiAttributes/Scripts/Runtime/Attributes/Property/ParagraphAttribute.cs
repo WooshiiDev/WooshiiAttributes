@@ -3,37 +3,53 @@ using UnityEngine;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Draws a paragraph above a field.
+    /// </summary>
     [AttributeUsage (AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class ParagraphAttribute : PropertyAttribute
     {
+        /// <summary>
+        /// The text to draw.
+        /// </summary>
         public string Text { get; }
 
+        /// <summary>
+        /// The text anchor.
+        /// </summary>
         public TextAnchor Anchor { get; }
 
+        /// <summary>
+        /// The text colour.
+        /// </summary>
         public string TextColor { get; } = "#D2D2D2";
+
+        /// <summary>
+        /// The background colour.
+        /// </summary>
         public string BackgroundColour { get; } = "#787878";
 
-        public ParagraphAttribute(string _text, TextAnchor _textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string text, TextAnchor textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = _text;
-            Anchor = _textAnchor;
+            Text = text;
+            Anchor = textAnchor;
         }
 
-        public ParagraphAttribute(string _text, string _textColor = "#D2D2D2", TextAnchor _textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string text, string textColor = "#D2D2D2", TextAnchor textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = _text;
-            TextColor = _textColor;
+            Text = text;
+            TextColor = textColor;
 
-            Anchor = _textAnchor;
+            Anchor = textAnchor;
         }
 
-        public ParagraphAttribute(string _text, string _textColor = "#D2D2D2", string _backgroundColour = "#787878", TextAnchor _textAnchor = TextAnchor.MiddleLeft)
+        public ParagraphAttribute(string text, string textColor = "#D2D2D2", string backgroundColour = "#787878", TextAnchor textAnchor = TextAnchor.MiddleLeft)
         {
-            Text = _text;
-            TextColor = _textColor;
-            BackgroundColour = _backgroundColour;
+            Text = text;
+            TextColor = textColor;
+            BackgroundColour = backgroundColour;
 
-            Anchor = _textAnchor;
+            Anchor = textAnchor;
         }
     }
 }

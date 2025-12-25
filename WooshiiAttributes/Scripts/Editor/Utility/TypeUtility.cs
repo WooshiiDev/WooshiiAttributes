@@ -5,9 +5,12 @@ using Object = UnityEngine.Object;
 
 namespace WooshiiAttributes
 {
+    /// <summary>
+    /// Utility class helpiong convert some Type data.
+    /// </summary>
     public static class TypeUtility
     {
-        private readonly static Dictionary<Type, PropertyType> TypeDictionary = new Dictionary<Type, PropertyType> ()
+        private readonly static Dictionary<Type, PropertyType> s_typeDictionary = new Dictionary<Type, PropertyType> ()
         {
             // Standard Types
 
@@ -48,32 +51,38 @@ namespace WooshiiAttributes
             { typeof(Pose)          , PropertyType.POSE},
         };
 
-        public static PropertyType GetPropertyTypeFromType(Type _type)
+        /// <summary>
+        /// Get an enum value representing a given type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>Returns the enum value representing a type. Will return <see cref="PropertyType.INVALID"/> if it cannot find a valid value.</returns>
+        public static PropertyType GetPropertyTypeFromType(Type type)
         {
-            if (_type == null)
+            if (type == null)
             {
                 return PropertyType.INVALID;
             }
 
-            if (_type.IsEnum)
+            if (type.IsEnum)
             {
                 return PropertyType.ENUM;
             }
 
-            if (TypeDictionary.ContainsKey(_type))
+            if (s_typeDictionary.ContainsKey(type))
             {
-                return TypeDictionary[_type];
+                return s_typeDictionary[type];
             }
 
             return PropertyType.INVALID;
         }
-
-        
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum PropertyType
     {
-        // --- Standard Types ---
+        // - Standard Types
 
         INVALID = -1,
 
@@ -89,7 +98,7 @@ namespace WooshiiAttributes
 
         ENUM = 7,
 
-        // --- Unity Types ---
+        // - Unity Types
 
         UNITY_OBJECT = 8,
 
@@ -105,8 +114,6 @@ namespace WooshiiAttributes
 
         LAYER_MASK = 16,
         ANIMATION_CURVE = 17,
-
-        // Other unity types - find through serializable properties
 
         RECT = 18,
         RECTINT = 19,
