@@ -28,7 +28,7 @@ namespace WooshiiAttributes
             if (property.isExpanded)
             {
                 Rect background = position;
-                background.y += SingleLineHeight;
+                background.y += SingleLineHeight + StandardSpacing;
                 background.height -= SingleLineHeight;
                 DrawBackground(background);
                 
