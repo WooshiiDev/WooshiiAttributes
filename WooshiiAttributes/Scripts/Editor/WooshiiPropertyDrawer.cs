@@ -10,20 +10,31 @@ namespace WooshiiAttributes
     {
         // - Fields
 
-        protected float _lineHeight = EditorGUIUtility.singleLineHeight;
+        protected float SingleLineHeight = EditorGUIUtility.singleLineHeight;
+        protected float StandardSpacing = EditorGUIUtility.standardVerticalSpacing;
 
         // - Methods
 
-        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            return base.GetPropertyHeight (_property, _label);
+            EditorGUI.PropertyField(position, property, label, property.isExpanded);
         }
 
-        protected void DrawBackground(Rect _rect, Color _color)
+        public override float GetPropertyHeight(SerializedProperty _property, GUIContent _label)
         {
-            GUI.color = _color;
-            GUI.Box (_rect, GUIContent.none, EditorStyles.textField);
-            GUI.color = Color.white;
+            return EditorGUI.GetPropertyHeight(_property, _label, _property.isExpanded) + StandardSpacing;
+        }
+
+        protected void DrawBackground(Rect _rect)
+        {
+            Color c = GUI.color;
+            GUI.Box(_rect, string.Empty, GUI.skin.box);
+        }
+
+        protected Rect GetSingleLineControlRect(Rect rect)
+        {
+            rect.height = SingleLineHeight;
+            return rect;
         }
     }
 }
